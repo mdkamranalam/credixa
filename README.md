@@ -30,7 +30,13 @@ The entire application stack (frontend, backend, AI risk engine, and databases) 
 
 ### Running the Services
 
-**1. Start all services:**
+**1. Set up environment variables:**
+Before running the application, copy the `.env.example` file to `.env` in the `backend-gateway` folder:
+```bash
+cp backend-gateway/.env.example backend-gateway/.env
+```
+
+**2. Start all services:**
 ```bash
 docker-compose up --build
 ```
@@ -41,7 +47,7 @@ This will spin up:
 - Python Risk Engine (`risk-engine` on port `8000`)
 - React Frontend (`frontend` on port `5173`)
 
-**2. Access the Application:**
+**3. Access the Application:**
 The frontend will be accessible at `http://localhost:5173`.
 
 ### Database Management Commands
