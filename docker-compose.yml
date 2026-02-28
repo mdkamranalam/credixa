@@ -1,0 +1,58 @@
+services:
+  # 1. PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: credixa-postgres
+    environment:
+      POSTGRES_USER: credixa_admin
+      POSTGRES_PASSWORD: admin@123
+      POSTGRES_DB: credixa_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  # 2. Node.js Gateway
+  backend:
+    build: ./backend-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - risk-engine
+    environment:
+      - DB_HOST=credixa-postgres
+      - RISK_ENGINE_URL=http://risk-engine:8000/analyze-statement
+    volumes:
+      - ./backend-gateway:/app
+      - /app/node_modules
+
+  # 3. Python Risk Engine
+  risk-engine:
+    build: ./risk-engine
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./risk-engine:/app
+
+  # 4. React Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+    stdin_open: true
+    tty: true
+
+  # 5. Redis for Caching
+  redis:
+    image: redis:7-alpine
+    container_name: credixa-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

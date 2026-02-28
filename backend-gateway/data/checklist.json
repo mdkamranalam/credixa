@@ -1,0 +1,180 @@
+[
+  {
+    "title": "1) Student Documents",
+    "icon": "UserPlus",
+    "color": "border-indigo-200 bg-indigo-50",
+    "description": "Identity, Personal, and Academic Records of the primary applicant.",
+    "items": [
+      {
+        "name": "Aadhaar Card",
+        "required": true
+      },
+      {
+        "name": "PAN Card",
+        "required": true
+      },
+      {
+        "name": "Passport",
+        "required": false,
+        "note": "Mandatory for abroad studies"
+      },
+      {
+        "name": "Passport-size photographs",
+        "required": true
+      },
+      {
+        "name": "10th mark sheet & certificate",
+        "required": true
+      },
+      {
+        "name": "12th mark sheet & certificate",
+        "required": true
+      },
+      {
+        "name": "Graduation mark sheets",
+        "required": false,
+        "note": "If applying for PG"
+      },
+      {
+        "name": "Entrance exam scorecards",
+        "required": false,
+        "note": "JEE, NEET, CAT, GRE, IELTS, etc."
+      }
+    ]
+  },
+  {
+    "title": "2) Admission & Course Documents",
+    "icon": "GraduationCap",
+    "color": "border-blue-200 bg-blue-50",
+    "description": "Proof of enrollment and fee structure.",
+    "items": [
+      {
+        "name": "Admission letter / Offer letter from college",
+        "required": true
+      },
+      {
+        "name": "Fee structure (year-wise)",
+        "required": true
+      },
+      {
+        "name": "Bonafide certificate",
+        "required": false,
+        "note": "If already enrolled"
+      },
+      {
+        "name": "Prospectus or course details",
+        "required": true
+      },
+      {
+        "name": "Scholarship letter",
+        "required": false,
+        "note": "If any"
+      }
+    ],
+    "foreignNote": {
+      "title": "For foreign education loans:",
+      "items": [
+        "Visa copy (or proof of visa application)",
+        "Passport",
+        "I-20 (USA) or CAS (UK) document",
+        "Travel details (sometimes)"
+      ]
+    }
+  },
+  {
+    "title": "3) Co-Applicant Documents (Parent/Guardian)",
+    "icon": "FileBadge2",
+    "color": "border-emerald-200 bg-emerald-50",
+    "description": "Most Indian education loans require a co-borrower.",
+    "items": [
+      {
+        "name": "Aadhaar Card",
+        "required": true
+      },
+      {
+        "name": "PAN Card",
+        "required": true
+      },
+      {
+        "name": "Address proof",
+        "required": true,
+        "note": "Electricity bill, voter ID, etc."
+      },
+      {
+        "name": "Photographs",
+        "required": true
+      }
+    ],
+    "incomeProof": {
+      "title": "Income Proof",
+      "salaried": [
+        "Last 3–6 months salary slips",
+        "Form 16",
+        "Bank statements (last 6 months)",
+        "Employment ID / appointment letter"
+      ],
+      "selfEmployed": [
+        "Income Tax Returns (ITR) for last 2–3 years",
+        "Business proof (GST certificate, registration, etc.)",
+        "Bank statements (6–12 months)",
+        "Balance sheet / P&L statement"
+      ]
+    }
+  },
+  {
+    "title": "4) Collateral Documents (If Required)",
+    "icon": "Home",
+    "color": "border-amber-200 bg-amber-50",
+    "description": "For larger loans (typically ₹7.5 lakh+). Note: Some govt schemes offer collateral-free loans up to ₹7.5 lakh.",
+    "items": [
+      {
+        "name": "Property documents",
+        "required": true,
+        "note": "Sale deed, title deed"
+      },
+      {
+        "name": "Property tax receipts",
+        "required": true
+      },
+      {
+        "name": "Encumbrance certificate",
+        "required": true
+      },
+      {
+        "name": "Valuation report",
+        "required": true
+      },
+      {
+        "name": "NOC from housing society",
+        "required": false,
+        "note": "If applicable"
+      }
+    ]
+  },
+  {
+    "title": "5) Financial & Bank Documents",
+    "icon": "Landmark",
+    "color": "border-purple-200 bg-purple-50",
+    "description": "Banking history and credit details.",
+    "items": [
+      {
+        "name": "Student’s bank account details",
+        "required": true
+      },
+      {
+        "name": "Co-applicant bank statements",
+        "required": true
+      },
+      {
+        "name": "Previous loan details",
+        "required": false,
+        "note": "If any"
+      },
+      {
+        "name": "Credit report",
+        "required": false,
+        "note": "Bank checks this internally"
+      }
+    ]
+  }
+]
