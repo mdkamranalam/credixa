@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import LoanChecklist from "./pages/LoanChecklist.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Router>
         <Routes>
           {/* Public Route */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/loan-checklist" element={<LoanChecklist />} />
