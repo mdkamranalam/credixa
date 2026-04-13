@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="120" ry="120" fill="#2563eb" />
+  
+  <!-- Hat top -->
+  <path d="M256 120 L100 210 L256 300 L412 210 Z" fill="#ffffff" />
+  
+  <!-- Tassel Base/String -->
+  <line x1="412" y1="210" x2="412" y2="280" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+  
+  <!-- Cap Bottom -->
+  <path d="M140 250 L140 330 C140 380 256 410 256 410 C256 410 372 380 372 330 L372 250" fill="none" stroke="#ffffff" stroke-width="32" stroke-linejoin="round" />
+</svg>
