@@ -76,6 +76,7 @@ const LandingPage = () => {
             </Link>
             <Link
               to="/register"
+              state={{ defaultTab: "INSTITUTION" }}
               className="px-8 py-4 text-lg font-semibold rounded-full text-gray-700 bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm transition-all"
             >
               Partner Institution

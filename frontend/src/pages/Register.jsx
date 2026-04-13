@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import {
   UserPlus,
   Mail,
@@ -20,10 +20,11 @@ import api from "../services/api.js";
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register } = useContext(AuthContext);
 
   // --- UI STATE ---
-  const [activeTab, setActiveTab] = useState("STUDENT"); // 'STUDENT' or 'INSTITUTION'
+  const [activeTab, setActiveTab] = useState(location.state?.defaultTab || "STUDENT"); // 'STUDENT' or 'INSTITUTION'
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
