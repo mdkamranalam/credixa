@@ -21,7 +21,12 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        if (
+            error.response && 
+            (error.response.status === 401 || error.response.status === 403) &&
+            !error.config.url.includes('/auth/login') &&
+            !error.config.url.includes('/auth/register')
+        ) {
             // Token is expired, invalid, or missing.
             console.warn("Authentication failed. Wiping stale session and redirecting to login.");
             localStorage.removeItem("token");

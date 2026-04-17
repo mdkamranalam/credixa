@@ -330,7 +330,7 @@ const StudentDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 relative pb-20">
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center border-b border-gray-200">
-        <div className="text-2xl font-black text-blue-600">Credixa</div>
+        <div className="text-2xl font-black text-tertiary">Credixa</div>
         <button
           onClick={logout}
           className="text-gray-500 hover:text-red-500 flex items-center"
@@ -345,7 +345,7 @@ const StudentDashboard = () => {
           <div className="bg-white rounded-xl shadow-sm border p-6 mb-8 flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <div className="bg-blue-100 p-3 rounded-full">
-                <User className="h-8 w-8 text-blue-600" />
+                <User className="h-8 w-8 text-tertiary" />
               </div>
               <div>
                 <div className="flex items-center space-x-2">
@@ -417,7 +417,7 @@ const StudentDashboard = () => {
         {!activeLoan && isProfileComplete && applicationStep === 2 && (
           <div className="bg-white rounded-xl shadow-sm border p-8 mb-8">
             <div className="flex items-center mb-6 space-x-2">
-              <UploadCloud className="text-blue-600" />
+              <UploadCloud className="text-tertiary" />
               <h2 className="text-xl font-bold">
                 BNPL Application: Final Step (AI Verification)
               </h2>
@@ -442,7 +442,7 @@ const StudentDashboard = () => {
                     <label className="flex items-center text-sm font-bold text-gray-600 mt-2 md:mt-0 cursor-pointer">
                       <input
                         type="checkbox"
-                        className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="mr-2 h-4 w-4 text-tertiary border-gray-300 rounded focus:ring-tertiary"
                         checked={isFirstSemester}
                         onChange={(e) => {
                           setIsFirstSemester(e.target.checked);
@@ -584,7 +584,7 @@ const StudentDashboard = () => {
               {activeLoan.status === "APPROVED" && (
                 <button
                   onClick={() => setShowPaymentModal(true)}
-                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg"
+                  className="w-full bg-tertiary text-white font-bold py-4 rounded-xl shadow-lg"
                 >
                   Make Repayment (EMI)
                 </button>
@@ -597,7 +597,7 @@ const StudentDashboard = () => {
               <h2 className="text-xl font-bold">Apply for BNPL Loan</h2>
               <Link
                 to="/loan-checklist"
-                className="flex items-center text-sm font-semibold text-blue-600 bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                className="flex items-center text-sm font-semibold text-tertiary bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
               >
                 <FileText className="w-4 h-4 mr-2" />
                 View Document Checklist
@@ -652,7 +652,7 @@ const StudentDashboard = () => {
               <button
                 type="submit"
                 disabled={isApplying}
-                className="w-full bg-blue-600 text-white font-bold py-3 rounded"
+                className="w-full bg-tertiary text-white font-bold py-3 rounded"
               >
                 {isApplying ? "Initializing..." : "Next: AI Verification"}
               </button>
@@ -704,7 +704,7 @@ const StudentDashboard = () => {
                 </p>
                 <button
                   onClick={handlePayment}
-                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl flex justify-center items-center"
+                  className="w-full bg-tertiary text-white font-bold py-4 rounded-xl flex justify-center items-center"
                 >
                   <Smartphone className="mr-2" /> Pay with UPI
                 </button>

@@ -63,6 +63,7 @@ CREATE TABLE users (
     college_roll_number VARCHAR(50) NOT NULL,
     academic_status VARCHAR(20) DEFAULT 'PASS',
     risk_flags TEXT [],
+    kyc_source VARCHAR(50),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -165,6 +166,8 @@ CREATE TABLE loan_documents (
     category VARCHAR(50) NOT NULL,
     doc_type VARCHAR(100) NOT NULL,
     file_url TEXT NOT NULL,
+    extraction_method VARCHAR(50),
+    extraction_confidence DECIMAL(5, 2),
     is_verified BOOLEAN DEFAULT FALSE,
     verified_at TIMESTAMP WITH TIME ZONE,
     uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

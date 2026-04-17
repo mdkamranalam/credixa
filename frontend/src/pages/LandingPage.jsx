@@ -20,20 +20,20 @@ const LandingPage = () => {
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-2">
               <img src="/credixa-logo.png" alt="Credixa Logo" className="w-10 h-10 rounded-xl object-contain shadow-sm" />
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600">
+              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-secondary to-indigo-600">
                 Credixa
               </span>
             </div>
             <div className="flex items-center gap-4">
               <Link
                 to="/login"
-                className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                className="text-gray-600 hover:text-tertiary font-medium transition-colors"
               >
                 Log In
               </Link>
               <Link
-                to="/register"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                to="/register/student"
+                className="bg-tertiary hover:opacity-90 text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2"
               >
                 Get Started <ArrowRight className="w-4 h-4" />
               </Link>
@@ -52,13 +52,13 @@ const LandingPage = () => {
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-medium text-sm mb-8 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-secondary font-medium text-sm mb-8 shadow-sm">
             <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
             AI-Driven Education Funding
           </div>
           <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-8">
             Fund your education with <br className="hidden lg:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-tertiary to-indigo-600">
               Buy Now, Pay Later.
             </span>
           </h1>
@@ -67,14 +67,13 @@ const LandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              to="/register"
-              className="px-8 py-4 text-lg font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+              to="/register/student"
+              className="px-8 py-4 text-lg font-semibold rounded-full text-white bg-tertiary hover:opacity-90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
             >
               Apply as Student
             </Link>
             <Link
-              to="/register"
-              state={{ defaultTab: "INSTITUTION" }}
+              to="/register/institution"
               className="px-8 py-4 text-lg font-semibold rounded-full text-gray-700 bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm transition-all"
             >
               Partner Institution
@@ -100,7 +99,7 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
-                <Landmark className="w-7 h-7 text-blue-600" />
+                <Landmark className="w-7 h-7 text-tertiary" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">AI-Powered Risk Engine</h3>
               <p className="text-gray-600 leading-relaxed">
@@ -143,21 +142,21 @@ const LandingPage = () => {
 
               <div className="space-y-6">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">1</div>
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-tertiary font-bold">1</div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">Create an Account</h4>
                     <p className="text-gray-600">Register as a student under your participating institution.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">2</div>
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-tertiary font-bold">2</div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">Upload Documents</h4>
                     <p className="text-gray-600">Securely upload bank statements to our Document Vault for analysis.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">3</div>
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-tertiary font-bold">3</div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">AI Assessment</h4>
                     <p className="text-gray-600">Our engine instantly calculates your Omniscore and decides on approval.</p>
@@ -167,11 +166,11 @@ const LandingPage = () => {
             </div>
 
             <div className="lg:w-1/2 w-full">
-              <div className="bg-gradient-to-tr from-blue-600 to-indigo-600 p-1 rounded-2xl shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500">
+              <div className="bg-gradient-to-tr from-tertiary to-indigo-600 p-1 rounded-2xl shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500">
                 <div className="bg-white rounded-xl p-8 h-full">
                   <div className="flex justify-between items-center mb-8 border-b pb-4">
                     <span className="font-bold text-gray-800 flex items-center gap-2">
-                      <GraduationCap className="h-5 w-5 text-blue-600" /> Dashboard Preview
+                      <GraduationCap className="h-5 w-5 text-tertiary" /> Dashboard Preview
                     </span>
                     <span className="text-xs font-medium px-2 py-1 bg-green-100 text-green-700 rounded-full">Approved</span>
                   </div>
@@ -180,7 +179,7 @@ const LandingPage = () => {
                     <div className="h-4 bg-gray-100 rounded w-1/2"></div>
                     <div className="py-4">
                       <div className="h-24 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100">
-                        <span className="text-blue-700 font-bold text-xl">Omniscore: 852 / 900</span>
+                        <span className="text-secondary font-bold text-xl">Omniscore: 852 / 900</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -196,15 +195,15 @@ const LandingPage = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-blue-600 text-white">
+      <div className="bg-tertiary text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-6">Ready to empower your educational journey?</h2>
           <p className="text-blue-100 mb-10 max-w-2xl mx-auto text-lg">
             Join thousands of students and leading institutions who trust Credixa for simple, transparent, and fair education financing.
           </p>
           <Link
-            to="/register"
-            className="inline-flex items-center gap-2 px-8 py-4 text-lg font-bold rounded-full text-blue-600 bg-white hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all"
+            to="/register/student"
+            className="inline-flex items-center gap-2 px-8 py-4 text-lg font-bold rounded-full text-tertiary bg-white hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all"
           >
             Get Started Now <ChevronRight className="w-5 h-5" />
           </Link>

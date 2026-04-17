@@ -19,7 +19,8 @@ function App() {
         <Routes>
           {/* Public Route */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register/:type" element={<Register />} />
+          <Route path="/register" element={<Navigate to="/register/student" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/loan-checklist" element={<LoanChecklist />} />
 

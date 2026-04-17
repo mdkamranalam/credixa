@@ -199,7 +199,7 @@ const AdminDashboard = () => {
           <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8 flex flex-col md:flex-row items-center justify-between border-l-4 border-l-blue-500">
             <div className="flex items-center space-x-4">
               <div className="bg-blue-50 p-3 rounded-lg">
-                <Landmark className="h-8 w-8 text-blue-600" />
+                <Landmark className="h-8 w-8 text-tertiary" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">
@@ -236,7 +236,7 @@ const AdminDashboard = () => {
             <p className="text-sm font-bold text-gray-400 uppercase">
               Active Collections
             </p>
-            <p className="text-2xl font-black text-blue-600">
+            <p className="text-2xl font-black text-tertiary">
               {activeCollectionsCount} Students
             </p>
           </div>
@@ -342,7 +342,7 @@ const AdminDashboard = () => {
                       </button>
                       <button
                         onClick={() => setSelectedLoan(loan)}
-                        className="text-blue-600 hover:text-blue-900 font-bold bg-blue-50 px-3 py-1 rounded-md"
+                        className="text-tertiary hover:text-blue-900 font-bold bg-blue-50 px-3 py-1 rounded-md"
                       >
                         Review
                       </button>
@@ -465,7 +465,7 @@ const AdminDashboard = () => {
               <textarea
                 value={checklistData}
                 onChange={(e) => setChecklistData(e.target.value)}
-                className="w-full h-[50vh] p-4 font-mono text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                className="w-full h-[50vh] p-4 font-mono text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary bg-gray-50"
                 spellCheck="false"
               />
             </div>
@@ -480,7 +480,7 @@ const AdminDashboard = () => {
               <button
                 onClick={handleSaveChecklist}
                 disabled={isProcessing}
-                className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 flex items-center"
+                className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-tertiary hover:opacity-90 disabled:opacity-50 flex items-center"
               >
                 {isProcessing ? "Saving..." : <><CheckCircle className="w-4 h-4 mr-2" /> Save Changes</>}
               </button>
@@ -620,7 +620,7 @@ const AdminDashboard = () => {
                   <p className="text-[10px] uppercase font-bold text-gray-400">
                     Inst. Account
                   </p>
-                  <Landmark className="h-5 w-5 mx-auto text-blue-600" />
+                  <Landmark className="h-5 w-5 mx-auto text-tertiary" />
                 </div>
               </div>
 

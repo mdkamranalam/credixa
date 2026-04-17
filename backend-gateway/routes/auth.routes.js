@@ -22,9 +22,31 @@ pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err);
 });
 
+// Simple in-memory rate limiter for registration
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const MAX_REQUESTS = 5;
+
+const registerRateLimiter = (req, res, next) => {
+    const ip = req.ip;
+    const now = Date.now();
+    const records = rateLimitMap.get(ip) || [];
+    const windowStart = now - RATE_LIMIT_WINDOW_MS;
+    
+    // Filter out old records
+    const validRecords = records.filter(timestamp => timestamp > windowStart);
+    
+    if (validRecords.length >= MAX_REQUESTS) {
+        return res.status(429).json({ error: "Too many registration attempts. Please try again later." });
+    }
+    
+    validRecords.push(now);
+    rateLimitMap.set(ip, validRecords);
+    next();
+};
 
 // 1. User Registration
-router.post("/register", async (req, res) => {
+router.post("/register", registerRateLimiter, async (req, res) => {
   const {
     full_name,
     email,
@@ -32,7 +54,7 @@ router.post("/register", async (req, res) => {
     password,
     role,
     institution_id,
-    pan_number,
+    dob,
     college_roll_number,
   } = req.body;
 
@@ -41,7 +63,7 @@ router.post("/register", async (req, res) => {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     const insertQuery = `
-            INSERT INTO users (full_name, email, mobile_number, password_hash, role, institution_id, pan_number, college_roll_number)
+            INSERT INTO users (full_name, email, mobile_number, password_hash, role, institution_id, dob, college_roll_number)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
             RETURNING user_id, full_name, role;
         `;
@@ -53,7 +75,7 @@ router.post("/register", async (req, res) => {
       passwordHash,
       role,
       institution_id,
-      pan_number.toUpperCase(),
+      dob || null,
       college_roll_number || "UNKNOWN",
     ]);
 
