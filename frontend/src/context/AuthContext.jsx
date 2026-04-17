@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <h2 className="text-2xl text-blue-600 font-bold">
+        <h2 className="text-2xl text-emerald-500 font-bold">
           Loading Credixa Environment...
         </h2>
       </div>

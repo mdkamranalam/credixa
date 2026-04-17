@@ -56,7 +56,7 @@ const Register = () => {
   };
   
   const strengthLabels = ["", "Weak", "Fair", "Good", "Strong", "Excellent"];
-  const strengthColors = ["bg-gray-200", "bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"];
+  const strengthColors = ["bg-gray-200", "bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-emerald-500", "bg-green-500"];
 
 
   // --- INSTITUTION FORM STATE ---
@@ -142,7 +142,7 @@ const Register = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Join <span className="text-tertiary">Credixa</span>
+          Join <span className="text-emerald-500">Credixa</span>
         </h2>
       </div>
 
@@ -181,7 +181,7 @@ const Register = () => {
                         type="text"
                         name="full_name"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="John Doe"
                         value={studentData.full_name}
                         onChange={handleStudentChange}
@@ -200,7 +200,7 @@ const Register = () => {
                         type="email"
                         name="email"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="student@edu.in"
                         value={studentData.email}
                         onChange={handleStudentChange}
@@ -221,7 +221,7 @@ const Register = () => {
                       list="college-list"
                       type="text"
                       required
-                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="Start typing your college name..."
                       value={collegeSearch}
                       onChange={(e) => setCollegeSearch(e.target.value)}
@@ -245,7 +245,7 @@ const Register = () => {
                       list="college-list"
                       type="text"
                       required
-                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="Start typing (e.g. BITS Pilani)"
                       value={collegeSearch}
                       onChange={(e) => setCollegeSearch(e.target.value)}
@@ -271,7 +271,7 @@ const Register = () => {
                         type="text"
                         name="college_roll_number"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="CS2024-001"
                         value={studentData.college_roll_number}
                         onChange={handleStudentChange}
@@ -292,7 +292,7 @@ const Register = () => {
                         required
                         pattern="[0-9]{10}"
                         title="Exactly 10 digits required"
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="9876543210"
                         value={studentData.mobile_number}
                         onChange={handleStudentChange}
@@ -314,7 +314,7 @@ const Register = () => {
                         type="date"
                         name="dob"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-emerald-500 focus:border-emerald-500"
                         value={studentData.dob}
                         onChange={handleStudentChange}
                       />
@@ -332,7 +332,7 @@ const Register = () => {
                         type="password"
                         name="password"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="••••••••"
                         value={studentData.password}
                         onChange={handleStudentChange}
@@ -378,7 +378,7 @@ const Register = () => {
                       type="text"
                       name="name"
                       required
-                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="e.g. BITS Pilani"
                       value={instData.name}
                       onChange={handleInstChange}
@@ -399,7 +399,7 @@ const Register = () => {
                         type="text"
                         name="code"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="BITS-001"
                         value={instData.code}
                         onChange={handleInstChange}
@@ -418,7 +418,7 @@ const Register = () => {
                         type="email"
                         name="contact_email"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="admin@bits.edu"
                         value={instData.contact_email}
                         onChange={handleInstChange}
@@ -439,7 +439,7 @@ const Register = () => {
                       type="password"
                       name="password"
                       required
-                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="••••••••"
                       value={instData.password}
                       onChange={handleInstChange}
@@ -465,7 +465,7 @@ const Register = () => {
                         type="text"
                         name="bank_name"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="HDFC Bank"
                         value={instData.bank_name}
                         onChange={handleInstChange}
@@ -484,7 +484,7 @@ const Register = () => {
                         type="text"
                         name="ifsc_code"
                         required
-                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-tertiary focus:border-tertiary"
+                        className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border uppercase focus:ring-emerald-500 focus:border-emerald-500"
                         placeholder="HDFC0001234"
                         value={instData.ifsc_code.toUpperCase()}
                         onChange={handleInstChange}
@@ -505,7 +505,7 @@ const Register = () => {
                       type="text"
                       name="bank_account_number"
                       required
-                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="0000111122223333"
                       value={instData.bank_account_number}
                       onChange={handleInstChange}
@@ -525,7 +525,7 @@ const Register = () => {
                       type="text"
                       name="address"
                       required
-                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-tertiary focus:border-tertiary"
+                      className="pl-10 w-full sm:text-sm border-gray-300 rounded-md py-2 border focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="123 Tech Park, Bangalore"
                       value={instData.address}
                       onChange={handleInstChange}
@@ -538,7 +538,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-6 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-tertiary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tertiary disabled:opacity-50 disabled:bg-tertiary transition-colors"
+              className="w-full mt-6 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:bg-emerald-500 transition-colors"
             >
               {isLoading
                 ? "Processing..."
@@ -551,7 +551,7 @@ const Register = () => {
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="font-medium text-tertiary hover:text-tertiary/80"
+                className="font-medium text-emerald-500 hover:text-emerald-500/80"
               >
                 Sign in here
               </Link>

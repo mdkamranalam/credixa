@@ -177,7 +177,7 @@ const AdminDashboard = () => {
       {/* Top Navigation */}
       <nav className="bg-gray-900 shadow-sm px-8 py-4 flex justify-between items-center text-white">
         <div className="flex items-center space-x-2">
-          <Building className="h-6 w-6 text-blue-400" />
+          <Building className="h-6 w-6 text-emerald-400" />
           <h1 className="text-xl font-bold">Credixa Admin Console</h1>
         </div>
         <div className="flex items-center space-x-6">
@@ -196,10 +196,10 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
         {/* --- NEW: INSTITUTIONAL BANK DETAILS SECTION --- */}
         {instDetails && (
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8 flex flex-col md:flex-row items-center justify-between border-l-4 border-l-blue-500">
+          <div className="bg-white rounded-xl shadow-sm border border-[#A7F3D0] p-6 mb-8 flex flex-col md:flex-row items-center justify-between border-l-4 border-l-emerald-500">
             <div className="flex items-center space-x-4">
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <Landmark className="h-8 w-8 text-tertiary" />
+              <div className="bg-[#F0FDF4] p-3 rounded-lg">
+                <Landmark className="h-8 w-8 text-emerald-500" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">
@@ -236,7 +236,7 @@ const AdminDashboard = () => {
             <p className="text-sm font-bold text-gray-400 uppercase">
               Active Collections
             </p>
-            <p className="text-2xl font-black text-tertiary">
+            <p className="text-2xl font-black text-emerald-500">
               {activeCollectionsCount} Students
             </p>
           </div>
@@ -327,7 +327,7 @@ const AdminDashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${loan.status === "APPROVED" ? "bg-green-100 text-green-800" : loan.status === "REJECTED" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"}`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${loan.status === "APPROVED" ? "bg-green-100 text-green-800" : loan.status === "REJECTED" ? "bg-red-100 text-red-800" : "bg-[#D1FAE5] text-slate-800"}`}
                       >
                         {loan.status}
                       </span>
@@ -342,7 +342,7 @@ const AdminDashboard = () => {
                       </button>
                       <button
                         onClick={() => setSelectedLoan(loan)}
-                        className="text-tertiary hover:text-blue-900 font-bold bg-blue-50 px-3 py-1 rounded-md"
+                        className="text-emerald-500 hover:text-slate-900 font-bold bg-[#F0FDF4] px-3 py-1 rounded-md"
                       >
                         Review
                       </button>
@@ -374,7 +374,7 @@ const AdminDashboard = () => {
       <div className="mt-12 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
           <h3 className="text-lg font-bold text-gray-900 flex items-center">
-            <ArrowRightLeft className="mr-2 h-5 w-5 text-blue-500" />
+            <ArrowRightLeft className="mr-2 h-5 w-5 text-emerald-500" />
             Recent Repayments & Disbursements
           </h3>
           <button
@@ -414,7 +414,7 @@ const AdminDashboard = () => {
                 <td className="px-6 py-4">
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded ${txn.txn_type === "REPAYMENT"
-                      ? "bg-blue-100 text-blue-700"
+                      ? "bg-[#D1FAE5] text-slate-800"
                       : "bg-purple-100 text-purple-700"
                       }`}
                   >
@@ -465,7 +465,7 @@ const AdminDashboard = () => {
               <textarea
                 value={checklistData}
                 onChange={(e) => setChecklistData(e.target.value)}
-                className="w-full h-[50vh] p-4 font-mono text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary bg-gray-50"
+                className="w-full h-[50vh] p-4 font-mono text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50"
                 spellCheck="false"
               />
             </div>
@@ -480,7 +480,7 @@ const AdminDashboard = () => {
               <button
                 onClick={handleSaveChecklist}
                 disabled={isProcessing}
-                className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-tertiary hover:opacity-90 disabled:opacity-50 flex items-center"
+                className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-500 hover:opacity-90 disabled:opacity-50 flex items-center"
               >
                 {isProcessing ? "Saving..." : <><CheckCircle className="w-4 h-4 mr-2" /> Save Changes</>}
               </button>
@@ -595,11 +595,11 @@ const AdminDashboard = () => {
                 </div>
               )}
 
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                <p className="text-sm text-blue-800 font-medium">
+              <div className="bg-[#F0FDF4] p-4 rounded-lg border border-[#A7F3D0]">
+                <p className="text-sm text-slate-800 font-medium">
                   Requested Amount
                 </p>
-                <p className="text-3xl font-extrabold text-blue-900">
+                <p className="text-3xl font-extrabold text-slate-900">
                   ₹
                   {parseFloat(selectedLoan.requested_amount).toLocaleString(
                     "en-IN",
@@ -615,12 +615,12 @@ const AdminDashboard = () => {
                   </p>
                   <CreditCard className="h-5 w-5 mx-auto text-gray-600" />
                 </div>
-                <ArrowRightLeft className="h-4 w-4 text-blue-500 animate-pulse" />
+                <ArrowRightLeft className="h-4 w-4 text-emerald-500 animate-pulse" />
                 <div className="text-center flex-1">
                   <p className="text-[10px] uppercase font-bold text-gray-400">
                     Inst. Account
                   </p>
-                  <Landmark className="h-5 w-5 mx-auto text-tertiary" />
+                  <Landmark className="h-5 w-5 mx-auto text-emerald-500" />
                 </div>
               </div>
 

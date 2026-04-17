@@ -16,7 +16,7 @@ import api from "../services/api";
 
 const IconMap = {
   UserPlus: <UserPlus className="h-6 w-6 text-indigo-600" />,
-  GraduationCap: <GraduationCap className="h-6 w-6 text-blue-600" />,
+  GraduationCap: <GraduationCap className="h-6 w-6 text-emerald-500" />,
   FileBadge2: <FileBadge2 className="h-6 w-6 text-emerald-600" />,
   Home: <Home className="h-6 w-6 text-amber-600" />,
   Landmark: <Landmark className="h-6 w-6 text-purple-600" />
@@ -46,7 +46,7 @@ const LoanChecklist = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
-        <Loader2 className="h-10 w-10 text-blue-600 animate-spin mb-4" />
+        <Loader2 className="h-10 w-10 text-emerald-500 animate-spin mb-4" />
         <p className="text-gray-500 font-medium">Loading document checklist...</p>
       </div>
     );
@@ -60,7 +60,7 @@ const LoanChecklist = () => {
         <p className="text-gray-600 text-center">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700"
+          className="mt-6 bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-800"
         >
           Try Again
         </button>
@@ -74,7 +74,7 @@ const LoanChecklist = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-gray-900 flex items-center justify-center gap-3">
-            <FileText className="h-10 w-10 text-blue-600" />
+            <FileText className="h-10 w-10 text-emerald-500" />
             Education Loan Document Checklist
           </h1>
           <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
@@ -83,7 +83,7 @@ const LoanChecklist = () => {
         </div>
 
         {/* Minimum Required Quick Checklist Alert */}
-        <div className="bg-blue-600 rounded-2xl shadow-xl overflow-hidden mb-12 transform transition-all hover:scale-[1.01]">
+        <div className="bg-emerald-500 rounded-2xl shadow-xl overflow-hidden mb-12 transform transition-all hover:scale-[1.01]">
           <div className="px-6 py-8 sm:p-10">
             <h3 className="text-2xl font-bold text-white flex items-center gap-2 mb-6">
               <CheckCircle className="h-7 w-7 text-green-300" />
@@ -98,8 +98,8 @@ const LoanChecklist = () => {
                 "Fee structure",
                 "Passport (for abroad)"
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center text-blue-100 bg-blue-700/50 rounded-lg p-4 font-medium">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-400 text-blue-900 flex items-center justify-center text-sm font-bold mr-3">
+                <div key={idx} className="flex items-center text-white bg-slate-800/50 rounded-lg p-4 font-medium">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-400 text-slate-900 flex items-center justify-center text-sm font-bold mr-3">
                     ✓
                   </span>
                   {item}
@@ -169,15 +169,15 @@ const LoanChecklist = () => {
 
                 {/* Conditional Foreign Education Needs */}
                 {section.foreignNote && (
-                  <div className="mt-6 bg-blue-50/50 rounded-xl p-5 border border-blue-100">
-                    <h4 className="font-bold text-blue-900 flex items-center gap-2 mb-3">
-                      <Globe2 className="h-5 w-5 text-blue-600" />
+                  <div className="mt-6 bg-[#F0FDF4]/50 rounded-xl p-5 border border-[#A7F3D0]">
+                    <h4 className="font-bold text-slate-900 flex items-center gap-2 mb-3">
+                      <Globe2 className="h-5 w-5 text-emerald-500" />
                       {section.foreignNote.title}
                     </h4>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {section.foreignNote.items.map((noteItem, nIdx) => (
                         <li key={nIdx} className="flex items-center text-sm text-gray-700">
-                          <span className="text-blue-500 mr-2">•</span> {noteItem}
+                          <span className="text-emerald-500 mr-2">•</span> {noteItem}
                         </li>
                       ))}
                     </ul>

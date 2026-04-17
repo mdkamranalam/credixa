@@ -51,7 +51,7 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
     };
 
     return (
-        <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm transition-all hover:border-blue-300">
+        <div className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm transition-all hover:border-emerald-300">
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <h4 className="font-bold text-gray-800 text-sm">{title}</h4>
@@ -77,9 +77,9 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                             <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileChange} />
                         </label>
                     ) : (
-                        <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                        <div className="flex items-center justify-between p-3 bg-[#F0FDF4] border border-[#A7F3D0] rounded-lg">
                             <div className="flex items-center">
-                                <FileText className="w-5 h-5 text-blue-600 mr-2" />
+                                <FileText className="w-5 h-5 text-emerald-500 mr-2" />
                                 <span className="text-sm font-medium text-gray-700 truncate max-w-[150px] sm:max-w-[200px]">
                                     {file.name}
                                 </span>
@@ -87,7 +87,7 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                             <div className="flex items-center space-x-2">
                                 <button
                                     onClick={() => setFile(null)}
-                                    className="p-1 hover:bg-blue-100 rounded-full text-gray-500"
+                                    className="p-1 hover:bg-[#D1FAE5] rounded-full text-gray-500"
                                     disabled={isUploading}
                                 >
                                     <X className="w-4 h-4" />
@@ -95,7 +95,7 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                                 <button
                                     onClick={handleUpload}
                                     disabled={isUploading}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm disabled:opacity-50"
+                                    className="bg-emerald-500 hover:bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm disabled:opacity-50"
                                 >
                                     {isUploading ? 'Uploading...' : 'Upload'}
                                 </button>

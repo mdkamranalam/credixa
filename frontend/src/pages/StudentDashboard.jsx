@@ -315,7 +315,7 @@ const StudentDashboard = () => {
   if (isLoading && !profile)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
       </div>
     );
 
@@ -330,7 +330,11 @@ const StudentDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 relative pb-20">
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center border-b border-gray-200">
-        <div className="text-2xl font-black text-tertiary">Credixa</div>
+        <div className="text-2xl font-black">
+          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-indigo-600">
+              Credixa
+          </span>
+        </div>
         <button
           onClick={logout}
           className="text-gray-500 hover:text-red-500 flex items-center"
@@ -344,15 +348,15 @@ const StudentDashboard = () => {
         {profile && (
           <div className="bg-white rounded-xl shadow-sm border p-6 mb-8 flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <div className="bg-blue-100 p-3 rounded-full">
-                <User className="h-8 w-8 text-tertiary" />
+              <div className="bg-[#D1FAE5] p-3 rounded-full">
+                <User className="h-8 w-8 text-emerald-500" />
               </div>
               <div>
                 <div className="flex items-center space-x-2">
                   <h2 className="text-xl font-bold">{profile.full_name}</h2>
                   <button
                     onClick={() => setShowProfileModal(true)}
-                    className="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded font-bold transition-colors"
+                    className="text-xs bg-[#F0FDF4] text-slate-800 hover:bg-[#D1FAE5] px-2 py-1 rounded font-bold transition-colors"
                   >
                     View Profile
                   </button>
@@ -417,17 +421,17 @@ const StudentDashboard = () => {
         {!activeLoan && isProfileComplete && applicationStep === 2 && (
           <div className="bg-white rounded-xl shadow-sm border p-8 mb-8">
             <div className="flex items-center mb-6 space-x-2">
-              <UploadCloud className="text-tertiary" />
+              <UploadCloud className="text-emerald-500" />
               <h2 className="text-xl font-bold">
                 BNPL Application: Final Step (AI Verification)
               </h2>
             </div>
 
             <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-6 text-center">
-                <CheckCircle className="mx-auto h-12 w-12 text-blue-500 mb-2" />
-                <h3 className="text-lg font-bold text-blue-900 mb-1">Upload Fresh Statements</h3>
-                <p className="text-blue-700 text-sm">Upload verifiable 6-month bank statements to trigger our instant AI Risk Assessment engine.</p>
+              <div className="bg-[#F0FDF4] border border-[#A7F3D0] rounded-lg p-6 text-center">
+                <CheckCircle className="mx-auto h-12 w-12 text-emerald-500 mb-2" />
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Upload Fresh Statements</h3>
+                <p className="text-slate-800 text-sm">Upload verifiable 6-month bank statements to trigger our instant AI Risk Assessment engine.</p>
               </div>
 
               <form onSubmit={handleFinalSubmit} className="space-y-6 bg-white border rounded-lg shadow-sm p-6">
@@ -442,7 +446,7 @@ const StudentDashboard = () => {
                     <label className="flex items-center text-sm font-bold text-gray-600 mt-2 md:mt-0 cursor-pointer">
                       <input
                         type="checkbox"
-                        className="mr-2 h-4 w-4 text-tertiary border-gray-300 rounded focus:ring-tertiary"
+                        className="mr-2 h-4 w-4 text-emerald-500 border-gray-300 rounded focus:ring-emerald-500"
                         checked={isFirstSemester}
                         onChange={(e) => {
                           setIsFirstSemester(e.target.checked);
@@ -458,7 +462,7 @@ const StudentDashboard = () => {
                       <input type="file" accept=".pdf" required className="w-full border border-gray-300 p-3 rounded-lg bg-white" onChange={(e) => setLatestMarksheetFile(e.target.files[0])} />
                     </>
                   ) : (
-                    <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-800 font-medium">
+                    <div className="p-3 bg-[#F0FDF4] border border-[#A7F3D0] rounded-lg text-sm text-slate-800 font-medium">
                       🎓 Since you are in your first semester, no previous grades are required today. Your permanent Admission Letter will be used instead.
                     </div>
                   )}
@@ -566,7 +570,7 @@ const StudentDashboard = () => {
             </div>
             <div className="p-8">
               <div className="grid grid-cols-3 gap-8 mb-6 text-center">
-                <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="bg-[#F0FDF4] p-4 rounded-lg">
                   Principal: ₹
                   {(
                     activeLoan?.approved_amount ||
@@ -584,7 +588,7 @@ const StudentDashboard = () => {
               {activeLoan.status === "APPROVED" && (
                 <button
                   onClick={() => setShowPaymentModal(true)}
-                  className="w-full bg-tertiary text-white font-bold py-4 rounded-xl shadow-lg"
+                  className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg"
                 >
                   Make Repayment (EMI)
                 </button>
@@ -597,7 +601,7 @@ const StudentDashboard = () => {
               <h2 className="text-xl font-bold">Apply for BNPL Loan</h2>
               <Link
                 to="/loan-checklist"
-                className="flex items-center text-sm font-semibold text-tertiary bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors"
+                className="flex items-center text-sm font-semibold text-emerald-500 bg-[#F0FDF4] px-4 py-2 rounded-lg hover:bg-[#D1FAE5] transition-colors"
               >
                 <FileText className="w-4 h-4 mr-2" />
                 View Document Checklist
@@ -652,7 +656,7 @@ const StudentDashboard = () => {
               <button
                 type="submit"
                 disabled={isApplying}
-                className="w-full bg-tertiary text-white font-bold py-3 rounded"
+                className="w-full bg-emerald-500 text-white font-bold py-3 rounded"
               >
                 {isApplying ? "Initializing..." : "Next: AI Verification"}
               </button>
@@ -704,7 +708,7 @@ const StudentDashboard = () => {
                 </p>
                 <button
                   onClick={handlePayment}
-                  className="w-full bg-tertiary text-white font-bold py-4 rounded-xl flex justify-center items-center"
+                  className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl flex justify-center items-center"
                 >
                   <Smartphone className="mr-2" /> Pay with UPI
                 </button>
@@ -717,7 +721,7 @@ const StudentDashboard = () => {
               </>
             )}
             {paymentStatus === "processing" && (
-              <div className="animate-spin h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin h-12 w-12 border-b-2 border-emerald-500 mx-auto"></div>
             )}
             {paymentStatus === "success" && (
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
@@ -730,13 +734,13 @@ const StudentDashboard = () => {
       {showProfileModal && profile && (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[85vh] flex flex-col overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-700 to-indigo-800 px-6 py-5 border-b flex justify-between items-center text-white">
+            <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-5 border-b flex justify-between items-center text-white">
               <div>
                 <h3 className="text-xl font-bold flex items-center">
-                  <User className="mr-2 h-6 w-6 text-blue-200" />
+                  <User className="mr-2 h-6 w-6 text-white" />
                   My Digital Profile
                 </h3>
-                <p className="text-blue-100 text-sm mt-1">Roll Number: {profile.college_roll_number}</p>
+                <p className="text-white text-sm mt-1">Roll Number: {profile.college_roll_number}</p>
               </div>
               <button
                 onClick={() => setShowProfileModal(false)}
@@ -786,11 +790,11 @@ const StudentDashboard = () => {
                         href={'http://localhost:3000/' + doc.file_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="block p-4 border rounded-xl bg-white hover:border-blue-300 hover:shadow-md transition-all group"
+                        className="block p-4 border rounded-xl bg-white hover:border-emerald-300 hover:shadow-md transition-all group"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <FileText className="h-6 w-6 text-blue-500 group-hover:scale-110 transition-transform" />
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">{doc.category}</span>
+                          <FileText className="h-6 w-6 text-emerald-500 group-hover:scale-110 transition-transform" />
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#F0FDF4] text-slate-800">{doc.category}</span>
                         </div>
                         <p className="font-medium text-sm text-gray-900 truncate mt-2">
                           {doc.doc_type.replace(/_/g, ' ')}

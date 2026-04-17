@@ -22,7 +22,7 @@ const LoanProgress = ({ loanData }) => {
       {/* Progress Bar */}
       <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
         <div
-          className="bg-blue-600 h-4 rounded-full transition-all duration-500"
+          className="bg-emerald-500 h-4 rounded-full transition-all duration-500"
           style={{ width: `${progress}%` }}
         ></div>
       </div>
@@ -33,8 +33,8 @@ const LoanProgress = ({ loanData }) => {
 
       {/* Financial Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-blue-50 rounded">
-          <p className="text-xs text-blue-600 uppercase font-bold">
+        <div className="p-4 bg-[#F0FDF4] rounded">
+          <p className="text-xs text-emerald-500 uppercase font-bold">
             Remaining Balance
           </p>
           <p className="text-2xl font-bold">

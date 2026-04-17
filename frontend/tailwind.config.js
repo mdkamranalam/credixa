@@ -8,18 +8,10 @@ export default {
         heading: ['Manrope', 'sans-serif'],
       },
       colors: {
-        primary: {
-          DEFAULT: '#0F172A',
-        },
-        secondary: {
-          DEFAULT: '#1E293B',
-        },
-        tertiary: {
-          DEFAULT: '#10B981',
-        },
-        neutral: {
-          DEFAULT: '#F8FAFC',
-        },
+        primary: '#0F172A',
+        secondary: '#1E293B',
+        tertiary: '#10B981',
+        neutral: '#F8FAFC',
         credixa: {
           50: "#eff6ff",
           100: "#dbeafe",
