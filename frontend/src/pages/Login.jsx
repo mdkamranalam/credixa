@@ -37,6 +37,7 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <img src="/credixa-favicon.png" alt="Credixa Logo" className="mx-auto h-12 w-12 rounded-xl object-contain shadow-sm mb-4" />
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Sign in to <span className="text-emerald-500">Credixa</span>
         </h2>

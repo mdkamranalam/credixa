@@ -19,7 +19,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-2">
-              <img src="/credixa-logo.png" alt="Credixa Logo" className="w-10 h-10 rounded-xl object-contain shadow-sm" />
+              <img src="/credixa-favicon.png" alt="Credixa Logo" className="w-10 h-10 rounded-xl object-contain shadow-sm" />
               <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-indigo-600">
                 Credixa
               </span>
@@ -215,7 +215,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <img src="/credixa-logo.png" alt="Credixa Logo" className="h-8 w-8 rounded-lg object-contain" />
+              <img src="/credixa-favicon.png" alt="Credixa Logo" className="h-8 w-8 rounded-lg object-contain" />
               <span className="text-xl font-bold text-white">Credixa</span>
             </div>
             <div className="flex gap-6 text-sm">

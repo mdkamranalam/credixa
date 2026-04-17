@@ -177,7 +177,7 @@ const AdminDashboard = () => {
       {/* Top Navigation */}
       <nav className="bg-gray-900 shadow-sm px-8 py-4 flex justify-between items-center text-white">
         <div className="flex items-center space-x-2">
-          <Building className="h-6 w-6 text-emerald-400" />
+          <img src="/credixa-favicon.png" alt="Credixa Logo" className="h-8 w-8 rounded-lg object-contain bg-white p-1" />
           <h1 className="text-xl font-bold">Credixa Admin Console</h1>
         </div>
         <div className="flex items-center space-x-6">
