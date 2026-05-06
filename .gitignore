@@ -56,3 +56,6 @@ database/data/
 .vscode/
 *.swp
 *.swo
+
+# Other
+docs/*
