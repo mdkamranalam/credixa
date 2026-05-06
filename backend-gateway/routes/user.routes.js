@@ -3,6 +3,7 @@ import pg from "pg";
 import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import { upload as diskUpload } from "../middleware/upload.middleware.js";
+import { encryptData } from "../utils/encryption.js";
 
 dotenv.config();
 const router = express.Router();
@@ -66,6 +67,47 @@ router.get("/profile", authenticateToken, async (req, res) => {
   }
 });
 
+// Step 2: Identity Verification (KYC)
+router.post("/kyc", authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { pan_number, aadhaar_number } = req.body;
+
+  if (!pan_number || !aadhaar_number) {
+    return res.status(400).json({ error: "PAN and Aadhaar numbers are required." });
+  }
+
+  // Simulate IndiaStack API latency (50ms)
+  await new Promise((resolve) => setTimeout(resolve, 50));
+
+  try {
+    const aadhaarHash = encryptData(aadhaar_number);
+
+    const updateQuery = `
+      UPDATE users 
+      SET kyc_status = 'VERIFIED', kyc_source = 'INDIASTACK_SIMULATION', pan_number = $1, aadhaar_hash = $2, updated_at = NOW()
+      WHERE user_id = $3
+      RETURNING user_id, kyc_status, pan_number;
+    `;
+    const result = await pool.query(updateQuery, [pan_number, aadhaarHash, userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.status(200).json({ message: "KYC Verified successfully", user: result.rows[0] });
+  } catch (error) {
+    console.error("KYC Verification Error:", error.message);
+    if (error.code === '23505') {
+       return res.status(400).json({ error: "PAN or Aadhaar already linked to another account." });
+    }
+    // Handle check constraint failure for PAN
+    if (error.code === '23514') {
+       return res.status(400).json({ error: "Invalid PAN format. Must be 5 letters, 4 digits, 1 letter." });
+    }
+    res.status(500).json({ error: "Failed to verify KYC." });
+  }
+});
+
 // Upload a static KYC/Academic document persistently attached to the user
 router.post(
   "/documents",
@@ -123,6 +165,9 @@ router.post("/co-applicant", authenticateToken, async (req, res) => {
   }
 
   try {
+    const encryptedAadhaar = aadhaar_number ? encryptData(aadhaar_number) : null;
+    const encryptedPan = pan_number ? encryptData(pan_number) : null;
+
     // We use a simple SELECT then INSERT/UPDATE because `user_id` might not be strictly UNIQUE on co_applicants in all setups
     // But conceptually, one student = one co_applicant (for the prototype)
     const existing = await pool.query(
@@ -141,8 +186,8 @@ router.post("/co-applicant", authenticateToken, async (req, res) => {
       const updateRes = await pool.query(updateQuery, [
         full_name,
         relationship,
-        aadhaar_number,
-        pan_number,
+        encryptedAadhaar,
+        encryptedPan,
         income_type,
         monthly_income || 0,
         userId,
@@ -158,8 +203,8 @@ router.post("/co-applicant", authenticateToken, async (req, res) => {
         userId,
         full_name,
         relationship,
-        aadhaar_number,
-        pan_number,
+        encryptedAadhaar,
+        encryptedPan,
         income_type,
         monthly_income || 0,
       ]);
