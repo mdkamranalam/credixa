@@ -21,7 +21,11 @@ const Login = () => {
       const loggedInUser = await login(email, password);
 
       if (loggedInUser.role === "STUDENT") {
-        navigate("/student-dashboard");
+        if (loggedInUser.kyc_status === "PENDING") {
+          navigate("/onboarding");
+        } else {
+          navigate("/student-dashboard");
+        }
       } else if (loggedInUser.role === "INSTITUTION_ADMIN") {
         navigate("/admin-dashboard");
       } else {

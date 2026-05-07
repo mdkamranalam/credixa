@@ -28,9 +28,31 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
         const response = await api.post("/auth/register", userData);
-        return response.data;
+        const { token, user: registeredUser } = response.data;
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(registeredUser));
+
+        setUser(registeredUser);
+        return registeredUser;
     } catch (error) {
         throw new Error(error.response?.data?.error || "Registration failed");
+    }
+  }
+
+  // The Register Institution Function
+  const registerInstitution = async (instData) => {
+    try {
+        const response = await api.post("/auth/register-institution", instData);
+        const { token, user: registeredUser } = response.data;
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(registeredUser));
+
+        setUser(registeredUser);
+        return registeredUser;
+    } catch (error) {
+        throw new Error(error.response?.data?.error || "Institution Registration failed");
     }
   }
 
@@ -68,7 +90,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, registerInstitution, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

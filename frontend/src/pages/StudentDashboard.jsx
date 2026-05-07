@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DocumentUpload from "../components/DocumentUpload";
 import CoApplicantForm from "../components/CoApplicantForm";
 import {
@@ -23,6 +23,7 @@ import LoanProgress from "../components/LoanProgress.jsx";
 
 const StudentDashboard = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [applicationStep, setApplicationStep] = useState(1);
   const [tempLoanId, setTempLoanId] = useState(null);
@@ -77,9 +78,11 @@ const StudentDashboard = () => {
       setPayments(historyRes.data || []);
 
       if (profileRes.data) {
-        const docs = profileRes.data.documents || [];
-        const hasParent = !!profileRes.data.co_applicant;
-        setIsProfileComplete(hasParent && docs.length >= 3);
+        if (profileRes.data.kyc_status === 'PENDING' || !profileRes.data.co_applicant) {
+          navigate('/onboarding');
+          return;
+        }
+        setIsProfileComplete(true);
       }
 
       const myLoan = myLoanRes.data;
@@ -389,34 +392,7 @@ const StudentDashboard = () => {
           <LoanProgress loanData={activeLoan} />
         )}
 
-        {/* KYC PROFILE BUILDER TRAP */}
-        {!isProfileComplete && (
-          <div className="bg-white rounded-xl shadow-sm border p-8 mb-8">
-            <h2 className="text-2xl font-black mb-4">Complete Your KYC Profile</h2>
-            <p className="text-gray-600 mb-8 font-medium">Before applying for loans, please provide your permanent academic and co-applicant details. This is a secure, one-time setup!</p>
-
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">🎓 Academic & Admission Records</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <DocumentUpload category="ACADEMIC" docType="10TH_MARKSHEET" ownerType="STUDENT" title="10th Marksheet" description="Board passing certificate" onUploadSuccess={() => loadDashboardData()} />
-                  <DocumentUpload category="ACADEMIC" docType="12TH_MARKSHEET" ownerType="STUDENT" title="12th Marksheet" description="Board passing certificate" onUploadSuccess={() => loadDashboardData()} />
-                  <DocumentUpload category="ADMISSION" docType="ADMISSION_LETTER" ownerType="STUDENT" title="Admission Letter" description="Official college document" onUploadSuccess={() => loadDashboardData()} />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">👨‍👩‍👧 Permanent Co-Applicant Profile</h3>
-                <CoApplicantForm onSuccess={() => loadDashboardData()} />
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">📄 Co-Applicant Income Proof</h3>
-                <DocumentUpload category="INCOME" docType="PARENT_ITR_SALARY_SLIP" ownerType="CO_APPLICANT" title="Income Proof (ITR/Salary Slip)" description="Latest proof of income for Co-Applicant" onUploadSuccess={() => loadDashboardData()} />
-              </div>
-            </div>
-          </div>
-        )}
+        {/* KYC Profile handled by Onboarding.jsx now */}
 
         {/* LOAN APPLICATION STEP 2: AI VERIFICATION */}
         {!activeLoan && isProfileComplete && applicationStep === 2 && (

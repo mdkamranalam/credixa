@@ -21,7 +21,7 @@ import api from "../services/api.js";
 const Register = () => {
   const navigate = useNavigate();
   const { type } = useParams();
-  const { register } = useContext(AuthContext);
+  const { register, registerInstitution } = useContext(AuthContext);
 
   // --- UI STATE ---
   const activeTab = type === "institution" ? "INSTITUTION" : "STUDENT";
@@ -122,13 +122,19 @@ const Register = () => {
         setSuccess("Student account created! Redirecting...");
       } else {
         // --- Process Institution Registration ---
-        await api.post("/auth/register-institution", instData);
+        await registerInstitution(instData);
         setSuccess(
           "Institution registered perfectly! You can now register students for this college.",
         );
       }
 
-      setTimeout(() => navigate('/login'), 2000);
+      setTimeout(() => {
+        if (activeTab === "STUDENT") {
+          navigate("/onboarding");
+        } else {
+          navigate("/admin-dashboard");
+        }
+      }, 2000);
     } catch (error) {
       setError(
         error.response?.data?.error || error.message || "Registration failed.",
@@ -143,11 +149,35 @@ const Register = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img src="/credixa-favicon.png" alt="Credixa Logo" className="mx-auto h-12 w-12 rounded-xl object-contain shadow-sm mb-4" />
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Join <span className="text-emerald-500">Credixa</span>
+          {activeTab === "STUDENT" ? "Step 1: Account Setup" : (
+            <>Join <span className="text-emerald-500">Credixa</span></>
+          )}
         </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl">
+        {activeTab === "STUDENT" && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between relative px-2">
+              <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 -z-10"></div>
+              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-emerald-500 -z-10 transition-all duration-500`} style={{ width: `0%` }}></div>
+              
+              {[1, 2, 3, 4, 5].map((s) => (
+                <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 ${1 >= s ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
+                  {1 > s ? <CircleCheck className="w-5 h-5" /> : s}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-2 text-xs font-semibold text-gray-500">
+              <span>Auth</span>
+              <span>Identity</span>
+              <span>Guarantor</span>
+              <span>Financials</span>
+              <span>Dashboard</span>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-100">
           {/* Messages */}
           {error && (

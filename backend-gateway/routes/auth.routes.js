@@ -65,7 +65,7 @@ router.post("/register", registerRateLimiter, async (req, res) => {
     const insertQuery = `
             INSERT INTO users (full_name, email, mobile_number, password_hash, role, institution_id, dob, college_roll_number)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-            RETURNING user_id, full_name, role;
+            RETURNING user_id, full_name, role, institution_id, kyc_status;
         `;
 
     const result = await pool.query(insertQuery, [
@@ -79,9 +79,30 @@ router.post("/register", registerRateLimiter, async (req, res) => {
       college_roll_number || "UNKNOWN",
     ]);
 
+    const user = result.rows[0];
+    const token = jwt.sign(
+      {
+        id: user.user_id,
+        role: user.role,
+        institution_id: user.institution_id,
+      },
+      JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
     res
       .status(201)
-      .json({ message: "User registered successfully", user: result.rows[0] });
+      .json({
+        message: "User registered successfully",
+        token,
+        user: {
+          id: user.user_id,
+          full_name: user.full_name,
+          role: user.role,
+          institution_id: user.institution_id,
+          kyc_status: user.kyc_status,
+        },
+      });
   } catch (error) {
     if (error.code === "23505") {
       if (error.detail.includes("email"))
@@ -141,6 +162,7 @@ router.post('/register-institution', async (req, res) => {
                 full_name, email, mobile_number, password_hash, 
                 role, institution_id, college_roll_number
             ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING user_id, full_name, role, institution_id, kyc_status;
         `;
         const userValues = [
             `${name} Admin`,      // Creates a name like "BITS Pilani Admin"
@@ -152,11 +174,32 @@ router.post('/register-institution', async (req, res) => {
             'ADMIN_ACCOUNT'       // Fills the roll number constraint
         ];
         
-        await client.query(userQuery, userValues);
+        const userResult = await client.query(userQuery, userValues);
+        const user = userResult.rows[0];
 
         await client.query('COMMIT'); // Save everything permanently!
 
-        res.status(201).json({ message: "Institution and Admin account created perfectly!" });
+        const token = jwt.sign(
+          {
+            id: user.user_id,
+            role: user.role,
+            institution_id: user.institution_id,
+          },
+          JWT_SECRET,
+          { expiresIn: "24h" }
+        );
+
+        res.status(201).json({
+          message: "Institution and Admin account created perfectly!",
+          token,
+          user: {
+            id: user.user_id,
+            full_name: user.full_name,
+            role: user.role,
+            institution_id: user.institution_id,
+            kyc_status: user.kyc_status,
+          },
+        });
 
     } catch (error) {
         await client.query('ROLLBACK'); // If anything fails, undo everything to protect the DB
@@ -222,6 +265,7 @@ router.post("/login", async (req, res) => {
             full_name: user.full_name,
             role: user.role,
             institution_id: user.institution_id,
+            kyc_status: user.kyc_status,
           },
         });
     } catch (error) {
