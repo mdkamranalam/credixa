@@ -336,7 +336,7 @@ const StudentDashboard = () => {
         <div className="flex items-center gap-2">
           <img src="/credixa-favicon.png" alt="Credixa Logo" className="w-8 h-8 rounded-lg object-contain shadow-sm" />
           <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-indigo-600">
-              Credixa
+            Credixa
           </span>
         </div>
         <button
