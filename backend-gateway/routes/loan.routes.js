@@ -75,19 +75,24 @@ router.post(
       }
 
       // Update the loan to change status to UNDER_REVIEW
-      const loanUpdate = `
-        UPDATE loans 
-        SET 
-          requested_amount = COALESCE($1, requested_amount),
-          interest_rate = COALESCE($2, interest_rate),
-          tenure_months = COALESCE($3, tenure_months),
-          student_account_number = COALESCE($4, student_account_number),
-          student_ifsc_code = COALESCE($5, student_ifsc_code),
-          status = 'UNDER_REVIEW',
-          updated_at = NOW()
-        WHERE loan_id = $6
-        RETURNING *;
-      `;
+      // Trim and validate IFSC code (max 11 chars)
+        const trimmedIfsc = (ifsc_code || "").trim();
+        if (trimmedIfsc.length > 11) {
+          return res.status(400).json({ error: "IFSC code exceeds maximum length of 11 characters." });
+        }
+        const loanUpdate = `
+          UPDATE loans 
+          SET 
+            requested_amount = COALESCE($1, requested_amount),
+            interest_rate = COALESCE($2, interest_rate),
+            tenure_months = COALESCE($3, tenure_months),
+            student_account_number = COALESCE($4, student_account_number),
+            student_ifsc_code = COALESCE($5, student_ifsc_code),
+            status = 'UNDER_REVIEW',
+            updated_at = NOW()
+          WHERE loan_id = $6
+          RETURNING *;
+        `;
       const loanRes = await client.query(loanUpdate, [
         requested_amount,
         interest_rate,
