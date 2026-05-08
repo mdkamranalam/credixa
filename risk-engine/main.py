@@ -49,7 +49,11 @@ def extract_financial_features(pdf_bytes: bytes):
 # Main API endpoint to analyze the bank statement
 # Main API endpoint to analyze the bank statements
 @app.post("/analyze-statement")
-async def analyze_statement(student_file: UploadFile = File(...), parent_file: UploadFile = File(...)):
+async def analyze_statement(
+    student_file: UploadFile = File(...), 
+    parent_file: UploadFile = File(...),
+    academic_score: float = 7.0
+):
     """
     The main scoring endpoint that analyzes both Student and Parent PDFs
     """
@@ -72,8 +76,8 @@ async def analyze_statement(student_file: UploadFile = File(...), parent_file: U
         total_overdrafts = s_overdrafts + p_overdrafts
         total_gambling = s_gambling + p_gambling
         
-        # 5. Format data for the Random Forest model
-        features = np.array([[combined_balance, total_overdrafts, total_gambling]])
+        # 5. Format data for the Random Forest model (now 4 features)
+        features = np.array([[combined_balance, total_overdrafts, total_gambling, academic_score]])
         
         # 6. Run Inference
         prediction = rf_model.predict(features)[0]
@@ -89,7 +93,8 @@ async def analyze_statement(student_file: UploadFile = File(...), parent_file: U
             "extracted_metrics": {
                 "combined_average_balance": combined_balance,
                 "total_overdrafts": total_overdrafts,
-                "total_gambling_flags": total_gambling
+                "total_gambling_flags": total_gambling,
+                "academic_score": academic_score
             }
         }
     except Exception as e:

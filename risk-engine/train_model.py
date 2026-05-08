@@ -13,12 +13,13 @@ num_samples = 1000
 avg_mongthly_balance = np.random.normal(5000, 2000, num_samples) # Average monthly balance
 overdraft_count = np.random.poisson(1, num_samples)
 gambling_transactions = np.random.poisson(0.5, num_samples)
+academic_score = np.random.uniform(4.0, 10.0, num_samples) # CGPA out of 10
 
-# Target Logic: High balance, low overdrafts, no gambling = APPROVED (1)
+# Target Logic: High balance, low overdrafts, no gambling, good marks = APPROVED (1)
 # Otherwise: REJECTED (0)
 target = []
 for i in range(num_samples):
-    if avg_mongthly_balance[i] > 3000 and overdraft_count[i] <= 2 and gambling_transactions[i] == 0:
+    if avg_mongthly_balance[i] > 3000 and overdraft_count[i] <= 2 and gambling_transactions[i] == 0 and academic_score[i] >= 6.0:
         target.append(1) # APPROVED
     else:
         target.append(0) # REJECTED
@@ -28,10 +29,11 @@ df = pd.DataFrame({
     "avg_balance": avg_mongthly_balance,
     "overdrafts": overdraft_count,
     "gambling_flags": gambling_transactions,
+    "academic_score": academic_score,
     "status": target
 })
 
-X = df[["avg_balance", "overdrafts", "gambling_flags"]]
+X = df[["avg_balance", "overdrafts", "gambling_flags", "academic_score"]]
 y = df["status"]
 
 print(f"Generatd {num_samples} synthetic records.")

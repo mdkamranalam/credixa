@@ -237,7 +237,7 @@ const StudentDashboard = () => {
       });
 
       setTempLoanId(response.data.loan_id);
-      setApplicationStep(2); // Move to Document Uploads
+      setApplicationStep(2);
     } catch (error) {
       setApplyError("Initial application failed.");
     } finally {

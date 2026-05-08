@@ -118,9 +118,21 @@ router.post(
         fs.createReadStream(req.files.parent_statement[0].path),
       );
 
+      // Fetch academic score from user profile
+      const userRes = await client.query("SELECT current_semester_marks FROM users WHERE user_id = $1", [userId]);
+      const marks = userRes.rows[0]?.current_semester_marks;
+      // Convert marks (e.g., '8.5' or '85') to a 10.0 scale, default to 7.0
+      let academicScore = 7.0;
+      if (marks) {
+        const parsed = parseFloat(marks);
+        if (!isNaN(parsed)) {
+          academicScore = parsed > 10 ? parsed / 10 : parsed;
+        }
+      }
+
       // 4. Send to Python ML Engine using AXIOS
       const pythonResponse = await axios.post(
-        RISK_ENGINE_URL,
+        `${RISK_ENGINE_URL}?academic_score=${academicScore}`,
         formData,
         {
           headers: {

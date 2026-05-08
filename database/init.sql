@@ -62,6 +62,7 @@ CREATE TABLE users (
     parent_annual_income DECIMAL(12, 2) DEFAULT 0.00,
     college_roll_number VARCHAR(50) NOT NULL,
     academic_status VARCHAR(20) DEFAULT 'PASS',
+    current_semester_marks VARCHAR(20),
     risk_flags TEXT [],
     kyc_source VARCHAR(50),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

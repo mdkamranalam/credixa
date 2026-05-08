@@ -226,4 +226,35 @@ router.post("/co-applicant", authenticateToken, async (req, res) => {
   }
 });
 
+// Update User's Academic Details
+router.post("/academic-details", authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { current_semester_marks } = req.body;
+
+  try {
+    const updateQuery = `
+      UPDATE users 
+      SET current_semester_marks = $1, updated_at = NOW()
+      WHERE user_id = $2
+      RETURNING *;
+    `;
+    const updateRes = await pool.query(updateQuery, [
+      current_semester_marks || null,
+      userId,
+    ]);
+
+    if (updateRes.rows.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.status(200).json({
+      message: "Academic details updated successfully",
+      user: updateRes.rows[0],
+    });
+  } catch (error) {
+    console.error("Academic details update error:", error);
+    res.status(500).json({ error: "Failed to update academic details." });
+  }
+});
+
 export default router;

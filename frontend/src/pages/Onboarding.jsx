@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, ShieldCheck, User, UploadCloud, ArrowRight } from "lucide-react";
+import { CheckCircle, ShieldCheck, User, UploadCloud, ArrowRight, BookOpen } from "lucide-react";
 import api from "../services/api";
 import CoApplicantForm from "../components/CoApplicantForm";
 import DocumentUpload from "../components/DocumentUpload";
@@ -15,6 +15,11 @@ const Onboarding = () => {
   const [kycLoading, setKycLoading] = useState(false);
   const [kycError, setKycError] = useState("");
 
+  // Academic State
+  const [currentSemesterMarks, setCurrentSemesterMarks] = useState("");
+  const [academicLoading, setAcademicLoading] = useState(false);
+  const [academicError, setAcademicError] = useState("");
+
   // Check Profile Status on Mount
   useEffect(() => {
     const checkProfile = async () => {
@@ -26,12 +31,15 @@ const Onboarding = () => {
           if (!profile.co_applicant) {
             setStep(3);
           } else {
-            // Assuming we check for Financial Documents
+            const hasAcademicDocs = profile.documents?.some(d => d.category === "ACADEMIC");
             const hasStatements = profile.documents?.some(d => d.doc_type.includes("STATEMENT"));
-            if (!hasStatements) {
+            
+            if (!hasAcademicDocs) {
               setStep(4);
-            } else {
+            } else if (!hasStatements) {
               setStep(5);
+            } else {
+              setStep(6);
             }
           }
         }
@@ -41,6 +49,22 @@ const Onboarding = () => {
     };
     checkProfile();
   }, []);
+
+  const handleAcademicSubmit = async (e) => {
+    e.preventDefault();
+    setAcademicLoading(true);
+    setAcademicError("");
+    try {
+      if (currentSemesterMarks) {
+        await api.post("/users/academic-details", { current_semester_marks: currentSemesterMarks });
+      }
+      setStep(5);
+    } catch (error) {
+      setAcademicError(error.response?.data?.error || "Failed to update academic details.");
+    } finally {
+      setAcademicLoading(false);
+    }
+  };
 
   const handleKycSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +84,7 @@ const Onboarding = () => {
   };
 
   const finishOnboarding = () => {
-    setStep(5);
+    setStep(6);
     setTimeout(() => {
       navigate("/student-dashboard");
     }, 1500);
@@ -79,9 +103,9 @@ const Onboarding = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between relative px-2">
             <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 -z-10"></div>
-            <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-emerald-500 -z-10 transition-all duration-500`} style={{ width: `${((step - 1) / 4) * 100}%` }}></div>
+            <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-emerald-500 -z-10 transition-all duration-500`} style={{ width: `${((step - 1) / 5) * 100}%` }}></div>
             
-            {[1, 2, 3, 4, 5].map((s) => (
+            {[1, 2, 3, 4, 5, 6].map((s) => (
               <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 ${step >= s ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
                 {step > s ? <CheckCircle className="w-5 h-5" /> : s}
               </div>
@@ -91,6 +115,7 @@ const Onboarding = () => {
             <span>Auth</span>
             <span>Identity</span>
             <span>Guarantor</span>
+            <span>Academic</span>
             <span>Financials</span>
             <span>Dashboard</span>
           </div>
@@ -157,12 +182,98 @@ const Onboarding = () => {
           </div>
         )}
 
-        {/* Step 4: Financial Data */}
+        {/* Step 4: Academic Details */}
         {step === 4 && (
           <div className="bg-white rounded-xl shadow-sm border p-8">
             <div className="flex items-center mb-6">
+              <BookOpen className="h-8 w-8 text-emerald-500 mr-3" />
+              <h3 className="text-xl font-bold">Step 4: Academic Details</h3>
+            </div>
+            <p className="text-gray-600 mb-6">Upload your academic documents to strengthen your profile.</p>
+            
+            {academicError && <div className="mb-4 bg-red-50 text-red-600 p-3 rounded">{academicError}</div>}
+            
+            <form onSubmit={handleAcademicSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Current Semester Marks (Optional)</label>
+                <input
+                  type="text"
+                  className="w-full border p-3 rounded-lg focus:ring-emerald-500"
+                  placeholder="e.g. 8.5 CGPA or 85%"
+                  value={currentSemesterMarks}
+                  onChange={(e) => setCurrentSemesterMarks(e.target.value)}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <DocumentUpload 
+                  category="ACADEMIC" 
+                  docType="10TH_MARKSHEET" 
+                  ownerType="STUDENT" 
+                  title="10th Marksheet" 
+                  description="Upload PDF or image" 
+                />
+                <DocumentUpload 
+                  category="ACADEMIC" 
+                  docType="12TH_MARKSHEET" 
+                  ownerType="STUDENT" 
+                  title="12th Marksheet" 
+                  description="Upload PDF or image" 
+                />
+                <DocumentUpload 
+                  category="ACADEMIC" 
+                  docType="ADMISSION_LETTER" 
+                  ownerType="STUDENT" 
+                  title="Admission Letter" 
+                  description="Upload your college admission letter" 
+                />
+                <DocumentUpload 
+                  category="ACADEMIC" 
+                  docType="FEE_STRUCTURE" 
+                  ownerType="STUDENT" 
+                  title="Fee Structure (Year-wise)" 
+                  description="Upload official fee structure" 
+                />
+                <DocumentUpload 
+                  category="ACADEMIC" 
+                  docType="PROSPECTUS" 
+                  ownerType="STUDENT" 
+                  title="Prospectus/Course Details" 
+                  description="Upload the prospectus" 
+                />
+                <DocumentUpload 
+                  category="ACADEMIC" 
+                  docType="BONAFIDE_CERTIFICATE" 
+                  ownerType="STUDENT" 
+                  title="Bonafide Certificate (Optional)" 
+                  description="Upload if available" 
+                />
+                <DocumentUpload 
+                  category="ACADEMIC" 
+                  docType="SCHOLARSHIP_LETTER" 
+                  ownerType="STUDENT" 
+                  title="Scholarship Letter (Optional)" 
+                  description="Upload if applicable" 
+                />
+              </div>
+              
+              <button
+                type="submit"
+                disabled={academicLoading}
+                className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center disabled:opacity-50"
+              >
+                {academicLoading ? "Saving..." : "Continue to Financials"} <ArrowRight className="ml-2 w-5 h-5" />
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Step 5: Financial Data */}
+        {step === 5 && (
+          <div className="bg-white rounded-xl shadow-sm border p-8">
+            <div className="flex items-center mb-6">
               <UploadCloud className="h-8 w-8 text-emerald-500 mr-3" />
-              <h3 className="text-xl font-bold">Step 4: Financial Data Ingestion</h3>
+              <h3 className="text-xl font-bold">Step 5: Financial Data Ingestion</h3>
             </div>
             <p className="text-gray-600 mb-6">To accurately calculate your AI Omniscore, we need historical cash-flow data.</p>
             
@@ -192,8 +303,8 @@ const Onboarding = () => {
           </div>
         )}
 
-        {/* Step 5: Finished */}
-        {step === 5 && (
+        {/* Step 6: Finished */}
+        {step === 6 && (
           <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
             <div className="animate-spin h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-6"></div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">Generating AI Omniscore...</h3>
