@@ -231,15 +231,12 @@ const StudentDashboard = () => {
       // Need a new route "POST /api/loans/initialize" or we just post the init data.
 
       // Let's hit the DB to initialize:
-      const response = await api.post("/loans/initialize", formData).catch(e => {
-        // Fallback if initialize doesn't exist yet, we'll implement it shortly in backend:
-        return { data: { loan_id: Math.floor(Math.random() * 1000000).toString() } }
-      });
+      const response = await api.post("/loans/initialize", formData);
 
       setTempLoanId(response.data.loan_id);
       setApplicationStep(2);
     } catch (error) {
-      setApplyError("Initial application failed.");
+      setApplyError(error.response?.data?.error || "Initial application failed.");
     } finally {
       setIsApplying(false);
     }
@@ -585,6 +582,11 @@ const StudentDashboard = () => {
               </Link>
             </div>
             <form onSubmit={handleInitialSubmit} className="space-y-6">
+              {applyError && (
+                <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200 flex items-center">
+                  <XCircle className="w-4 h-4 mr-2" /> {applyError}
+                </div>
+              )}
               <div className="grid grid-cols-3 gap-6">
                 <input
                   type="number"

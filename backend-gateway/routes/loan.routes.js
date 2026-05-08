@@ -62,6 +62,12 @@ router.post(
     if (!existing_loan_id) {
       return res.status(400).json({ error: "existing_loan_id is required." });
     }
+    
+    // Validate existing_loan_id is a UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(existing_loan_id)) {
+      return res.status(400).json({ error: "existing_loan_id must be a valid UUID." });
+    }
 
     const client = await pool.connect();
 
@@ -71,6 +77,7 @@ router.post(
       // Verify user owns the loan
       const verifyQuery = await client.query("SELECT * FROM loans WHERE loan_id = $1 AND user_id = $2", [existing_loan_id, userId]);
       if (verifyQuery.rows.length === 0) {
+        await client.query("ROLLBACK");
         return res.status(403).json({ error: "Unauthorized or loan not found." });
       }
 
@@ -221,12 +228,19 @@ router.post("/initialize", authenticateToken, async (req, res) => {
     );
 
     if (userQuery.rows.length === 0 || !userQuery.rows[0].institution_id) {
+      await client.query("ROLLBACK");
       return res.status(400).json({
         error: "No institution linked to this user.",
       });
     }
 
     const dbInstitutionId = userQuery.rows[0].institution_id;
+
+    // Trim and validate IFSC code (max 11 chars)
+    const trimmedIfscInit = (ifsc_code || "").trim();
+    if (trimmedIfscInit.length > 11) {
+      return res.status(400).json({ error: "IFSC code exceeds maximum length of 11 characters." });
+    }
 
     const loanInsert = `
         INSERT INTO loans (
@@ -235,7 +249,7 @@ router.post("/initialize", authenticateToken, async (req, res) => {
         RETURNING *;
       `;
     const loanRes = await client.query(loanInsert, [
-      userId, dbInstitutionId, requested_amount, interest_rate, tenure_months, student_account_number, ifsc_code,
+      userId, dbInstitutionId, requested_amount, interest_rate, tenure_months, student_account_number, trimmedIfscInit,
     ]);
     const loanId = loanRes.rows[0].loan_id;
 
