@@ -20,6 +20,14 @@ const Onboarding = () => {
   const [academicLoading, setAcademicLoading] = useState(false);
   const [academicError, setAcademicError] = useState("");
 
+  // Upload State
+  const [uploadedAcademicDocs, setUploadedAcademicDocs] = useState([]);
+  const [uploadedFinancialDocs, setUploadedFinancialDocs] = useState([]);
+  const [financialError, setFinancialError] = useState("");
+
+  const requiredAcademicDocs = ["10TH_MARKSHEET", "12TH_MARKSHEET", "ADMISSION_LETTER", "FEE_STRUCTURE"];
+  const requiredFinancialDocs = ["STUDENT_STATEMENT", "CO_APPLICANT_STATEMENT"];
+
   // Check Profile Status on Mount
   useEffect(() => {
     const checkProfile = async () => {
@@ -31,12 +39,18 @@ const Onboarding = () => {
           if (!profile.co_applicant) {
             setStep(3);
           } else {
-            const hasAcademicDocs = profile.documents?.some(d => d.category === "ACADEMIC");
-            const hasStatements = profile.documents?.some(d => d.doc_type.includes("STATEMENT"));
+            const academicDocs = profile.documents?.filter(d => d.category === "ACADEMIC").map(d => d.doc_type) || [];
+            const financialDocs = profile.documents?.filter(d => d.category === "FINANCIAL").map(d => d.doc_type) || [];
             
-            if (!hasAcademicDocs) {
+            setUploadedAcademicDocs(academicDocs);
+            setUploadedFinancialDocs(financialDocs);
+
+            const hasAllAcademic = requiredAcademicDocs.every(doc => academicDocs.includes(doc));
+            const hasAllFinancial = requiredFinancialDocs.every(doc => financialDocs.includes(doc));
+            
+            if (!hasAllAcademic) {
               setStep(4);
-            } else if (!hasStatements) {
+            } else if (!hasAllFinancial) {
               setStep(5);
             } else {
               setStep(6);
@@ -52,6 +66,12 @@ const Onboarding = () => {
 
   const handleAcademicSubmit = async (e) => {
     e.preventDefault();
+    const missingDocs = requiredAcademicDocs.filter(doc => !uploadedAcademicDocs.includes(doc));
+    if (missingDocs.length > 0) {
+      const missingNames = missingDocs.map(d => d.replace(/_/g, ' ').toLowerCase());
+      setAcademicError(`Please upload all required documents. Missing: ${missingNames.join(', ')}`);
+      return;
+    }
     setAcademicLoading(true);
     setAcademicError("");
     try {
@@ -84,6 +104,13 @@ const Onboarding = () => {
   };
 
   const finishOnboarding = () => {
+    const missingDocs = requiredFinancialDocs.filter(doc => !uploadedFinancialDocs.includes(doc));
+    if (missingDocs.length > 0) {
+      const missingNames = missingDocs.map(d => d.replace(/_/g, ' ').toLowerCase());
+      setFinancialError(`Please upload all required documents. Missing: ${missingNames.join(', ')}`);
+      return;
+    }
+    setFinancialError("");
     setStep(6);
     setTimeout(() => {
       navigate("/student-dashboard");
@@ -210,36 +237,41 @@ const Onboarding = () => {
                   category="ACADEMIC" 
                   docType="10TH_MARKSHEET" 
                   ownerType="STUDENT" 
-                  title="10th Marksheet" 
+                  title="10th Marksheet (Required)" 
                   description="Upload PDF or image" 
+                  onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "10TH_MARKSHEET"])}
                 />
                 <DocumentUpload 
                   category="ACADEMIC" 
                   docType="12TH_MARKSHEET" 
                   ownerType="STUDENT" 
-                  title="12th Marksheet" 
+                  title="12th Marksheet (Required)" 
                   description="Upload PDF or image" 
+                  onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "12TH_MARKSHEET"])}
                 />
                 <DocumentUpload 
                   category="ACADEMIC" 
                   docType="ADMISSION_LETTER" 
                   ownerType="STUDENT" 
-                  title="Admission Letter" 
+                  title="Admission Letter (Required)" 
                   description="Upload your college admission letter" 
+                  onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "ADMISSION_LETTER"])}
                 />
                 <DocumentUpload 
                   category="ACADEMIC" 
                   docType="FEE_STRUCTURE" 
                   ownerType="STUDENT" 
-                  title="Fee Structure (Year-wise)" 
+                  title="Fee Structure (Year-wise) (Required)" 
                   description="Upload official fee structure" 
+                  onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "FEE_STRUCTURE"])}
                 />
                 <DocumentUpload 
                   category="ACADEMIC" 
                   docType="PROSPECTUS" 
                   ownerType="STUDENT" 
-                  title="Prospectus/Course Details" 
+                  title="Prospectus/Course Details (Optional)" 
                   description="Upload the prospectus" 
+                  onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "PROSPECTUS"])}
                 />
                 <DocumentUpload 
                   category="ACADEMIC" 
@@ -247,6 +279,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="Bonafide Certificate (Optional)" 
                   description="Upload if available" 
+                  onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "BONAFIDE_CERTIFICATE"])}
                 />
                 <DocumentUpload 
                   category="ACADEMIC" 
@@ -254,6 +287,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="Scholarship Letter (Optional)" 
                   description="Upload if applicable" 
+                  onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "SCHOLARSHIP_LETTER"])}
                 />
               </div>
               
@@ -277,20 +311,24 @@ const Onboarding = () => {
             </div>
             <p className="text-gray-600 mb-6">To accurately calculate your AI Omniscore, we need historical cash-flow data.</p>
             
+            {financialError && <div className="mb-4 bg-red-50 text-red-600 p-3 rounded">{financialError}</div>}
+            
             <div className="space-y-6">
               <DocumentUpload 
                 category="FINANCIAL" 
                 docType="STUDENT_STATEMENT" 
                 ownerType="STUDENT" 
-                title="Student Bank Statement (6 Months)" 
+                title="Student Bank Statement (6 Months) (Required)" 
                 description="Upload a PDF statement." 
+                onUploadSuccess={() => setUploadedFinancialDocs(prev => [...prev, "STUDENT_STATEMENT"])}
               />
               <DocumentUpload 
                 category="FINANCIAL" 
                 docType="CO_APPLICANT_STATEMENT" 
                 ownerType="CO_APPLICANT" 
-                title="Guarantor Bank Statement (6 Months)" 
+                title="Guarantor Bank Statement (6 Months) (Required)" 
                 description="Upload a PDF statement." 
+                onUploadSuccess={() => setUploadedFinancialDocs(prev => [...prev, "CO_APPLICANT_STATEMENT"])}
               />
             </div>
             

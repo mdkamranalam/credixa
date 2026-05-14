@@ -214,6 +214,13 @@ const StudentDashboard = () => {
 
   const handleInitialSubmit = async (e) => {
     e.preventDefault();
+    setApplyError("");
+
+    if (!formData.requested_amount || !formData.interest_rate || !formData.tenure_months || !formData.student_account_number || !formData.ifsc_code) {
+      setApplyError("Please fill in all required fields before proceeding.");
+      return;
+    }
+
     setIsApplying(true);
     try {
       // Step 1: Create the basic loan entry in DB via a simplified endpoint.
@@ -245,6 +252,17 @@ const StudentDashboard = () => {
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
     setApplyError("");
+
+    const missingDocs = [];
+    if (!isFirstSemester && !latestMarksheetFile) missingDocs.push("Latest Semester Marksheet");
+    if (!studentFile) missingDocs.push("Student Bank Statement");
+    if (!parentFile) missingDocs.push("Parent Bank Statement");
+
+    if (missingDocs.length > 0) {
+      setApplyError(`Please upload the following required documents: ${missingDocs.join(', ')}`);
+      return;
+    }
+
     setIsApplying(true);
 
     const data = new FormData();
