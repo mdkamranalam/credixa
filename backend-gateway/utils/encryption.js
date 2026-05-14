@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // The key must be 32 bytes (256 bits) for aes-256-gcm
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex');
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
 
 // Ensure the key is exactly 32 bytes long for aes-256-gcm
 const getKey = () => {

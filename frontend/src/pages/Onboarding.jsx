@@ -8,6 +8,8 @@ import DocumentUpload from "../components/DocumentUpload";
 const Onboarding = () => {
   const [step, setStep] = useState(2); // Step 1 is Basic Auth, which is already done
   const navigate = useNavigate();
+  const [profileData, setProfileData] = useState(null);
+  const [fraudConsent, setFraudConsent] = useState(false);
   
   // KYC State
   const [panNumber, setPanNumber] = useState("");
@@ -34,6 +36,7 @@ const Onboarding = () => {
       try {
         const response = await api.get("/users/profile");
         const profile = response.data;
+        setProfileData(profile);
         
         if (profile.kyc_status === "VERIFIED") {
           if (!profile.co_applicant) {
@@ -103,7 +106,7 @@ const Onboarding = () => {
     }
   };
 
-  const finishOnboarding = () => {
+  const finishOnboarding = async () => {
     const missingDocs = requiredFinancialDocs.filter(doc => !uploadedFinancialDocs.includes(doc));
     if (missingDocs.length > 0) {
       const missingNames = missingDocs.map(d => d.replace(/_/g, ' ').toLowerCase());
@@ -111,7 +114,20 @@ const Onboarding = () => {
       return;
     }
     setFinancialError("");
-    setStep(6);
+    
+    // Fetch latest profile to show in confirmation step
+    try {
+      const response = await api.get("/users/profile");
+      setProfileData(response.data);
+      setStep(6);
+    } catch (error) {
+      console.error("Failed to load profile for confirmation");
+      setStep(6);
+    }
+  };
+
+  const confirmAndProceed = () => {
+    setStep(7);
     setTimeout(() => {
       navigate("/student-dashboard");
     }, 1500);
@@ -144,7 +160,7 @@ const Onboarding = () => {
             <span>Guarantor</span>
             <span>Academic</span>
             <span>Financials</span>
-            <span>Dashboard</span>
+            <span>Review</span>
           </div>
         </div>
 
@@ -341,8 +357,88 @@ const Onboarding = () => {
           </div>
         )}
 
-        {/* Step 6: Finished */}
-        {step === 6 && (
+        {/* Step 6: Review & Confirmation */}
+        {step === 6 && profileData && (
+          <div className="bg-white rounded-xl shadow-sm border p-8">
+            <div className="flex items-center mb-6">
+              <ShieldCheck className="h-8 w-8 text-emerald-500 mr-3" />
+              <h3 className="text-xl font-bold">Step 6: Final Review & Confirmation</h3>
+            </div>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <p className="text-sm text-yellow-800 font-medium">
+                <strong>Important:</strong> These details and documents will be directly processed by our AI Risk Engine. Please ensure all uploaded documents are authentic, correct, and match the requirements to prevent fraud detection flags and application rejection.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="border border-gray-100 rounded-lg p-5 bg-gray-50">
+                <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Personal & KYC Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Name:</span> {profileData.full_name}</p>
+                  <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Email:</span> {profileData.email}</p>
+                  <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Phone:</span> {profileData.mobile_number}</p>
+                  <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">PAN:</span> {profileData.pan_number}</p>
+                  <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Aadhaar:</span> {profileData.aadhaar_number}</p>
+                  <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">KYC Status:</span> <span className="text-green-600 font-bold">{profileData.kyc_status}</span></p>
+                </div>
+              </div>
+
+              {profileData.co_applicant && (
+                <div className="border border-gray-100 rounded-lg p-5 bg-gray-50">
+                  <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Guarantor Details</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Name:</span> {profileData.co_applicant.full_name}</p>
+                    <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Relation:</span> {profileData.co_applicant.relationship}</p>
+                    <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">PAN:</span> {profileData.co_applicant.pan_number}</p>
+                    <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Aadhaar:</span> {profileData.co_applicant.aadhaar_number}</p>
+                    <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Income:</span> ₹{parseFloat(profileData.co_applicant.monthly_income).toLocaleString()}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="border border-gray-100 rounded-lg p-5 bg-gray-50">
+                <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Uploaded Documents Tracker</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {profileData.documents?.map(doc => (
+                    <div key={doc.doc_id} className="flex items-center text-sm text-green-700 font-medium bg-green-50 p-2 rounded-lg border border-green-100">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      {doc.doc_type.replace(/_/g, ' ')}
+                    </div>
+                  ))}
+                  {(!profileData.documents || profileData.documents.length === 0) && (
+                    <p className="text-sm text-gray-500 italic">No documents found.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 bg-blue-50 border border-blue-100 p-4 rounded-lg flex items-start">
+              <input 
+                type="checkbox" 
+                id="fraudConsent" 
+                className="mt-1 mr-3 h-5 w-5 text-emerald-500 focus:ring-emerald-500 rounded border-gray-300" 
+                required 
+                checked={fraudConsent}
+                onChange={(e) => setFraudConsent(e.target.checked)} 
+              />
+              <label htmlFor="fraudConsent" className="text-sm text-blue-900 font-medium cursor-pointer">
+                I hereby declare that all the details furnished and documents uploaded are true and correct to the best of my knowledge. I understand that submitting fraudulent documents will lead to immediate rejection by the AI Risk Engine and potential action.
+              </label>
+            </div>
+
+            <button
+              onClick={confirmAndProceed}
+              disabled={!fraudConsent}
+              className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl mt-6 flex items-center justify-center disabled:opacity-50 hover:bg-slate-800 transition-colors shadow-lg"
+            >
+              Confirm Accuracy & Access Dashboard <ArrowRight className="ml-2 w-5 h-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Step 7: Finished */}
+        {step === 7 && (
           <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
             <div className="animate-spin h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-6"></div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">Generating AI Omniscore...</h3>

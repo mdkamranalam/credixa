@@ -3,7 +3,7 @@ import pg from "pg";
 import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import { upload as diskUpload } from "../middleware/upload.middleware.js";
-import { encryptData } from "../utils/encryption.js";
+import { encryptData, decryptData } from "../utils/encryption.js";
 
 dotenv.config();
 const router = express.Router();
@@ -32,6 +32,7 @@ router.get("/profile", authenticateToken, async (req, res) => {
                 u.email, 
                 u.mobile_number, 
                 u.pan_number, 
+                u.aadhaar_hash,
                 u.college_roll_number, 
                 u.kyc_status,
                 i.name AS college_name 
@@ -57,8 +58,43 @@ router.get("/profile", authenticateToken, async (req, res) => {
     ]);
 
     const userProfile = result.rows[0];
+    
+    if (userProfile.aadhaar_hash) {
+      try {
+        userProfile.aadhaar_number = decryptData(userProfile.aadhaar_hash);
+      } catch (e) {
+        userProfile.aadhaar_number = "Decryption Failed";
+      }
+      delete userProfile.aadhaar_hash;
+    } else {
+      userProfile.aadhaar_number = "Not Provided";
+    }
+
+    const coApp = coAppRes.rows[0] || null;
+    if (coApp) {
+      if (coApp.aadhaar_number && coApp.aadhaar_number.includes(':')) {
+        try {
+          coApp.aadhaar_number = decryptData(coApp.aadhaar_number);
+        } catch (e) {
+          coApp.aadhaar_number = "Decryption Failed";
+        }
+      } else if (!coApp.aadhaar_number) {
+        coApp.aadhaar_number = "Not Provided";
+      }
+      
+      if (coApp.pan_number && coApp.pan_number.includes(':')) {
+        try {
+          coApp.pan_number = decryptData(coApp.pan_number);
+        } catch (e) {
+          coApp.pan_number = "Decryption Failed";
+        }
+      } else if (!coApp.pan_number) {
+        coApp.pan_number = "Not Provided";
+      }
+    }
+
     userProfile.documents = docsRes.rows;
-    userProfile.co_applicant = coAppRes.rows[0] || null;
+    userProfile.co_applicant = coApp;
 
     res.status(200).json(userProfile);
   } catch (error) {
