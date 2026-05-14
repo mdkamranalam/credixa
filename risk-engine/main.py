@@ -86,10 +86,47 @@ async def analyze_statement(
         # The probability of class '1' (APPROVED) becomes our omniscore (0-100)
         omniscore = round(probabilities[1] * 100, 2)
         decision = "APPROVED" if prediction == 1 else "REJECTED"
+
+        # 7. Generate Human-Readable Reasoning
+        pros = []
+        cons = []
         
+        if combined_balance > 10000:
+            pros.append("Strong average household balance (>₹10,000)")
+        elif combined_balance < 2000:
+            cons.append("Low average balance increases default risk")
+            
+        if total_overdrafts == 0:
+            pros.append("Clean banking history with zero overdrafts")
+        else:
+            cons.append(f"Detected {total_overdrafts} overdraft/NSF instances, indicating liquidity stress")
+            
+        if total_gambling == 0:
+            pros.append("No high-risk behavioral transactions (gambling/betting) detected")
+        else:
+            cons.append(f"Found {total_gambling} transactions linked to high-risk apps/sites")
+            
+        if academic_score >= 8.5:
+            pros.append(f"Exceptional academic record (GPA: {academic_score})")
+        elif academic_score < 6.0:
+            cons.append(f"Below-average academic performance (GPA: {academic_score}) may impact future employability")
+
+        # Compile final summary
+        if omniscore > 70:
+            reasoning = "High Approval Confidence: This applicant demonstrates strong financial discipline and a robust academic foundation. The absence of behavioral risk flags and a healthy liquidity buffer suggest a very low probability of default."
+        elif omniscore > 40:
+            reasoning = "Moderate Risk: The applicant shows potential but has minor financial inconsistencies. While the base metrics are acceptable, caution is advised regarding current liquidity or academic stability."
+        else:
+            reasoning = "High Risk Warning: Multiple red flags detected in financial behavior or academic consistency. The combination of low balances and behavioral risk indicators suggests a higher likelihood of repayment difficulty."
+
         return {
             "omniscore": omniscore,
             "decision": decision,
+            "reasoning": reasoning,
+            "analysis_highlights": {
+                "pros": pros,
+                "cons": cons
+            },
             "extracted_metrics": {
                 "combined_average_balance": combined_balance,
                 "total_overdrafts": total_overdrafts,
@@ -103,6 +140,7 @@ async def analyze_statement(
 @app.post("/validate-document")
 async def validate_document(
     doc_type: str,
+    expected_name: str = None,
     file: UploadFile = File(...)
 ):
     if file.content_type != "application/pdf":
@@ -139,12 +177,32 @@ async def validate_document(
             # Default fallback for optional docs like BONAFIDE, SCHOLARSHIP, PROSPECTUS
             is_valid = len(text_upper.strip()) > 0
             
+        # Name Matching Logic
+        name_match = True
+        extracted_name = "Not Identified"
+        if expected_name and is_valid:
+            # Simple heuristic: see if the parts of the name appear in the text
+            name_parts = [p.strip() for p in expected_name.upper().split() if len(p.strip()) > 2]
+            match_count = sum(1 for p in name_parts if p in text_upper)
+            
+            # If we don't find at least 50% of the name parts, flag it
+            if len(name_parts) > 0 and (match_count / len(name_parts)) < 0.5:
+                name_match = False
+                
         if not is_valid:
             return {
                 "valid": False, 
                 "extracted_text": None, 
                 "structured_details": {},
                 "message": f"Document does not appear to be a valid {doc_type}. Please upload the correct document."
+            }
+            
+        if not name_match:
+             return {
+                "valid": False,
+                "extracted_text": None,
+                "structured_details": {},
+                "message": f"Name mismatch detected. The document name does not match '{expected_name}'. Please upload your own document."
             }
             
         # --- NEW: Extract Structured Details ---

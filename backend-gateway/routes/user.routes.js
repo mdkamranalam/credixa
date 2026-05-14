@@ -38,6 +38,9 @@ router.get("/profile", authenticateToken, async (req, res) => {
                 u.aadhaar_hash,
                 u.college_roll_number, 
                 u.kyc_status,
+                u.pre_approval_score,
+                u.analysis_reasoning,
+                u.analysis_highlights,
                 i.name AS college_name 
             FROM users u
             LEFT JOIN institutions i ON u.institution_id = i.institution_id
@@ -173,12 +176,22 @@ router.post(
         ? process.env.RISK_ENGINE_URL.replace("/analyze-statement", "/validate-document")
         : "http://risk-engine:8000/validate-document";
 
+      // Fetch expected name based on owner_type for matching
+      let expectedName = "";
+      if (owner_type === "STUDENT") {
+        const userRes = await pool.query("SELECT full_name FROM users WHERE user_id = $1", [userId]);
+        expectedName = userRes.rows[0]?.full_name;
+      } else {
+        const coAppRes = await pool.query("SELECT full_name FROM co_applicants WHERE user_id = $1", [userId]);
+        expectedName = coAppRes.rows[0]?.full_name;
+      }
+
       let extracted_text = null;
       let structured_details = null;
       let is_verified = false;
 
       try {
-        const riskResponse = await axios.post(riskEngineUrl, formData, {
+        const riskResponse = await axios.post(`${riskEngineUrl}?expected_name=${encodeURIComponent(expectedName)}`, formData, {
           headers: {
             ...formData.getHeaders(),
           },
@@ -330,6 +343,58 @@ router.post("/academic-details", authenticateToken, async (req, res) => {
   } catch (error) {
     console.error("Academic details update error:", error);
     res.status(500).json({ error: "Failed to update academic details." });
+  }
+});
+
+router.post("/run-analysis", authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const userRes = await pool.query("SELECT current_semester_marks FROM users WHERE user_id = $1", [userId]);
+    const marks = userRes.rows[0]?.current_semester_marks;
+    let academicScore = 7.0;
+    if (marks) {
+        const parsed = parseFloat(marks);
+        if (!isNaN(parsed)) {
+          academicScore = parsed > 10 ? parsed / 10 : parsed;
+        }
+    }
+
+    const docsRes = await pool.query(
+      "SELECT file_url, doc_type FROM loan_documents WHERE user_id = $1 AND doc_type IN ('STUDENT_STATEMENT', 'CO_APPLICANT_STATEMENT') ORDER BY uploaded_at DESC",
+      [userId]
+    );
+
+    const studentDoc = docsRes.rows.find(d => d.doc_type === 'STUDENT_STATEMENT');
+    const parentDoc = docsRes.rows.find(d => d.doc_type === 'CO_APPLICANT_STATEMENT');
+
+    if (!studentDoc || !parentDoc) {
+      return res.status(400).json({ error: "Missing required bank statements for analysis." });
+    }
+
+    const formData = new FormData();
+    formData.append("student_file", fs.createReadStream(studentDoc.file_url));
+    formData.append("parent_file", fs.createReadStream(parentDoc.file_url));
+
+    const riskEngineUrl = process.env.RISK_ENGINE_URL || "http://risk-engine:8000/analyze-statement";
+    const response = await axios.post(`${riskEngineUrl}?academic_score=${academicScore}`, formData, {
+      headers: formData.getHeaders()
+    });
+
+    const { omniscore, reasoning, analysis_highlights } = response.data;
+    
+    await pool.query(
+      "UPDATE users SET pre_approval_score = $1, analysis_reasoning = $2, analysis_highlights = $3 WHERE user_id = $4",
+      [Math.round(omniscore), reasoning, JSON.stringify(analysis_highlights), userId]
+    );
+
+    res.status(200).json({
+      score: omniscore,
+      reasoning,
+      highlights: analysis_highlights
+    });
+  } catch (error) {
+    console.error("Analysis Error:", error.message);
+    res.status(500).json({ error: "Failed to run risk analysis." });
   }
 });
 

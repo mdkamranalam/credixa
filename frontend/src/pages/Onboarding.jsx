@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, ShieldCheck, User, UploadCloud, ArrowRight, BookOpen } from "lucide-react";
+import { CheckCircle, ShieldCheck, User, UploadCloud, ArrowRight, BookOpen, AlertCircle, XCircle } from "lucide-react";
 import api from "../services/api";
 import CoApplicantForm from "../components/CoApplicantForm";
 import DocumentUpload from "../components/DocumentUpload";
@@ -14,6 +14,8 @@ const Onboarding = () => {
   // KYC State
   const [panNumber, setPanNumber] = useState("");
   const [aadhaarNumber, setAadhaarNumber] = useState("");
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [kycLoading, setKycLoading] = useState(false);
   const [kycError, setKycError] = useState("");
 
@@ -126,11 +128,17 @@ const Onboarding = () => {
     }
   };
 
-  const confirmAndProceed = () => {
+  const confirmAndProceed = async () => {
     setStep(7);
-    setTimeout(() => {
-      navigate("/student-dashboard");
-    }, 1500);
+    setIsAnalyzing(true);
+    try {
+      const response = await api.post("/users/run-analysis");
+      setAnalysisResult(response.data);
+    } catch (error) {
+      console.error("Analysis failed:", error.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -460,10 +468,75 @@ const Onboarding = () => {
 
         {/* Step 7: Finished */}
         {step === 7 && (
-          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
-            <div className="animate-spin h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-6"></div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Generating AI Omniscore...</h3>
-            <p className="text-gray-600">Please wait while we initialize your personalized dashboard.</p>
+          <div className="bg-white rounded-xl shadow-sm border p-12 text-center max-w-2xl mx-auto">
+            {isAnalyzing ? (
+              <>
+                <div className="animate-spin h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-6"></div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Generating AI Omniscore...</h3>
+                <p className="text-gray-600">Please wait while our AI Risk Engine analyzes your profile.</p>
+              </>
+            ) : analysisResult ? (
+              <div className="text-left">
+                <div className="flex items-center justify-center mb-8">
+                   <div className={`w-32 h-32 rounded-full border-8 flex items-center justify-center ${analysisResult.score > 70 ? 'border-green-500' : analysisResult.score > 40 ? 'border-yellow-500' : 'border-red-500'}`}>
+                      <div className="text-center">
+                        <span className="text-3xl font-black block leading-none">{Math.round(analysisResult.score)}</span>
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Omniscore</span>
+                      </div>
+                   </div>
+                </div>
+                
+                <h3 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">AI Risk Analysis Report</h3>
+                <p className="text-gray-700 bg-gray-50 p-4 rounded-lg italic border-l-4 border-emerald-500 mb-6 text-sm">
+                  "{analysisResult.reasoning}"
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+                    <h4 className="text-sm font-bold text-green-800 mb-3 flex items-center">
+                      <CheckCircle className="w-4 h-4 mr-2" /> Positive Indicators
+                    </h4>
+                    <ul className="space-y-2">
+                      {analysisResult.highlights.pros.map((pro, idx) => (
+                        <li key={idx} className="text-xs text-green-700 flex items-start">
+                          <span className="mr-2">•</span> {pro}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="bg-red-50 p-4 rounded-lg border border-red-100">
+                    <h4 className="text-sm font-bold text-red-800 mb-3 flex items-center">
+                      <AlertCircle className="w-4 h-4 mr-2" /> Areas of Concern
+                    </h4>
+                    <ul className="space-y-2">
+                      {analysisResult.highlights.cons.length > 0 ? (
+                        analysisResult.highlights.cons.map((con, idx) => (
+                          <li key={idx} className="text-xs text-red-700 flex items-start">
+                            <span className="mr-2">•</span> {con}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-xs text-green-700 italic">No significant concerns detected.</li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => navigate("/student-dashboard")}
+                  className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl flex items-center justify-center hover:bg-slate-800 transition-colors shadow-lg"
+                >
+                  Access My Dashboard <ArrowRight className="ml-2 w-5 h-5" />
+                </button>
+              </div>
+            ) : (
+               <>
+                <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-red-900 mb-2">Analysis Failed</h3>
+                <p className="text-red-700 mb-6">We couldn't generate your risk score at this time. Our engine might be under high load.</p>
+                <button onClick={() => navigate("/student-dashboard")} className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold">Continue to Dashboard</button>
+               </>
+            )}
           </div>
         )}
 
