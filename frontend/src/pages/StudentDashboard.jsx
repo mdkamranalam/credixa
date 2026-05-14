@@ -790,15 +790,34 @@ const StudentDashboard = () => {
                         className="block p-4 border rounded-xl bg-white hover:border-emerald-300 hover:shadow-md transition-all group"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <FileText className="h-6 w-6 text-emerald-500 group-hover:scale-110 transition-transform" />
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#F0FDF4] text-slate-800">{doc.category}</span>
+                          <FileText className="h-6 w-6 flex-shrink-0 text-emerald-500 group-hover:scale-110 transition-transform" />
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#F0FDF4] text-slate-800 ml-2">{doc.category}</span>
                         </div>
-                        <p className="font-medium text-sm text-gray-900 truncate mt-2">
+                        <p className="font-bold text-sm text-gray-900 truncate mt-2">
                           {doc.doc_type.replace(/_/g, ' ')}
                         </p>
-                        <p className="text-xs text-green-600 font-bold mt-1 flex items-center">
+                        <p className="text-xs text-green-600 font-bold mt-1 flex items-center mb-3">
                           <CheckCircle className="h-3 w-3 mr-1" /> Securely Vaulted
                         </p>
+                        
+                        {doc.structured_details && Object.keys(doc.structured_details).length > 0 && (
+                          <div className="pt-2 border-t border-gray-100 space-y-1">
+                            {Object.entries(doc.structured_details).map(([key, value]) => (
+                              <div key={key} className="flex justify-between text-[10px]">
+                                <span className="text-gray-500 font-bold">{key}:</span>
+                                <span className="text-gray-900 font-medium">{value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {doc.extracted_text && !doc.structured_details && (
+                          <div className="pt-2 border-t border-gray-100">
+                            <p className="text-xs text-gray-500 line-clamp-3 italic whitespace-pre-wrap">
+                              "{doc.extracted_text.trim()}"
+                            </p>
+                          </div>
+                        )}
                       </a>
                     ))}
                   </div>

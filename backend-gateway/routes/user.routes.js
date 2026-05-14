@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import { upload as diskUpload } from "../middleware/upload.middleware.js";
 import { encryptData, decryptData } from "../utils/encryption.js";
+import axios from "axios";
+import FormData from "form-data";
+import fs from "fs";
 
 dotenv.config();
 const router = express.Router();
@@ -49,7 +52,7 @@ router.get("/profile", authenticateToken, async (req, res) => {
 
     const [docsRes, coAppRes] = await Promise.all([
       pool.query(
-        "SELECT doc_id, category, doc_type, is_verified, file_url FROM loan_documents WHERE user_id = $1",
+        "SELECT doc_id, category, doc_type, is_verified, file_url, extracted_text, structured_details FROM loan_documents WHERE user_id = $1",
         [userId]
       ),
       pool.query("SELECT * FROM co_applicants WHERE user_id = $1 LIMIT 1", [
@@ -161,9 +164,43 @@ router.post(
     const file_url = req.file.path;
 
     try {
+      // Create FormData to send file to risk engine
+      const formData = new FormData();
+      formData.append("doc_type", doc_type);
+      formData.append("file", fs.createReadStream(req.file.path));
+
+      const riskEngineUrl = process.env.RISK_ENGINE_URL 
+        ? process.env.RISK_ENGINE_URL.replace("/analyze-statement", "/validate-document")
+        : "http://risk-engine:8000/validate-document";
+
+      let extracted_text = null;
+      let structured_details = null;
+      let is_verified = false;
+
+      try {
+        const riskResponse = await axios.post(riskEngineUrl, formData, {
+          headers: {
+            ...formData.getHeaders(),
+          },
+        });
+
+        if (riskResponse.data && !riskResponse.data.valid) {
+          fs.unlinkSync(req.file.path); // remove invalid file
+          return res.status(400).json({ error: riskResponse.data.message });
+        }
+
+        extracted_text = riskResponse.data?.extracted_text;
+        structured_details = riskResponse.data?.structured_details;
+        is_verified = true;
+      } catch (riskError) {
+        console.error("Risk engine validation failed or unavailable:", riskError.message);
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ error: "Failed to validate document. Ensure the file is a readable PDF." });
+      }
+
       const insertQuery = `
-        INSERT INTO loan_documents (user_id, owner_type, category, doc_type, file_url)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO loan_documents (user_id, owner_type, category, doc_type, file_url, extracted_text, structured_details, is_verified)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *;
       `;
       const result = await pool.query(insertQuery, [
@@ -172,6 +209,9 @@ router.post(
         category,
         doc_type,
         file_url,
+        extracted_text,
+        JSON.stringify(structured_details),
+        is_verified
       ]);
       res.status(201).json({
         message: "Document uploaded successfully",

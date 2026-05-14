@@ -399,11 +399,32 @@ const Onboarding = () => {
 
               <div className="border border-gray-100 rounded-lg p-5 bg-gray-50">
                 <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Uploaded Documents Tracker</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   {profileData.documents?.map(doc => (
-                    <div key={doc.doc_id} className="flex items-center text-sm text-green-700 font-medium bg-green-50 p-2 rounded-lg border border-green-100">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      {doc.doc_type.replace(/_/g, ' ')}
+                    <div key={doc.doc_id} className="flex flex-col text-sm text-green-700 font-medium bg-green-50 p-3 rounded-lg border border-green-100 shadow-sm">
+                      <div className="flex items-center">
+                        <CheckCircle className="h-4 w-4 mr-2 flex-shrink-0 text-green-600" />
+                        <span className="font-bold text-green-900">{doc.doc_type.replace(/_/g, ' ')}</span>
+                      </div>
+                      {doc.structured_details && Object.keys(doc.structured_details).length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-green-200">
+                          <div className="grid grid-cols-1 gap-1">
+                            {Object.entries(doc.structured_details).map(([key, value]) => (
+                              <div key={key} className="flex justify-between text-[11px]">
+                                <span className="text-green-600 font-bold">{key}:</span>
+                                <span className="text-green-900 font-medium">{value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {doc.extracted_text && !doc.structured_details && (
+                        <div className="mt-2 pt-2 border-t border-green-200">
+                          <p className="text-xs text-green-800 line-clamp-2 italic font-normal whitespace-pre-wrap">
+                            "{doc.extracted_text.trim()}"
+                          </p>
+                        </div>
+                      )}
                     </div>
                   ))}
                   {(!profileData.documents || profileData.documents.length === 0) && (
