@@ -163,12 +163,15 @@ const Onboarding = () => {
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-2 text-xs font-semibold text-gray-500">
+          <div className="flex justify-between mt-2 text-[10px] sm:text-xs font-semibold text-gray-500">
             <span>Auth</span>
             <span>Identity</span>
-            <span>Guarantor</span>
-            <span>Academic</span>
-            <span>Financials</span>
+            <span className="hidden sm:inline">Guarantor</span>
+            <span className="sm:hidden">Gua</span>
+            <span className="hidden sm:inline">Academic</span>
+            <span className="sm:hidden">Acad</span>
+            <span className="hidden sm:inline">Financials</span>
+            <span className="sm:hidden">Fin</span>
             <span>Review</span>
           </div>
         </div>
@@ -444,9 +447,9 @@ const Onboarding = () => {
             <div className="space-y-6">
               <div className="border border-gray-100 rounded-lg p-5 bg-gray-50">
                 <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Personal & KYC Details</h4>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Name:</span> {profileData.full_name}</p>
-                  <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Email:</span> {profileData.email}</p>
+                  <p className="text-sm text-gray-600 break-words"><span className="font-bold text-gray-800">Email:</span> {profileData.email}</p>
                   <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Phone:</span> {profileData.mobile_number}</p>
                   <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">PAN:</span> {profileData.pan_number}</p>
                   <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Aadhaar:</span> {profileData.aadhaar_number}</p>
@@ -457,7 +460,7 @@ const Onboarding = () => {
               {profileData.co_applicant && (
                 <div className="border border-gray-100 rounded-lg p-5 bg-gray-50">
                   <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Guarantor Details</h4>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Name:</span> {profileData.co_applicant.full_name}</p>
                     <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">Relation:</span> {profileData.co_applicant.relationship}</p>
                     <p className="text-sm text-gray-600"><span className="font-bold text-gray-800">PAN:</span> {profileData.co_applicant.pan_number}</p>

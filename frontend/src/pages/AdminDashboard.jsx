@@ -271,7 +271,8 @@ const AdminDashboard = () => {
               No loan applications found yet.
             </div>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -367,6 +368,7 @@ const AdminDashboard = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>
@@ -392,7 +394,8 @@ const AdminDashboard = () => {
             Manage Checklist
           </button>
         </div>
-        <table className="min-w-full divide-y divide-gray-200">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50 text-xs text-gray-500 uppercase font-bold">
             <tr>
               <th className="px-6 py-3 text-left">Date</th>
@@ -433,6 +436,7 @@ const AdminDashboard = () => {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* --- NEW CHECKLIST MODAL --- */}
@@ -510,7 +514,7 @@ const AdminDashboard = () => {
             </div>
 
             <div className="p-8 flex-1 overflow-y-auto bg-gray-50">
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* User Info */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                   <h4 className="font-bold text-gray-800 border-b pb-2 mb-4">Identity Details</h4>
@@ -541,7 +545,7 @@ const AdminDashboard = () => {
               <div className="mt-8">
                 <h4 className="font-bold text-gray-800 border-b pb-2 mb-4">Verification Documents</h4>
                 {studentDossier.documents.length > 0 ? (
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {studentDossier.documents.map(doc => (
                       <a
                         key={doc.doc_id}

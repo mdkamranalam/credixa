@@ -365,7 +365,7 @@ const StudentDashboard = () => {
       <div className="max-w-4xl mx-auto mt-10 px-4">
         {/* PROFILE CARD */}
         {profile && (
-          <div className="bg-white rounded-xl shadow-sm border p-6 mb-8 flex justify-between items-center">
+          <div className="bg-white rounded-xl shadow-sm border p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
             <div className="flex items-center space-x-4">
               <div className="bg-[#D1FAE5] p-3 rounded-full">
                 <User className="h-8 w-8 text-emerald-500" />
@@ -386,7 +386,7 @@ const StudentDashboard = () => {
                 </p>
               </div>
             </div>
-            <div className="text-xs font-bold text-gray-400 uppercase grid grid-cols-2 gap-4 border-l pl-8">
+            <div className="text-xs font-bold text-gray-400 uppercase grid grid-cols-2 gap-4 md:border-l md:pl-8 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0">
               <div>
                 Roll:{" "}
                 <span className="text-gray-700 block text-sm">
@@ -508,17 +508,17 @@ const StudentDashboard = () => {
             <p className="text-yellow-700 mb-6 font-medium">
               We've received your application and documents. Our AI Engine and your Institution Admin are currently reviewing it.
             </p>
-            <div className="flex justify-center space-x-8">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:space-x-8">
               <div className="text-center">
                 <p className="text-xs font-bold text-yellow-600 uppercase">Requested</p>
                 <p className="text-lg font-black text-yellow-900">₹{parseFloat(activeLoan.requested_amount).toLocaleString()}</p>
               </div>
-              <div className="text-center border-l border-yellow-200 pl-8">
+              <div className="text-center sm:border-l border-yellow-200 sm:pl-8">
                 <p className="text-xs font-bold text-yellow-600 uppercase">Status</p>
                 <p className="text-lg font-black text-yellow-900">{activeLoan.status.replace("_", " ")}</p>
               </div>
               {activeLoan.omniscore && (
-                <div className="text-center border-l border-yellow-200 pl-8">
+                <div className="text-center sm:border-l border-yellow-200 sm:pl-8">
                   <p className="text-xs font-bold text-emerald-600 uppercase">AI Credit Omniscore</p>
                   <p className="text-lg font-black text-emerald-600">{activeLoan.omniscore} / 900</p>
                 </div>
@@ -534,12 +534,12 @@ const StudentDashboard = () => {
             <p className="text-red-700 mb-6 font-medium">
               We're sorry, but your institution has decided not to approve this loan request based on the risk profile.
             </p>
-            <div className="flex justify-center space-x-8 mb-8">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:space-x-8 mb-8">
               <div className="text-center">
                 <p className="text-xs font-bold text-red-600 uppercase">Requested</p>
                 <p className="text-lg font-black text-red-900">₹{parseFloat(activeLoan.requested_amount).toLocaleString()}</p>
               </div>
-              <div className="text-center border-l border-red-200 pl-8">
+              <div className="text-center sm:border-l border-red-200 sm:pl-8">
                 <p className="text-xs font-bold text-red-600 uppercase">Status</p>
                 <p className="text-lg font-black text-red-900">REJECTED</p>
               </div>
@@ -567,7 +567,7 @@ const StudentDashboard = () => {
               </span>
             </div>
             <div className="p-8">
-              <div className="grid grid-cols-3 gap-8 mb-6 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-6 text-center">
                 <div className="bg-[#F0FDF4] p-4 rounded-lg">
                   Principal: ₹
                   {(
@@ -595,7 +595,7 @@ const StudentDashboard = () => {
           </div>
         ) : isProfileComplete && applicationStep === 1 ? (
           <div className="bg-white rounded-xl shadow-sm border p-8 mb-8">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
               <h2 className="text-xl font-bold">Apply for BNPL Loan</h2>
               <Link
                 to="/loan-checklist"
@@ -611,7 +611,7 @@ const StudentDashboard = () => {
                   <XCircle className="w-4 h-4 mr-2" /> {applyError}
                 </div>
               )}
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <input
                   type="number"
                   name="requested_amount"
@@ -638,7 +638,7 @@ const StudentDashboard = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg grid grid-cols-2 gap-6">
+              <div className="bg-gray-50 p-4 rounded-lg grid grid-cols-1 md:grid-cols-2 gap-6">
                 <input
                   type="text"
                   name="student_account_number"
@@ -669,7 +669,7 @@ const StudentDashboard = () => {
 
         {/* PAYMENT HISTORY */}
         {activeLoan && payments.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="bg-white rounded-xl shadow-sm border p-6 overflow-x-auto">
             <h3 className="text-lg font-bold mb-4 flex items-center">
               <History className="mr-2 h-5 w-5" /> Payment History
             </h3>

@@ -168,11 +168,13 @@ const Register = () => {
                 </div>
               ))}
             </div>
-            <div className="flex justify-between mt-2 text-xs font-semibold text-gray-500">
+            <div className="flex justify-between mt-2 text-[10px] sm:text-xs font-semibold text-gray-500">
               <span>Auth</span>
               <span>Identity</span>
-              <span>Guarantor</span>
-              <span>Financials</span>
+              <span className="hidden sm:inline">Guarantor</span>
+              <span className="sm:hidden">Gua</span>
+              <span className="hidden sm:inline">Financials</span>
+              <span className="sm:hidden">Fin</span>
               <span>Dashboard</span>
             </div>
           </div>
