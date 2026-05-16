@@ -286,10 +286,11 @@ router.post(
 router.get("/my-loan", authenticateToken, async (req, res) => {
   try {
     const query = `
-      SELECT loan_id, requested_amount, approved_amount, interest_rate, tenure_months, status, created_at 
-      FROM loans 
-      WHERE user_id = $1 
-      ORDER BY created_at DESC 
+      SELECT l.loan_id, l.requested_amount, l.approved_amount, l.interest_rate, l.tenure_months, l.status, l.created_at, rs.omniscore 
+      FROM loans l
+      LEFT JOIN risk_scores rs ON l.loan_id = rs.loan_id
+      WHERE l.user_id = $1 
+      ORDER BY l.created_at DESC 
       LIMIT 1;
     `;
     const result = await pool.query(query, [req.user.id]);

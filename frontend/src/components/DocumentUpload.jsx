@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, X, FileText } from 'lucide-react';
 import api from '../services/api';
 
-const DocumentUpload = ({ loanId, ownerType, category, docType, title, description, onUploadSuccess }) => {
+const DocumentUpload = ({ loanId, ownerType, category, docType, title, description, onUploadSuccess, useOcr = false }) => {
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadStatus, setUploadStatus] = useState('idle'); // 'idle', 'uploading', 'success', 'error'
@@ -27,6 +27,9 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
         formData.append('owner_type', ownerType);
         formData.append('category', category);
         formData.append('doc_type', docType);
+        if (useOcr) {
+            formData.append('use_ocr', true);
+        }
 
         try {
             const uploadUrl = loanId

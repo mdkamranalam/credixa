@@ -10,6 +10,7 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
   const [fraudConsent, setFraudConsent] = useState(false);
+  const [useOcr, setUseOcr] = useState(true);
   
   // KYC State
   const [panNumber, setPanNumber] = useState("");
@@ -132,7 +133,7 @@ const Onboarding = () => {
     setStep(7);
     setIsAnalyzing(true);
     try {
-      const response = await api.post("/users/run-analysis");
+      const response = await api.post("/users/run-analysis", { use_ocr: useOcr });
       setAnalysisResult(response.data);
     } catch (error) {
       console.error("Analysis failed:", error.message);
@@ -242,6 +243,32 @@ const Onboarding = () => {
             </div>
             <p className="text-gray-600 mb-6">Upload your academic documents to strengthen your profile.</p>
             
+            <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+              <p className="text-sm font-bold text-blue-900 mb-3">Select Document Extraction Method:</p>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-6">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="extractionMethodAcademic" 
+                    checked={useOcr === true} 
+                    onChange={() => setUseOcr(true)} 
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300" 
+                  />
+                  <span className="text-sm font-medium text-blue-800">OCR Extraction (Recommended)</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="extractionMethodAcademic" 
+                    checked={useOcr === false} 
+                    onChange={() => setUseOcr(false)} 
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300" 
+                  />
+                  <span className="text-sm font-medium text-blue-800">Standard Text Extraction</span>
+                </label>
+              </div>
+            </div>
+            
             {academicError && <div className="mb-4 bg-red-50 text-red-600 p-3 rounded">{academicError}</div>}
             
             <form onSubmit={handleAcademicSubmit} className="space-y-6">
@@ -263,6 +290,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="10th Marksheet (Required)" 
                   description="Upload PDF or image" 
+                  useOcr={useOcr}
                   onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "10TH_MARKSHEET"])}
                 />
                 <DocumentUpload 
@@ -271,6 +299,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="12th Marksheet (Required)" 
                   description="Upload PDF or image" 
+                  useOcr={useOcr}
                   onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "12TH_MARKSHEET"])}
                 />
                 <DocumentUpload 
@@ -279,6 +308,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="Admission Letter (Required)" 
                   description="Upload your college admission letter" 
+                  useOcr={useOcr}
                   onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "ADMISSION_LETTER"])}
                 />
                 <DocumentUpload 
@@ -287,6 +317,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="Fee Structure (Year-wise) (Required)" 
                   description="Upload official fee structure" 
+                  useOcr={useOcr}
                   onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "FEE_STRUCTURE"])}
                 />
                 <DocumentUpload 
@@ -295,6 +326,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="Prospectus/Course Details (Optional)" 
                   description="Upload the prospectus" 
+                  useOcr={useOcr}
                   onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "PROSPECTUS"])}
                 />
                 <DocumentUpload 
@@ -303,6 +335,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="Bonafide Certificate (Optional)" 
                   description="Upload if available" 
+                  useOcr={useOcr}
                   onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "BONAFIDE_CERTIFICATE"])}
                 />
                 <DocumentUpload 
@@ -311,6 +344,7 @@ const Onboarding = () => {
                   ownerType="STUDENT" 
                   title="Scholarship Letter (Optional)" 
                   description="Upload if applicable" 
+                  useOcr={useOcr}
                   onUploadSuccess={() => setUploadedAcademicDocs(prev => [...prev, "SCHOLARSHIP_LETTER"])}
                 />
               </div>
@@ -335,6 +369,32 @@ const Onboarding = () => {
             </div>
             <p className="text-gray-600 mb-6">To accurately calculate your AI Omniscore, we need historical cash-flow data.</p>
             
+            <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+              <p className="text-sm font-bold text-blue-900 mb-3">Select Document Extraction Method:</p>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-6">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="extractionMethodFinancial" 
+                    checked={useOcr === true} 
+                    onChange={() => setUseOcr(true)} 
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300" 
+                  />
+                  <span className="text-sm font-medium text-blue-800">OCR Extraction (Recommended)</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="extractionMethodFinancial" 
+                    checked={useOcr === false} 
+                    onChange={() => setUseOcr(false)} 
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300" 
+                  />
+                  <span className="text-sm font-medium text-blue-800">Standard Text Extraction</span>
+                </label>
+              </div>
+            </div>
+
             {financialError && <div className="mb-4 bg-red-50 text-red-600 p-3 rounded">{financialError}</div>}
             
             <div className="space-y-6">
@@ -344,6 +404,7 @@ const Onboarding = () => {
                 ownerType="STUDENT" 
                 title="Student Bank Statement (6 Months) (Required)" 
                 description="Upload a PDF statement." 
+                useOcr={useOcr}
                 onUploadSuccess={() => setUploadedFinancialDocs(prev => [...prev, "STUDENT_STATEMENT"])}
               />
               <DocumentUpload 
@@ -352,6 +413,7 @@ const Onboarding = () => {
                 ownerType="CO_APPLICANT" 
                 title="Guarantor Bank Statement (6 Months) (Required)" 
                 description="Upload a PDF statement." 
+                useOcr={useOcr}
                 onUploadSuccess={() => setUploadedFinancialDocs(prev => [...prev, "CO_APPLICANT_STATEMENT"])}
               />
             </div>
@@ -472,8 +534,8 @@ const Onboarding = () => {
             {isAnalyzing ? (
               <>
                 <div className="animate-spin h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-6"></div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Generating AI Omniscore...</h3>
-                <p className="text-gray-600">Please wait while our AI Risk Engine analyzes your profile.</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Generating Profile Readiness Score...</h3>
+                <p className="text-gray-600">Please wait while our system analyzes your uploaded documents for data accuracy.</p>
               </>
             ) : analysisResult ? (
               <div className="text-left">
@@ -486,7 +548,7 @@ const Onboarding = () => {
                    </div>
                 </div>
                 
-                <h3 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">AI Risk Analysis Report</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Profile Readiness Analysis</h3>
                 <p className="text-gray-700 bg-gray-50 p-4 rounded-lg italic border-l-4 border-emerald-500 mb-6 text-sm">
                   "{analysisResult.reasoning}"
                 </p>
@@ -506,7 +568,7 @@ const Onboarding = () => {
                   </div>
                   <div className="bg-red-50 p-4 rounded-lg border border-red-100">
                     <h4 className="text-sm font-bold text-red-800 mb-3 flex items-center">
-                      <AlertCircle className="w-4 h-4 mr-2" /> Areas of Concern
+                      <AlertCircle className="w-4 h-4 mr-2" /> Action Recommended
                     </h4>
                     <ul className="space-y-2">
                       {analysisResult.highlights.cons.length > 0 ? (

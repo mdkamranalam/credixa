@@ -157,7 +157,7 @@ router.post(
   diskUpload.single("file"),
   async (req, res) => {
     const userId = req.user.id;
-    const { owner_type, category, doc_type } = req.body;
+    const { owner_type, category, doc_type, use_ocr } = req.body;
 
     if (!req.file) return res.status(400).json({ error: "No file uploaded." });
     if (!owner_type || !category || !doc_type) {
@@ -191,7 +191,8 @@ router.post(
       let is_verified = false;
 
       try {
-        const riskResponse = await axios.post(`${riskEngineUrl}?expected_name=${encodeURIComponent(expectedName)}`, formData, {
+        const ocrQuery = use_ocr === 'true' || use_ocr === true ? '&use_ocr=true' : '';
+        const riskResponse = await axios.post(`${riskEngineUrl}?expected_name=${encodeURIComponent(expectedName)}${ocrQuery}`, formData, {
           headers: {
             ...formData.getHeaders(),
           },
@@ -349,52 +350,73 @@ router.post("/academic-details", authenticateToken, async (req, res) => {
 router.post("/run-analysis", authenticateToken, async (req, res) => {
   const userId = req.user.id;
   try {
-    const userRes = await pool.query("SELECT current_semester_marks FROM users WHERE user_id = $1", [userId]);
-    const marks = userRes.rows[0]?.current_semester_marks;
-    let academicScore = 7.0;
-    if (marks) {
-        const parsed = parseFloat(marks);
-        if (!isNaN(parsed)) {
-          academicScore = parsed > 10 ? parsed / 10 : parsed;
-        }
-    }
-
     const docsRes = await pool.query(
-      "SELECT file_url, doc_type FROM loan_documents WHERE user_id = $1 AND doc_type IN ('STUDENT_STATEMENT', 'CO_APPLICANT_STATEMENT') ORDER BY uploaded_at DESC",
+      "SELECT doc_type, is_verified, structured_details FROM loan_documents WHERE user_id = $1",
       [userId]
     );
 
-    const studentDoc = docsRes.rows.find(d => d.doc_type === 'STUDENT_STATEMENT');
-    const parentDoc = docsRes.rows.find(d => d.doc_type === 'CO_APPLICANT_STATEMENT');
+    const docs = docsRes.rows;
+    let score = 20; // Base score for completed KYC
+    let pros = ["Identity (PAN/Aadhaar) successfully verified."];
+    let cons = [];
 
-    if (!studentDoc || !parentDoc) {
-      return res.status(400).json({ error: "Missing required bank statements for analysis." });
+    if (docs.length === 0) {
+      return res.status(400).json({ error: "No documents found for analysis." });
     }
 
-    const formData = new FormData();
-    formData.append("student_file", fs.createReadStream(studentDoc.file_url));
-    formData.append("parent_file", fs.createReadStream(parentDoc.file_url));
-
-    const riskEngineUrl = process.env.RISK_ENGINE_URL || "http://risk-engine:8000/analyze-statement";
-    const response = await axios.post(`${riskEngineUrl}?academic_score=${academicScore}`, formData, {
-      headers: formData.getHeaders()
+    let validDocs = 0;
+    docs.forEach(doc => {
+      if (doc.is_verified) {
+        validDocs++;
+        let details = typeof doc.structured_details === 'string' ? JSON.parse(doc.structured_details) : doc.structured_details;
+        
+        // If we found meaningful structured data
+        if (details && Object.keys(details).length > 0 && !Object.values(details).includes("Not Found")) {
+          score += (80 / docs.length);
+        } else {
+          score += (40 / docs.length); // Partial points
+          cons.push(`Extraction for ${doc.doc_type.replace(/_/g, ' ')} was partial. Ensure clarity.`);
+        }
+      }
     });
 
-    const { omniscore, reasoning, analysis_highlights } = response.data;
+    if (validDocs === docs.length) {
+      pros.push("All required documents uploaded and verified.");
+    }
     
+    // Bonus for specific positive extractions
+    if (docs.some(d => {
+      let details = typeof d.structured_details === 'string' ? JSON.parse(d.structured_details) : d.structured_details;
+      return details && details["Average Balance"];
+    })) {
+      pros.push("Financial data successfully digitized and structured.");
+    }
+
+    const finalScore = Math.min(Math.round(score), 100);
+    let reasoning = "";
+
+    if (finalScore >= 90) {
+      reasoning = "Excellent Profile Readiness: Your documents have been successfully parsed by our OCR engine with high accuracy. You are fully ready to apply for a loan.";
+    } else if (finalScore >= 70) {
+      reasoning = "Good Profile Readiness: Most of your documents were digitized. Some manual verification might be required during loan processing.";
+    } else {
+      reasoning = "Action Recommended: Several documents could not be fully parsed. You may proceed, but expect manual reviews.";
+      if (cons.length === 0) cons.push("Overall data extraction confidence is low.");
+    }
+
     await pool.query(
       "UPDATE users SET pre_approval_score = $1, analysis_reasoning = $2, analysis_highlights = $3 WHERE user_id = $4",
-      [Math.round(omniscore), reasoning, JSON.stringify(analysis_highlights), userId]
+      [finalScore, reasoning, JSON.stringify({ pros, cons }), userId]
     );
 
     res.status(200).json({
-      score: omniscore,
+      score: finalScore,
       reasoning,
-      highlights: analysis_highlights
+      highlights: { pros, cons }
     });
   } catch (error) {
     console.error("Analysis Error:", error.message);
-    res.status(500).json({ error: "Failed to run risk analysis." });
+    res.status(500).json({ error: "Failed to run profile readiness analysis." });
   }
 });
 

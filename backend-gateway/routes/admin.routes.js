@@ -96,6 +96,8 @@ router.get("/loans", authenticateToken, async (req, res) => {
     l.user_id,
       u.full_name,
       u.college_roll_number,
+      u.analysis_reasoning,
+      u.analysis_highlights,
       l.requested_amount,
       l.status,
       rs.omniscore,

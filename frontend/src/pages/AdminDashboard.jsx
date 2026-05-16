@@ -647,7 +647,7 @@ const AdminDashboard = () => {
                 <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
                   AI Risk Assessment
                 </p>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 mb-4">
                   <div className="text-2xl font-bold text-gray-900">
                     {selectedLoan.omniscore || "N/A"}{" "}
                     <span className="text-sm font-normal text-gray-500">
@@ -660,6 +660,52 @@ const AdminDashboard = () => {
                     {selectedLoan.risk_tier || "Pending"}
                   </span>
                 </div>
+                     {selectedLoan.analysis_reasoning && (
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm">
+                    <p className="text-gray-800 italic mb-3">"{selectedLoan.analysis_reasoning}"</p>
+                    
+                    {(() => {
+                      try {
+                        const highlights = typeof selectedLoan.analysis_highlights === 'string' 
+                          ? JSON.parse(selectedLoan.analysis_highlights) 
+                          : selectedLoan.analysis_highlights;
+                          
+                        if (!highlights) return null;
+                        
+                        return (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                            {highlights.pros && highlights.pros.length > 0 && (
+                              <div>
+                                <p className="text-xs font-bold text-green-700 mb-1 flex items-center">
+                                  <CheckCircle className="w-3 h-3 mr-1" /> Positive Indicators
+                                </p>
+                                <ul className="list-disc pl-4 space-y-1">
+                                  {highlights.pros.map((pro, i) => (
+                                    <li key={i} className="text-xs text-green-600">{pro}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {highlights.cons && highlights.cons.length > 0 && (
+                              <div>
+                                <p className="text-xs font-bold text-red-700 mb-1 flex items-center">
+                                  <XCircle className="w-3 h-3 mr-1" /> Risk Factors
+                                </p>
+                                <ul className="list-disc pl-4 space-y-1">
+                                  {highlights.cons.map((con, i) => (
+                                    <li key={i} className="text-xs text-red-600">{con}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      } catch (e) {
+                        return null;
+                      }
+                    })()}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -684,6 +730,6 @@ const AdminDashboard = () => {
       )}
     </div>
   );
-};;
+};
 
 export default AdminDashboard;

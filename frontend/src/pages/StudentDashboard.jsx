@@ -517,6 +517,12 @@ const StudentDashboard = () => {
                 <p className="text-xs font-bold text-yellow-600 uppercase">Status</p>
                 <p className="text-lg font-black text-yellow-900">{activeLoan.status.replace("_", " ")}</p>
               </div>
+              {activeLoan.omniscore && (
+                <div className="text-center border-l border-yellow-200 pl-8">
+                  <p className="text-xs font-bold text-emerald-600 uppercase">AI Credit Omniscore</p>
+                  <p className="text-lg font-black text-emerald-600">{activeLoan.omniscore} / 900</p>
+                </div>
+              )}
             </div>
           </div>
         ) : activeLoan && activeLoan.status === "REJECTED" ? (

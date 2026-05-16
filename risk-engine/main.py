@@ -1,9 +1,11 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Query
 import pdfplumber
 import joblib
 import numpy as np
 import io
 import re
+import pytesseract
+from pdf2image import convert_from_bytes
 
 # Initialize the API
 app = FastAPI(title="Credixa Risk Engine", version="1.0")
@@ -15,16 +17,25 @@ try:
 except Exception as e:
     print(f"Error loading model: {e}")
 
-def extract_financial_features(pdf_bytes: bytes):
+def extract_financial_features(pdf_bytes: bytes, use_ocr: bool = False):
     """
     Parses the PDF and extracts behavioral features.
     """
     text = ""
-    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-        for page in pdf.pages:
-            extracted = page.extract_text()
-            if extracted:
-                text += extracted + "\n"
+    if use_ocr:
+        try:
+            images = convert_from_bytes(pdf_bytes)
+            for image in images:
+                text += pytesseract.image_to_string(image) + "\n"
+        except Exception as e:
+            print(f"OCR Failed: {e}")
+    
+    if not text.strip():
+        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+            for page in pdf.pages:
+                extracted = page.extract_text()
+                if extracted:
+                    text += extracted + "\n"
     
     text_upper = text.upper()
     
@@ -52,7 +63,8 @@ def extract_financial_features(pdf_bytes: bytes):
 async def analyze_statement(
     student_file: UploadFile = File(...), 
     parent_file: UploadFile = File(...),
-    academic_score: float = 7.0
+    academic_score: float = Query(7.0),
+    use_ocr: bool = Query(False)
 ):
     """
     The main scoring endpoint that analyzes both Student and Parent PDFs
@@ -67,8 +79,8 @@ async def analyze_statement(
         parent_bytes = await parent_file.read()
         
         # 3. Extract the features from BOTH statements
-        s_avg_balance, s_overdrafts, s_gambling = extract_financial_features(student_bytes)
-        p_avg_balance, p_overdrafts, p_gambling = extract_financial_features(parent_bytes)
+        s_avg_balance, s_overdrafts, s_gambling = extract_financial_features(student_bytes, use_ocr)
+        p_avg_balance, p_overdrafts, p_gambling = extract_financial_features(parent_bytes, use_ocr)
         
         # 4. Combine the features for the Household Risk ML Model
         # (Average the balance, but add the risk flags together!)
@@ -139,8 +151,9 @@ async def analyze_statement(
 
 @app.post("/validate-document")
 async def validate_document(
-    doc_type: str,
-    expected_name: str = None,
+    doc_type: str = Form(...),
+    expected_name: str = Query(None),
+    use_ocr: bool = Query(False),
     file: UploadFile = File(...)
 ):
     if file.content_type != "application/pdf":
@@ -149,11 +162,21 @@ async def validate_document(
     try:
         pdf_bytes = await file.read()
         text = ""
-        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-            for page in pdf.pages[:3]: # limit to first 3 pages
-                extracted = page.extract_text()
-                if extracted:
-                    text += extracted + "\n"
+        
+        if use_ocr:
+            try:
+                images = convert_from_bytes(pdf_bytes)
+                for image in images[:3]: # limit to first 3 pages
+                    text += pytesseract.image_to_string(image) + "\n"
+            except Exception as e:
+                print(f"OCR Failed in validate: {e}")
+                
+        if not text.strip():
+            with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+                for page in pdf.pages[:3]: # limit to first 3 pages
+                    extracted = page.extract_text()
+                    if extracted:
+                        text += extracted + "\n"
                     
         text_upper = text.upper()
         is_valid = False
@@ -180,7 +203,11 @@ async def validate_document(
         # Name Matching Logic
         name_match = True
         extracted_name = "Not Identified"
-        if expected_name and is_valid:
+        
+        # Skip name match for general documents that don't typically contain applicant names
+        skip_name_match = "FEE" in doc_type_upper or "PROSPECTUS" in doc_type_upper
+        
+        if expected_name and is_valid and not skip_name_match:
             # Simple heuristic: see if the parts of the name appear in the text
             name_parts = [p.strip() for p in expected_name.upper().split() if len(p.strip()) > 2]
             match_count = sum(1 for p in name_parts if p in text_upper)
@@ -208,7 +235,7 @@ async def validate_document(
         # --- NEW: Extract Structured Details ---
         structured = {}
         if "STATEMENT" in doc_type_upper:
-            balance, overdrafts, gambling = extract_financial_features(pdf_bytes)
+            balance, overdrafts, gambling = extract_financial_features(pdf_bytes, use_ocr)
             structured = {
                 "Average Balance": f"₹{balance:,.2f}",
                 "Overdraft Alerts": overdrafts,
@@ -227,6 +254,12 @@ async def validate_document(
             structured = {
                 "Course Detected": course_match.group(1).strip() if course_match else "Detected",
                 "Verification": "University Match Confirmed"
+            }
+        elif "FEE" in doc_type_upper or "STRUCTURE" in doc_type_upper:
+            fee_match = re.search(r"(?:TOTAL|GRAND TOTAL|FEE|AMOUNT)[\s:A-Za-z]*([\d,]+(?:\.\d{2})?)", text_upper)
+            structured = {
+                "Fee Document Status": "Valid Structure Found",
+                "Total Amount Detected": f"₹{fee_match.group(1)}" if fee_match else "Extracted from context"
             }
         else:
             structured = {"Content Status": "Verified & Parsed"}

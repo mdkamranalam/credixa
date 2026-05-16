@@ -65,6 +65,9 @@ CREATE TABLE users (
     current_semester_marks VARCHAR(20),
     risk_flags TEXT [],
     kyc_source VARCHAR(50),
+    pre_approval_score INT,
+    analysis_reasoning TEXT,
+    analysis_highlights JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -169,6 +172,8 @@ CREATE TABLE loan_documents (
     file_url TEXT NOT NULL,
     extraction_method VARCHAR(50),
     extraction_confidence DECIMAL(5, 2),
+    extracted_text TEXT,
+    structured_details JSONB,
     is_verified BOOLEAN DEFAULT FALSE,
     verified_at TIMESTAMP WITH TIME ZONE,
     uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
