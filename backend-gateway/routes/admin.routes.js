@@ -4,33 +4,91 @@ import dotenv from "dotenv";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
-import { authenticateToken } from "../middleware/auth.middleware.js";
+import { enhancedAuthenticateToken } from "../middleware/auth.middleware.js";
 
 dotenv.config();
 const router = express.Router();
 
 const { Pool } = pg;
+// Enhanced connection pool configuration with additional security
 const pool = new Pool({
   user: process.env.DB_USER || "credixa_admin",
   host: process.env.DB_HOST || "localhost",
   database: process.env.DB_NAME || "credixa_db",
   password: process.env.DB_PASSWORD || "admin@123",
   port: process.env.DB_PORT || 5432,
+  max: 20, // max number of clients in the pool
+  idleTimeoutMillis: 30000, // close idle clients after 30 seconds
+  connectionTimeoutMillis: 5000, // return an error after 5 seconds if connection could not be established
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  // Additional security settings
+  allowExitOnIdle: true,
+  maxUses: 1000, // Reuse connections after 1000 queries
 });
 
+// Enhanced error handling for database connections
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err);
+  // Log the error and potentially restart the pool or alert admins
+  // In production, you might want to implement more sophisticated error handling
 });
 
+// Pool connection monitoring
+pool.on('connect', (client) => {
+  // Set client timeout for security
+  client.query('SET statement_timeout = 5000'); // 5 second timeout
+});
 
-// Configure storage for the "Document Vault"
+// Monitor pool health
+setInterval(() => {
+  console.log(`Pool stats - Total: ${pool.totalCount}, Idle: ${pool.idleCount}`);
+}, 60000); // Log every minute
+
+// Configure storage for the "Document Vault" with enhanced security
 const storage = multer.diskStorage({
   destination: "./uploads/loan_docs/",
   filename: (req, file, cb) => {
-    cb(null, `${req.params.loanId}_${Date.now()}_${file.originalname}`);
+    // Sanitize filename to prevent directory traversal attacks
+    const loanId = req.params.loanId;
+    const timestamp = Date.now();
+    const sanitizedFilename = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '');
+
+    // Additional validation for loan ID
+    const loanIdPattern = /^[a-zA-Z0-9\-_]+$/;
+    if (!loanIdPattern.test(loanId)) {
+      return cb(new Error("Invalid loan ID format"));
+    }
+
+    cb(null, `${loanId}_${timestamp}_${sanitizedFilename}`);
   }
 });
-const upload = multer({ storage });
+
+// Enhanced multer configuration with file size limits and type validation
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Define allowed file types
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain'
+    ];
+
+    // Check file type
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF, JPG, PNG, DOC, DOCX, and TXT files are allowed.'));
+    }
+  }
+});
 
 router.post("/loans/:loanId/co-applicant", authenticateToken, async (req, res) => {
   const { loanId } = req.params;
@@ -48,12 +106,41 @@ router.post("/loans/:loanId/co-applicant", authenticateToken, async (req, res) =
   }
 });
 
-router.post("/loans/:loanId/upload-doc", authenticateToken, upload.single("document"), async (req, res) => {
+router.post("/loans/:loanId/upload-doc", enhancedAuthenticateToken, upload.single("document"), async (req, res) => {
   const { loanId } = req.params;
   const { owner_type, category, doc_type } = req.body;
   const fileUrl = req.file.path;
 
   try {
+    // Input validation
+    if (!loanId || typeof loanId !== 'string' || loanId.trim() === '') {
+      return res.status(400).json({ error: "Valid loan ID is required." });
+    }
+
+    // Additional validation for loan ID format
+    const loanIdPattern = /^[a-zA-Z0-9\-_]+$/;
+    if (!loanIdPattern.test(loanId)) {
+      return res.status(400).json({ error: "Invalid loan ID format." });
+    }
+
+    // Validate document type
+    const validTypes = ['PAN', 'AADHAAR', 'BANK_STATEMENT', 'INCOME_PROOF', 'COLLEGE_ID', 'OTHER'];
+    if (!doc_type || !validTypes.includes(doc_type)) {
+      return res.status(400).json({ error: "Valid document type is required." });
+    }
+
+    // Additional security: validate file path to prevent directory traversal
+    if (!fileUrl.startsWith('./uploads/loan_docs/')) {
+      return res.status(400).json({ error: "Invalid file path." });
+    }
+
+    // Additional security: validate file name
+    const fileName = req.file.filename;
+    const fileNamePattern = /^[a-zA-Z0-9\-_]+_[0-9]+_[a-zA-Z0-9._-]+$/;
+    if (!fileNamePattern.test(fileName)) {
+      return res.status(400).json({ error: "Invalid file name format." });
+    }
+
     const query = `
       INSERT INTO loan_documents (loan_id, owner_type, category, doc_type, file_url)
       VALUES ($1, $2, $3, $4, $5) RETURNING *;
@@ -61,6 +148,7 @@ router.post("/loans/:loanId/upload-doc", authenticateToken, upload.single("docum
     const result = await pool.query(query, [loanId, owner_type, category, doc_type, fileUrl]);
     res.status(201).json({ message: "Document uploaded successfully", doc: result.rows[0] });
   } catch (err) {
+    console.error("Document upload error:", err);
     res.status(500).json({ error: "Document upload failed." });
   }
 });
@@ -123,21 +211,46 @@ router.get("/loans", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/loans/:loanId/status", authenticateToken, async (req, res) => {
+router.put("/loans/:loanId/status", enhancedAuthenticateToken, async (req, res) => {
   if (req.user.role !== "INSTITUTION_ADMIN") {
     return res.status(403).json({ error: "Access denied." });
   }
 
   const { loanId } = req.params;
   const { status, approved_amount } = req.body;
-  const client = await pool.connect();
+  const client = await securePool.connect();
 
   try {
+    // Input validation
+    if (!loanId || typeof loanId !== 'string' || loanId.trim() === '') {
+      return res.status(400).json({ error: "Valid loan ID is required." });
+    }
+
+    // Additional validation for loan ID format
+    const loanIdPattern = /^[a-zA-Z0-9\-_]+$/;
+    if (!loanIdPattern.test(loanId)) {
+      return res.status(400).json({ error: "Invalid loan ID format." });
+    }
+
+    if (status && typeof status !== 'string') {
+      return res.status(400).json({ error: "Valid status is required." });
+    }
+
+    // Validate approved_amount if provided
+    if (approved_amount !== undefined && (isNaN(approved_amount) || approved_amount <= 0)) {
+      return res.status(400).json({ error: "Valid approved amount (positive number) is required." });
+    }
+
+    // Additional security: validate that the user has proper institution access
+    if (!req.user || !req.user.institution_id) {
+      return res.status(403).json({ error: "Unauthorized access." });
+    }
+
     await client.query("BEGIN");
 
     // 1. Update the Loan Status
     const updateQuery = `
-            UPDATE loans 
+            UPDATE loans
             SET status = $1, approved_amount = COALESCE($2, requested_amount), updated_at = NOW()
             WHERE loan_id = $3 AND institution_id = $4
     RETURNING *;
@@ -159,6 +272,11 @@ router.put("/loans/:loanId/status", authenticateToken, async (req, res) => {
     if (status === "APPROVED" || status === "ACTIVE") {
       const months = loan.tenure_months;
       const emi = parseFloat(loan.approved_amount) / months;
+
+      // Validate tenure and EMI calculation
+      if (months <= 0 || isNaN(emi) || emi <= 0) {
+        throw new Error("Invalid loan terms for EMI calculation.");
+      }
 
       for (let i = 1; i <= months; i++) {
         const dueDate = new Date();
@@ -191,7 +309,8 @@ router.put("/loans/:loanId/status", authenticateToken, async (req, res) => {
       .json({ message: "Loan approved and schedule generated!", loan });
   } catch (error) {
     await client.query("ROLLBACK");
-    res.status(500).json({ error: error.message });
+    // Don't expose internal error details to client
+    res.status(500).json({ error: "Internal server error occurred during loan approval." });
   } finally {
     client.release();
   }
@@ -334,7 +453,53 @@ router.put("/checklist", authenticateToken, async (req, res) => {
 
   try {
     const newChecklist = req.body;
-    await fs.writeFile(CHECKLIST_FILE, JSON.stringify(newChecklist, null, 2), "utf-8");
+
+    // Input validation for checklist data
+    if (!newChecklist || typeof newChecklist !== 'object') {
+      return res.status(400).json({ error: "Valid checklist data is required." });
+    }
+
+    // Validate checklist structure to prevent malicious input
+    // This is a basic validation - in a production system, you might want more comprehensive validation
+    const checklistJson = JSON.stringify(newChecklist, null, 2);
+
+    // Basic check to prevent malicious file content
+    if (checklistJson.length > 100000) { // 100KB limit
+      return res.status(400).json({ error: "Checklist data too large." });
+    }
+
+    // Additional security checks for checklist content
+    try {
+      const parsedChecklist = JSON.parse(checklistJson);
+
+      // Check for potentially dangerous keys or structures
+      const dangerousPatterns = ['__proto__', 'constructor', 'prototype'];
+      const hasDangerousKeys = Object.keys(parsedChecklist).some(key =>
+        dangerousPatterns.includes(key)
+      );
+
+      if (hasDangerousKeys) {
+        return res.status(400).json({ error: "Invalid checklist structure detected." });
+      }
+
+      // Validate that checklist items are properly formatted
+      if (Array.isArray(parsedChecklist)) {
+        for (const item of parsedChecklist) {
+          if (typeof item !== 'object' || !item.title || !item.description) {
+            return res.status(400).json({ error: "Invalid checklist item format." });
+          }
+          // Additional validation for item content
+          if (typeof item.title !== 'string' || typeof item.description !== 'string') {
+            return res.status(400).json({ error: "Checklist item title and description must be strings." });
+          }
+        }
+      }
+
+    } catch (parseError) {
+      return res.status(400).json({ error: "Invalid checklist JSON format." });
+    }
+
+    await fs.writeFile(CHECKLIST_FILE, checklistJson, "utf-8");
     res.status(200).json({ message: "Checklist updated successfully." });
   } catch (err) {
     console.error("Failed to update checklist:", err);
