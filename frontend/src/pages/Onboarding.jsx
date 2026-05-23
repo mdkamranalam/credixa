@@ -470,9 +470,11 @@ const Onboarding = () => {
                 </div>
               )}
 
-              <div className="border border-gray-100 rounded-lg p-5 bg-gray-50">
-                <h4 className="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Uploaded Documents Tracker</h4>
-                <div className="grid grid-cols-1 gap-3">
+              <div className="border border-gray-200/80 rounded-xl p-6 bg-gradient-to-br from-gray-50 to-white shadow-sm">
+                <h4 className="font-bold text-gray-800 mb-4 border-b border-gray-200 pb-3 flex items-center">
+                  <ShieldCheck className="w-5 h-5 mr-2 text-emerald-500" /> Uploaded Documents Tracker
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {profileData.documents?.map(doc => (
                     <div key={doc.doc_id} className="flex flex-col text-sm text-green-700 font-medium bg-green-50 p-3 rounded-lg border border-green-100 shadow-sm">
                       <div className="flex items-center">
@@ -543,45 +545,48 @@ const Onboarding = () => {
             ) : analysisResult ? (
               <div className="text-left">
                 <div className="flex items-center justify-center mb-8">
-                   <div className={`w-32 h-32 rounded-full border-8 flex items-center justify-center ${analysisResult.score > 70 ? 'border-green-500' : analysisResult.score > 40 ? 'border-yellow-500' : 'border-red-500'}`}>
-                      <div className="text-center">
-                        <span className="text-3xl font-black block leading-none">{Math.round(analysisResult.score)}</span>
-                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Omniscore</span>
+                   <div className={`w-36 h-36 rounded-full border-8 flex items-center justify-center shadow-xl transition-all duration-700 ease-out transform hover:scale-105 relative ${analysisResult.score >= 70 ? 'border-emerald-400 bg-emerald-50' : analysisResult.score >= 40 ? 'border-amber-400 bg-amber-50' : 'border-rose-400 bg-rose-50'}`}>
+                      <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${analysisResult.score >= 70 ? 'bg-emerald-400' : analysisResult.score >= 40 ? 'bg-amber-400' : 'bg-rose-400'}`}></div>
+                      <div className="text-center relative z-10">
+                        <span className={`text-4xl font-black block leading-none tracking-tight ${analysisResult.score >= 70 ? 'text-emerald-700' : analysisResult.score >= 40 ? 'text-amber-700' : 'text-rose-700'}`}>{Math.round(analysisResult.score)}</span>
+                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-2 block">Pre-Approval</span>
                       </div>
                    </div>
                 </div>
                 
-                <h3 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Profile Readiness Analysis</h3>
-                <p className="text-gray-700 bg-gray-50 p-4 rounded-lg italic border-l-4 border-emerald-500 mb-6 text-sm">
+                <h3 className="text-xl font-bold text-slate-900 mb-4 border-b pb-2">Profile Readiness Analysis</h3>
+                <p className="text-slate-700 bg-slate-50 p-4 rounded-xl italic border-l-4 border-emerald-500 mb-8 text-sm">
                   "{analysisResult.reasoning}"
-                </p>
-
+                </p>                
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-100">
-                    <h4 className="text-sm font-bold text-green-800 mb-3 flex items-center">
-                      <CheckCircle className="w-4 h-4 mr-2" /> Positive Indicators
+                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-5 rounded-xl border border-emerald-200/60 shadow-sm transition-all hover:shadow-md">
+                    <h4 className="text-sm font-bold text-emerald-900 mb-4 flex items-center bg-white/60 w-fit px-3 py-1 rounded-full border border-emerald-100">
+                      <CheckCircle className="w-4 h-4 mr-2 text-emerald-600" /> Positive Indicators
                     </h4>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {analysisResult.highlights.pros.map((pro, idx) => (
-                        <li key={idx} className="text-xs text-green-700 flex items-start">
-                          <span className="mr-2">•</span> {pro}
+                        <li key={idx} className="text-sm text-emerald-800 flex items-start font-medium leading-relaxed">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 mr-3 flex-shrink-0"></div> {pro}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="bg-red-50 p-4 rounded-lg border border-red-100">
-                    <h4 className="text-sm font-bold text-red-800 mb-3 flex items-center">
-                      <AlertCircle className="w-4 h-4 mr-2" /> Action Recommended
+                  <div className="bg-gradient-to-br from-rose-50 to-rose-100/50 p-5 rounded-xl border border-rose-200/60 shadow-sm transition-all hover:shadow-md">
+                    <h4 className="text-sm font-bold text-rose-900 mb-4 flex items-center bg-white/60 w-fit px-3 py-1 rounded-full border border-rose-100">
+                      <AlertCircle className="w-4 h-4 mr-2 text-rose-600" /> Action Recommended
                     </h4>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {analysisResult.highlights.cons.length > 0 ? (
                         analysisResult.highlights.cons.map((con, idx) => (
-                          <li key={idx} className="text-xs text-red-700 flex items-start">
-                            <span className="mr-2">•</span> {con}
+                          <li key={idx} className="text-sm text-rose-800 flex items-start font-medium leading-relaxed">
+                             <div className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-2 mr-3 flex-shrink-0"></div> {con}
                           </li>
                         ))
                       ) : (
-                        <li className="text-xs text-green-700 italic">No significant concerns detected.</li>
+                        <li className="text-sm text-emerald-700 italic font-medium flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-2 text-emerald-500" /> No significant concerns detected.
+                        </li>
                       )}
                     </ul>
                   </div>

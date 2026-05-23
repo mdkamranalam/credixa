@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
-import { enhancedAuthenticateToken } from "../middleware/auth.middleware.js";
+import { enhancedAuthenticateToken, authenticateToken } from "../middleware/auth.middleware.js";
 
 dotenv.config();
 const router = express.Router();
@@ -218,7 +218,7 @@ router.put("/loans/:loanId/status", enhancedAuthenticateToken, async (req, res) 
 
   const { loanId } = req.params;
   const { status, approved_amount } = req.body;
-  const client = await securePool.connect();
+  const client = await pool.connect();
 
   try {
     // Input validation

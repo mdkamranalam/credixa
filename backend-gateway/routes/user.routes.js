@@ -373,6 +373,26 @@ router.post("/run-analysis", authenticateToken, async (req, res) => {
         // If we found meaningful structured data
         if (details && Object.keys(details).length > 0 && !Object.values(details).includes("Not Found")) {
           score += (80 / docs.length);
+
+          // PRE-APPROVAL RISK CHECKS
+          if (details["Risk Keywords Found"] && details["Risk Keywords Found"] > 0) {
+            const numKeywords = parseInt(details["Risk Keywords Found"]);
+            score -= (numKeywords * 10);
+            cons.push(`High risk alert: Detected ${numKeywords} risk keyword(s) in ${doc.doc_type.replace(/_/g, ' ')}.`);
+          }
+          
+          if (details["Extracted Marks/Score"]) {
+            const marksStr = String(details["Extracted Marks/Score"]);
+            if (!isNaN(parseFloat(marksStr))) {
+              const marks = parseFloat(marksStr);
+              // Normalize to percentage if it's a CGPA (<= 10)
+              const percentage = marks <= 10 ? marks * 10 : marks; 
+              if (percentage < 60) {
+                score -= 15;
+                cons.push(`Academic risk: Low scores detected (${marks}) in ${doc.doc_type.replace(/_/g, ' ')}. This may affect final eligibility.`);
+              }
+            }
+          }
         } else {
           score += (40 / docs.length); // Partial points
           cons.push(`Extraction for ${doc.doc_type.replace(/_/g, ' ')} was partial. Ensure clarity.`);
@@ -392,15 +412,15 @@ router.post("/run-analysis", authenticateToken, async (req, res) => {
       pros.push("Financial data successfully digitized and structured.");
     }
 
-    const finalScore = Math.min(Math.round(score), 100);
+    const finalScore = Math.max(0, Math.min(Math.round(score), 100));
     let reasoning = "";
 
     if (finalScore >= 90) {
-      reasoning = "Excellent Profile Readiness: Your documents have been successfully parsed by our OCR engine with high accuracy. You are fully ready to apply for a loan.";
+      reasoning = "Excellent Profile Readiness: Your documents have been successfully parsed and no immediate risk flags were detected. You are fully ready to apply for a loan.";
     } else if (finalScore >= 70) {
-      reasoning = "Good Profile Readiness: Most of your documents were digitized. Some manual verification might be required during loan processing.";
+      reasoning = "Good Profile Readiness: Most of your documents were digitized. Minor risks or manual verifications might be required during loan processing.";
     } else {
-      reasoning = "Action Recommended: Several documents could not be fully parsed. You may proceed, but expect manual reviews.";
+      reasoning = "Action Recommended: We detected potential risks in your academic/financial profile, or several documents could not be fully parsed. You may proceed, but expect manual reviews or higher scrutiny.";
       if (cons.length === 0) cons.push("Overall data extraction confidence is low.");
     }
 
