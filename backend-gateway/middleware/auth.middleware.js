@@ -25,8 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "super_secret_credixa_key_change_in_production";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];

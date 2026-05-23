@@ -26,7 +26,7 @@ const pool = new Pool({
   user: process.env.DB_USER || "credixa_admin",
   host: process.env.DB_HOST || "localhost",
   database: process.env.DB_NAME || "credixa_db",
-  password: process.env.DB_PASSWORD || "admin@123",
+  password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT || 5432,
 });
 
@@ -46,9 +46,47 @@ pool.connect((err, client, release) => {
   if (client) release();
 });
 
+// Validate required environment variables
+if (!process.env.JWT_SECRET) {
+  console.error("ERROR: JWT_SECRET environment variable is not set. Exiting.");
+  process.exit(1);
+}
+
+if (!process.env.DB_PASSWORD) {
+  console.error("ERROR: DB_PASSWORD environment variable is not set. Exiting.");
+  process.exit(1);
+}
+
 // Basic Health Check Route
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "API Gateway is online", db_connected: true });
+  res.status(200).json({
+    status: "API Gateway is online",
+    db_connected: true,
+    timestamp: new Date().toISOString(),
+    service: "backend-gateway"
+  });
+});
+
+// Database Health Check Route
+app.get("/health/db", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    await client.query('SELECT 1');
+    client.release();
+    res.status(200).json({
+      status: "OK",
+      timestamp: new Date().toISOString(),
+      database: "connected"
+    });
+  } catch (error) {
+    console.error("Database health check failed:", error);
+    res.status(500).json({
+      status: "ERROR",
+      timestamp: new Date().toISOString(),
+      database: "disconnected",
+      error: error.message
+    });
+  }
 });
 
 // API Routes

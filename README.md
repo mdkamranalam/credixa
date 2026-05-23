@@ -75,3 +75,14 @@ docker-compose down -v
 - **AI-Powered Underwriting:** Automated loan decisioning using predictive ML models evaluating non-traditional financial indicators.
 - **Dynamic Dashboards:** Real-time application tracking and repayment schedules.
 - **Role-Based Access:** Dedicated portals and functionality for students and administrators.
+
+## 🔒 Security Improvements
+
+This platform has been updated with critical security enhancements:
+
+1. **Environment Variable Management**: All sensitive credentials are now managed through environment variables instead of hardcoded values
+2. **Health Checks**: Added comprehensive health check endpoints for monitoring service status
+3. **Validation**: Implemented validation to ensure required environment variables are set
+4. **Docker Security**: Enhanced Docker configurations with proper health checks
+
+For detailed information on security improvements, please refer to [SECURITY_IMPROVEMENTS.md](SECURITY_IMPROVEMENTS.md)

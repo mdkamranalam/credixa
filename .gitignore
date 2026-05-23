@@ -59,6 +59,8 @@ database/data/
 
 # Other
 docs/*
+assist.md
+CLAUDE.md
 
 # AI / agent tooling
 .agent/
