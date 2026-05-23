@@ -27,7 +27,7 @@ export const approveAndDisburse = async (req, res) => {
 
     // Check if loan has already been disbursed
     const checkDisbursement = `
-      SELECT status, disbursed_at, institution_id, user_id FROM loans WHERE loan_id = $1 AND institution_id = $2;
+      SELECT status, disbursed_at, institution_id, user_id, interest_rate, tenure_months FROM loans WHERE loan_id = $1 AND institution_id = $2;
     `;
     const checkRes = await client.query(checkDisbursement, [sanitizedLoanId, req.user.institution_id]);
 
@@ -63,6 +63,17 @@ export const approveAndDisburse = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized access to this loan." });
     }
 
+    // Validate that the loan has required fields for EMI calculation
+    if (loan.interest_rate === undefined || loan.interest_rate === null) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "Loan interest rate not found." });
+    }
+
+    if (loan.tenure_months === undefined || loan.tenure_months === null || loan.tenure_months <= 0) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "Loan tenure months not found or invalid." });
+    }
+
     // 2. Record the 'DISBURSAL' Transaction (Table 5)
     const disbursalTxn = `
       INSERT INTO transactions (loan_id, user_id, amount, txn_type, status, idempotency_key)
@@ -76,7 +87,19 @@ export const approveAndDisburse = async (req, res) => {
     ]);
 
     // 3. Generate Repayment Schedule (Table 6)
-    const emi = approvedAmount / loan.tenure_months; // Simplified flat EMI
+    // Calculate EMI using standard formula: EMI = P * r * (1 + r)^n / ((1 + r)^n - 1)
+    // where P = principal, r = monthly interest rate, n = number of months
+    const monthlyInterestRate = (loan.interest_rate / 100) / 12;
+    const numberOfPayments = loan.tenure_months;
+
+    // Handle case where interest rate is 0 to avoid division by zero
+    let emi;
+    if (monthlyInterestRate === 0) {
+        emi = approvedAmount / numberOfPayments;
+    } else {
+        emi = (approvedAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) /
+              (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+    }
     for (let i = 1; i <= loan.tenure_months; i++) {
       const dueDate = new Date();
       dueDate.setMonth(dueDate.getMonth() + i);
