@@ -6,7 +6,7 @@ import CoApplicantForm from "../components/CoApplicantForm";
 import DocumentUpload from "../components/DocumentUpload";
 
 const Onboarding = () => {
-  const [step, setStep] = useState(2); // Step 1 is Basic Auth, which is already done
+  const [step, setStep] = useState(2);
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
   const [fraudConsent, setFraudConsent] = useState(false);

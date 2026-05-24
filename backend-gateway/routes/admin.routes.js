@@ -17,13 +17,13 @@ const pool = new Pool({
   database: process.env.DB_NAME || "credixa_db",
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT || 5432,
-  max: 20, // max number of clients in the pool
-  idleTimeoutMillis: 30000, // close idle clients after 30 seconds
-  connectionTimeoutMillis: 5000, // return an error after 5 seconds if connection could not be established
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
   ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   // Additional security settings
   allowExitOnIdle: true,
-  maxUses: 1000, // Reuse connections after 1000 queries
+  maxUses: 1000,
 });
 
 // Enhanced error handling for database connections
