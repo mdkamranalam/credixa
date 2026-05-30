@@ -23,7 +23,7 @@ services:
       - risk-engine
     environment:
       - DB_HOST=credixa-postgres
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD:-admin@123}
       - RISK_ENGINE_URL=http://risk-engine:8000/analyze-statement
     volumes:
       - ./backend-gateway:/app
