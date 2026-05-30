@@ -80,13 +80,13 @@ export const enhancedAuthenticateToken = (req, res, next) => {
     const verifiedUser = jwt.verify(token, JWT_SECRET);
 
     // Additional security checks
-    if (!verifiedUser || !verifiedUser.user_id || !verifiedUser.role) {
+    if (!verifiedUser || (!verifiedUser.id && !verifiedUser.user_id) || !verifiedUser.role) {
       logger.warn(`Enhanced authentication failed: Invalid token structure for ${req.path}`);
       return res.status(403).json({ error: "Invalid token structure." });
     }
 
     req.user = verifiedUser;
-    logger.info(`Enhanced authentication successful for user: ${verifiedUser.user_id}`);
+    logger.info(`Enhanced authentication successful for user: ${verifiedUser.id || verifiedUser.user_id}`);
     next();
   } catch (error) {
     logger.warn(`Enhanced authentication failed: Invalid or expired token for ${req.path}`);
