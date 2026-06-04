@@ -21,6 +21,18 @@ const AdminDashboard = () => {
   const [instDetails, setInstDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Loans Table Filters & Pagination
+  const [loanSearch, setLoanSearch] = useState("");
+  const [loanStatusFilter, setLoanStatusFilter] = useState("ALL");
+  const [loanPage, setLoanPage] = useState(1);
+  const LOANS_PER_PAGE = 5;
+
+  // Transactions Table Filters & Pagination
+  const [txnSearch, setTxnSearch] = useState("");
+  const [txnTypeFilter, setTxnTypeFilter] = useState("ALL");
+  const [txnPage, setTxnPage] = useState(1);
+  const TXNS_PER_PAGE = 5;
+
   // Modal State
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -45,19 +57,16 @@ const AdminDashboard = () => {
 
   // Checklist State
   const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
-  const [checklistData, setChecklistData] = useState("");
+  const [checklistData, setChecklistData] = useState([]);
 
   const handleSaveChecklist = async () => {
     setIsProcessing(true);
     setActionError("");
     try {
-      const parsedData = JSON.parse(checklistData);
-      await api.put("/admin/checklist", parsedData);
+      await api.put("/admin/checklist", checklistData);
       setIsChecklistModalOpen(false);
     } catch (err) {
-      setActionError(err.name === "SyntaxError"
-        ? "Invalid JSON format. Please correct it before saving."
-        : "Failed to save checklist to server.");
+      setActionError("Failed to save checklist to server.");
     } finally {
       setIsProcessing(false);
     }
@@ -172,6 +181,25 @@ const AdminDashboard = () => {
       ? Math.min(100, (totalPaidTxns / totalDisbursed) * 100).toFixed(1)
       : "0.0";
 
+  // Filter & Paginate Loans
+  const filteredLoans = loans.filter((l) => {
+    const matchesSearch = (l.full_name || "").toLowerCase().includes(loanSearch.toLowerCase()) || 
+                          (l.college_roll_number || "").toLowerCase().includes(loanSearch.toLowerCase());
+    const matchesStatus = loanStatusFilter === "ALL" || l.status === loanStatusFilter;
+    return matchesSearch && matchesStatus;
+  });
+  const totalLoanPages = Math.ceil(filteredLoans.length / LOANS_PER_PAGE) || 1;
+  const currentLoans = filteredLoans.slice((loanPage - 1) * LOANS_PER_PAGE, loanPage * LOANS_PER_PAGE);
+
+  // Filter & Paginate Transactions
+  const filteredTxns = globalTransactions.filter((t) => {
+    const matchesSearch = (t.student_name || "").toLowerCase().includes(txnSearch.toLowerCase());
+    const matchesType = txnTypeFilter === "ALL" || t.txn_type === txnTypeFilter;
+    return matchesSearch && matchesType;
+  });
+  const totalTxnPages = Math.ceil(filteredTxns.length / TXNS_PER_PAGE) || 1;
+  const currentTxns = filteredTxns.slice((txnPage - 1) * TXNS_PER_PAGE, txnPage * TXNS_PER_PAGE);
+
   return (
     <div className="min-h-screen bg-gray-50 relative pb-10">
       {/* Top Navigation */}
@@ -251,13 +279,37 @@ const AdminDashboard = () => {
 
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Student Loan Applications
-          </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Review AI risk scores and manage BNPL disbursements.
-          </p>
+        <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between space-y-4 md:space-y-0">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Student Loan Applications
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              Review AI risk scores and manage BNPL disbursements.
+            </p>
+          </div>
+          <div className="flex space-x-3">
+            <input
+              type="text"
+              placeholder="Search by name or roll..."
+              value={loanSearch}
+              onChange={(e) => { setLoanSearch(e.target.value); setLoanPage(1); }}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+            />
+            <select
+              value={loanStatusFilter}
+              onChange={(e) => { setLoanStatusFilter(e.target.value); setLoanPage(1); }}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="APPLIED">Applied</option>
+              <option value="UNDER_REVIEW">Under Review</option>
+              <option value="APPROVED">Approved</option>
+              <option value="ACTIVE">Active</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="CLOSED">Closed</option>
+            </select>
+          </div>
         </div>
 
         {/* Data Table */}
@@ -297,7 +349,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {loans.map((loan) => (
+                {currentLoans.map((loan) => (
                   <tr
                     key={loan.loan_id}
                     className="hover:bg-gray-50 transition-colors"
@@ -370,29 +422,72 @@ const AdminDashboard = () => {
             </table>
             </div>
           )}
+          
+          {/* Loans Pagination */}
+          {!isLoading && filteredLoans.length > 0 && (
+            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+              <span className="text-sm text-gray-700">
+                Showing <span className="font-bold">{((loanPage - 1) * LOANS_PER_PAGE) + 1}</span> to <span className="font-bold">{Math.min(loanPage * LOANS_PER_PAGE, filteredLoans.length)}</span> of <span className="font-bold">{filteredLoans.length}</span> entries
+              </span>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => setLoanPage(p => Math.max(1, p - 1))}
+                  disabled={loanPage === 1}
+                  className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <button 
+                  onClick={() => setLoanPage(p => Math.min(totalLoanPages, p + 1))}
+                  disabled={loanPage === totalLoanPages}
+                  className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="mt-12 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
           <h3 className="text-lg font-bold text-gray-900 flex items-center">
             <ArrowRightLeft className="mr-2 h-5 w-5 text-emerald-500" />
             Recent Repayments & Disbursements
           </h3>
-          <button
-            onClick={async () => {
-              setIsChecklistModalOpen(true);
-              try {
-                const res = await api.get("/admin/checklist");
-                setChecklistData(JSON.stringify(res.data, null, 2));
-              } catch (e) {
-                setActionError("Could not load checklist data.");
-              }
-            }}
-            className="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold flex items-center transition-colors"
-          >
-            Manage Checklist
-          </button>
+          <div className="flex flex-wrap gap-3 items-center">
+            <input
+              type="text"
+              placeholder="Search student..."
+              value={txnSearch}
+              onChange={(e) => { setTxnSearch(e.target.value); setTxnPage(1); }}
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+            />
+            <select
+              value={txnTypeFilter}
+              onChange={(e) => { setTxnTypeFilter(e.target.value); setTxnPage(1); }}
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+            >
+              <option value="ALL">All Types</option>
+              <option value="DISBURSAL">Disbursal</option>
+              <option value="REPAYMENT">Repayment</option>
+            </select>
+            <button
+              onClick={async () => {
+                setIsChecklistModalOpen(true);
+                try {
+                  const res = await api.get("/admin/checklist");
+                  setChecklistData(res.data);
+                } catch (e) {
+                  setActionError("Could not load checklist data.");
+                }
+              }}
+              className="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg font-bold flex items-center transition-colors"
+            >
+              Manage Checklist
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -406,7 +501,9 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {globalTransactions.map((txn) => (
+            {currentTxns.length === 0 ? (
+               <tr><td colSpan="5" className="px-6 py-8 text-center text-gray-500">No transactions found matching your criteria.</td></tr>
+            ) : currentTxns.map((txn) => (
               <tr key={txn.id} className="text-sm">
                 <td className="px-6 py-4">
                   {new Date(txn.date).toLocaleDateString()}
@@ -437,6 +534,31 @@ const AdminDashboard = () => {
           </tbody>
         </table>
         </div>
+        
+        {/* Transactions Pagination */}
+        {filteredTxns.length > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+            <span className="text-sm text-gray-700">
+              Showing <span className="font-bold">{((txnPage - 1) * TXNS_PER_PAGE) + 1}</span> to <span className="font-bold">{Math.min(txnPage * TXNS_PER_PAGE, filteredTxns.length)}</span> of <span className="font-bold">{filteredTxns.length}</span> entries
+            </span>
+            <div className="flex space-x-2">
+              <button 
+                onClick={() => setTxnPage(p => Math.max(1, p - 1))}
+                disabled={txnPage === 1}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button 
+                onClick={() => setTxnPage(p => Math.min(totalTxnPages, p + 1))}
+                disabled={txnPage === totalTxnPages}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* --- NEW CHECKLIST MODAL --- */}
@@ -455,9 +577,9 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            <div className="p-6 flex-1 overflow-y-auto">
-              <p className="text-sm text-gray-500 mb-4">
-                Edit the JSON configuration below to instantly update the Document Checklist for all students. Ensure it remains valid JSON.
+            <div className="p-6 flex-1 overflow-y-auto bg-gray-50">
+              <p className="text-sm text-gray-500 mb-6 font-medium">
+                Add, remove, or modify the required documents for student loan onboarding.
               </p>
 
               {actionError && (
@@ -466,12 +588,86 @@ const AdminDashboard = () => {
                 </div>
               )}
 
-              <textarea
-                value={checklistData}
-                onChange={(e) => setChecklistData(e.target.value)}
-                className="w-full h-[50vh] p-4 font-mono text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50"
-                spellCheck="false"
-              />
+              <div className="space-y-6">
+                {Array.isArray(checklistData) && checklistData.map((category, catIdx) => (
+                  <div key={catIdx} className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                    <div className="mb-4 border-b border-gray-100 pb-3">
+                      <h4 className="font-black text-lg text-gray-900">{category.title}</h4>
+                      <p className="text-sm text-gray-500">{category.description}</p>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {category.items.map((item, itemIdx) => (
+                        <div key={itemIdx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 group transition-colors hover:bg-gray-100">
+                          <div className="flex-1 mr-4">
+                            <input 
+                              type="text" 
+                              value={item.name}
+                              onChange={(e) => {
+                                 const newData = [...checklistData];
+                                 newData[catIdx].items[itemIdx].name = e.target.value;
+                                 setChecklistData(newData);
+                              }}
+                              className="w-full bg-transparent font-bold text-sm text-gray-900 focus:outline-none focus:ring-0 p-0 border-transparent focus:border-transparent"
+                              placeholder="Document Name"
+                            />
+                            {item.note !== undefined && (
+                              <input 
+                                type="text" 
+                                value={item.note}
+                                onChange={(e) => {
+                                   const newData = [...checklistData];
+                                   newData[catIdx].items[itemIdx].note = e.target.value;
+                                   setChecklistData(newData);
+                                }}
+                                className="w-full text-xs text-gray-500 bg-transparent mt-1 focus:outline-none placeholder-gray-400"
+                                placeholder="Optional Note (e.g. Mandatory for abroad studies)"
+                              />
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-6">
+                            <label className="flex items-center space-x-2 cursor-pointer select-none">
+                              <input 
+                                type="checkbox" 
+                                checked={item.required}
+                                onChange={(e) => {
+                                   const newData = [...checklistData];
+                                   newData[catIdx].items[itemIdx].required = e.target.checked;
+                                   setChecklistData(newData);
+                                }}
+                                className="rounded text-emerald-500 focus:ring-emerald-500 h-5 w-5 bg-white border-gray-300"
+                              />
+                              <span className={`text-xs font-bold uppercase ${item.required ? 'text-emerald-600' : 'text-gray-400'}`}>Required</span>
+                            </label>
+                            <button 
+                              onClick={() => {
+                                 const newData = [...checklistData];
+                                 newData[catIdx].items.splice(itemIdx, 1);
+                                 setChecklistData(newData);
+                              }}
+                              className="text-gray-300 hover:text-red-500 transition-colors p-1"
+                              title="Remove Item"
+                            >
+                              <X className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <button 
+                      onClick={() => {
+                         const newData = [...checklistData];
+                         newData[catIdx].items.push({ name: "New Document", required: false, note: "" });
+                         setChecklistData(newData);
+                      }}
+                      className="mt-4 text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg transition-colors flex items-center"
+                    >
+                      + Add Document
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
