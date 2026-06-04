@@ -10,6 +10,7 @@ import {
   ArrowRightLeft,
   FileText,
   User,
+  Download,
 } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
@@ -201,6 +202,33 @@ const AdminDashboard = () => {
   });
   const totalTxnPages = Math.ceil(filteredTxns.length / TXNS_PER_PAGE) || 1;
   const currentTxns = filteredTxns.slice((txnPage - 1) * TXNS_PER_PAGE, txnPage * TXNS_PER_PAGE);
+
+  const handleExportCSV = () => {
+    if (filteredTxns.length === 0) return;
+    
+    const headers = ["Date", "Student Name", "Transaction Type", "Amount (INR)", "Status"];
+    const rows = filteredTxns.map(txn => [
+      new Date(txn.date).toLocaleDateString(),
+      `"${txn.student_name || ''}"`,
+      txn.txn_type,
+      txn.amount,
+      txn.status
+    ]);
+    
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.join(","))
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `credixa_transactions_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 relative pb-10">
@@ -475,6 +503,13 @@ const AdminDashboard = () => {
               <option value="DISBURSAL">Disbursal</option>
               <option value="REPAYMENT">Repayment</option>
             </select>
+            <button
+              onClick={handleExportCSV}
+              disabled={filteredTxns.length === 0}
+              className="text-sm bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-1.5 rounded-lg font-bold flex items-center transition-colors disabled:opacity-50"
+            >
+              <Download className="h-4 w-4 mr-2 text-gray-500" /> Export CSV
+            </button>
             <button
               onClick={async () => {
                 setIsChecklistModalOpen(true);
