@@ -11,6 +11,7 @@ import {
   FileText,
   User,
   Download,
+  RefreshCw,
 } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
@@ -21,6 +22,7 @@ const AdminDashboard = () => {
   const [loans, setLoans] = useState([]);
   const [instDetails, setInstDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Loans Table Filters & Pagination
   const [loanSearch, setLoanSearch] = useState("");
@@ -103,38 +105,50 @@ const AdminDashboard = () => {
   //   fetchDashboardData();
   // }, []);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const [loansRes, profileRes, txnRes] = await Promise.all([
-          api.get("/admin/loans").catch((err) => {
-            console.error("Loans failed", err);
-            return { data: [] };
-          }),
-          api.get("/admin/institution-profile").catch((err) => {
-            console.error("Profile failed", err);
-            return { data: null };
-          }),
-          api.get("/admin/transactions").catch((err) => {
-            console.error("Txns failed", err);
-            return { data: [] };
-          }),
-        ]);
-        setLoans(loansRes.data || []);
-        setInstDetails(profileRes.data || null);
-        setGlobalTransactions(txnRes.data || []);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchDashboardData = async () => {
+    try {
+      const [loansRes, profileRes, txnRes] = await Promise.all([
+        api.get("/admin/loans").catch((err) => {
+          console.error("Loans failed", err);
+          return { data: [] };
+        }),
+        api.get("/admin/institution-profile").catch((err) => {
+          console.error("Profile failed", err);
+          return { data: null };
+        }),
+        api.get("/admin/transactions").catch((err) => {
+          console.error("Txns failed", err);
+          return { data: [] };
+        }),
+      ]);
+      setLoans(loansRes.data || []);
+      setInstDetails(profileRes.data || null);
+      setGlobalTransactions(txnRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchDashboardData();
 
-    const interval = setInterval(fetchDashboardData, 10000);
+    // Smart Polling: Poll every 30 seconds only if the tab is visible
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchDashboardData();
+      }
+    }, 30000);
+    
     return () => clearInterval(interval);
   }, []);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchDashboardData();
+    setIsRefreshing(false);
+  };
 
   const handleLoanAction = async (status) => {
     setIsProcessing(true);
@@ -239,7 +253,15 @@ const AdminDashboard = () => {
           <h1 className="text-xl font-bold">Credixa Admin Console</h1>
         </div>
         <div className="flex items-center space-x-6">
-          <span className="text-gray-300 text-sm">
+          <button
+            onClick={handleManualRefresh}
+            disabled={isRefreshing}
+            className="flex items-center text-sm font-bold bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} /> 
+            {isRefreshing ? "Refreshing..." : "Refresh Data"}
+          </button>
+          <span className="text-gray-300 text-sm border-l border-gray-700 pl-6 hidden md:block">
             Welcome, {user?.full_name}
           </span>
           <button
