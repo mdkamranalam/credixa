@@ -37,6 +37,7 @@ const AdminDashboard = () => {
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [actionError, setActionError] = useState("");
+  const [confirmAction, setConfirmAction] = useState(null);
 
   // Dossier State
   const [studentDossier, setStudentDossier] = useState(null);
@@ -151,6 +152,7 @@ const AdminDashboard = () => {
 
       setLoans(loansRes.data);
       setGlobalTransactions(txnRes.data);
+      setConfirmAction(null);
       setSelectedLoan(null);
     } catch (error) {
       setActionError(
@@ -781,7 +783,7 @@ const AdminDashboard = () => {
                 Review Application
               </h3>
               <button
-                onClick={() => setSelectedLoan(null)}
+                onClick={() => { setSelectedLoan(null); setConfirmAction(null); }}
                 className="text-gray-400 hover:text-gray-600"
               >
                 <X className="h-5 w-5" />
@@ -909,22 +911,48 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex space-x-3">
-              <button
-                onClick={() => handleLoanAction("REJECTED")}
-                disabled={isProcessing}
-                className="flex-1 flex justify-center items-center py-2 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 disabled:opacity-50"
-              >
-                <XCircle className="w-4 h-4 mr-2" /> Reject
-              </button>
-              <button
-                onClick={() => handleLoanAction("APPROVED")}
-                disabled={isProcessing}
-                className="flex-1 flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" /> Approve & Disburse
-              </button>
-            </div>
+            {confirmAction ? (
+              <div className="bg-orange-50 px-6 py-4 border-t border-orange-200">
+                <p className="text-sm font-bold text-orange-800 mb-4 text-center">
+                  {confirmAction === "APPROVED" 
+                    ? `Are you sure you want to approve this application and disburse ₹${parseFloat(selectedLoan.requested_amount).toLocaleString("en-IN")}?` 
+                    : "Are you sure you want to reject this application? This action cannot be undone."}
+                </p>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setConfirmAction(null)}
+                    disabled={isProcessing}
+                    className="flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleLoanAction(confirmAction)}
+                    disabled={isProcessing}
+                    className={`flex-1 flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:opacity-50 ${confirmAction === "APPROVED" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}
+                  >
+                    {isProcessing ? "Processing..." : confirmAction === "APPROVED" ? "Yes, Disburse Funds" : "Yes, Reject"}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex space-x-3">
+                <button
+                  onClick={() => setConfirmAction("REJECTED")}
+                  disabled={isProcessing}
+                  className="flex-1 flex justify-center items-center py-2 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 disabled:opacity-50"
+                >
+                  <XCircle className="w-4 h-4 mr-2" /> Reject
+                </button>
+                <button
+                  onClick={() => setConfirmAction("APPROVED")}
+                  disabled={isProcessing}
+                  className="flex-1 flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" /> Approve & Disburse
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
