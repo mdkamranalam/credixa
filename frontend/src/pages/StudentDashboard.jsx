@@ -25,6 +25,7 @@ const StudentDashboard = () => {
   const [isApplying, setIsApplying] = useState(false);
   const [applyError, setApplyError] = useState("");
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
 
   // Form States (New Smart UI)
   const [loanAmount, setLoanAmount] = useState(20000);
@@ -207,6 +208,24 @@ const StudentDashboard = () => {
     }
   };
 
+  const handlePayEMI = async () => {
+    if (!activeLoan) return;
+    setIsPaying(true);
+    try {
+      const emiAmount = calculateEMI(activeLoan.approved_amount || activeLoan.requested_amount, activeLoan.interest_rate, activeLoan.tenure_months);
+      await api.post("/loans/repay", {
+        loan_id: activeLoan.loan_id,
+        amount: emiAmount
+      });
+      await loadDashboardData();
+    } catch (err) {
+      console.error("Payment failed", err);
+      alert(err.response?.data?.error || "Payment failed");
+    } finally {
+      setIsPaying(false);
+    }
+  };
+
   if (isLoading && !profile)
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -358,8 +377,16 @@ const StudentDashboard = () => {
                           <p className="text-lg font-black text-emerald-600">₹{calculateEMI(activeLoan.approved_amount || activeLoan.requested_amount, activeLoan.interest_rate, activeLoan.tenure_months).toLocaleString()}</p>
                         </div>
                       </div>
-                      <button className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-slate-800 transition-colors flex justify-center items-center">
-                        <Zap className="h-5 w-5 mr-2" /> Pay Next EMI Now
+                      <button 
+                        onClick={handlePayEMI}
+                        disabled={isPaying}
+                        className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-slate-800 transition-colors flex justify-center items-center disabled:opacity-50">
+                        {isPaying ? (
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        ) : (
+                          <Zap className="h-5 w-5 mr-2" /> 
+                        )}
+                        {isPaying ? "Processing..." : "Pay Next EMI Now"}
                       </button>
                     </div>
                   </>
