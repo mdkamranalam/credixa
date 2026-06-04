@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import FormData from "form-data";
 import axios from "axios";
-import fs from "fs";
+import { createReadStream, unlinkSync, existsSync, mkdirSync } from "fs";
 import pg from "pg";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import dotenv from "dotenv";
@@ -123,11 +123,11 @@ router.post(
       const formData = new FormData();
       formData.append(
         "student_file",
-        fs.createReadStream(req.files.student_statement[0].path),
+        createReadStream(req.files.student_statement[0].path),
       );
       formData.append(
         "parent_file",
-        fs.createReadStream(req.files.parent_statement[0].path),
+        createReadStream(req.files.parent_statement[0].path),
       );
 
       // Fetch academic score from user profile

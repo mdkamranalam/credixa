@@ -6,7 +6,7 @@ import { upload as diskUpload } from "../middleware/upload.middleware.js";
 import { encryptData, decryptData } from "../utils/encryption.js";
 import axios from "axios";
 import FormData from "form-data";
-import fs from "fs";
+import { createReadStream, unlinkSync } from "fs";
 
 dotenv.config();
 const router = express.Router();
@@ -170,7 +170,7 @@ router.post(
       // Create FormData to send file to risk engine
       const formData = new FormData();
       formData.append("doc_type", doc_type);
-      formData.append("file", fs.createReadStream(req.file.path));
+      formData.append("file", createReadStream(req.file.path));
 
       const riskEngineUrl = process.env.RISK_ENGINE_URL 
         ? process.env.RISK_ENGINE_URL.replace("/analyze-statement", "/validate-document")
@@ -199,7 +199,7 @@ router.post(
         });
 
         if (riskResponse.data && !riskResponse.data.valid) {
-          fs.unlinkSync(req.file.path); // remove invalid file
+          unlinkSync(req.file.path); // remove invalid file
           return res.status(400).json({ error: riskResponse.data.message });
         }
 
@@ -208,7 +208,7 @@ router.post(
         is_verified = true;
       } catch (riskError) {
         console.error("Risk engine validation failed or unavailable:", riskError.message);
-        fs.unlinkSync(req.file.path);
+        unlinkSync(req.file.path);
         return res.status(400).json({ error: "Failed to validate document. Ensure the file is a readable PDF." });
       }
 
