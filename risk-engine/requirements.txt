@@ -7,3 +7,7 @@ python-multipart
 joblib
 pytesseract
 pdf2image
+xgboost
+huggingface_hub
+pydantic
+shap

@@ -31,6 +31,7 @@ build/
 .env.test
 .env.production
 .env.local
+risk-engine/env/
 
 # Python
 __pycache__/
