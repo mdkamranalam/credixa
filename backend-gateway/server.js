@@ -10,6 +10,7 @@ import transactionRoutes from "./routes/transaction.routes.js";
 import institutionRoutes from "./routes/institution.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import fileRoutes from "./routes/file.routes.js";
 import { authenticateToken, requireRole } from "./middleware/auth.middleware.js";
 
 dotenv.config();
@@ -22,7 +23,8 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || "http://localhost:5173",
   credentials: true
 }));
-app.use('/uploads', express.static('uploads'));
+
+app.use("/uploads", fileRoutes);
 
 
 // Test the DB Connection on Startup

@@ -26,7 +26,9 @@ except Exception as e:
 # Initialize the API
 app = FastAPI(title="Credixa Risk Engine (AI Overhauled)", version="2.0")
 
-API_KEY = os.getenv("RISK_ENGINE_API_KEY", "credixa_internal_engine_key_2026")
+API_KEY = os.getenv("RISK_ENGINE_API_KEY")
+if not API_KEY:
+    raise RuntimeError("CRITICAL SECURITY ERROR: RISK_ENGINE_API_KEY is not set.")
 
 async def verify_api_key(x_api_key: str = Header(...)):
     if x_api_key != API_KEY:
@@ -42,14 +44,14 @@ except Exception as e:
     # In production, we might want to fail startup if models aren't found.
     xgb_model, scaler = None, None
 
-def _extract_text_sync(pdf_bytes: bytes, use_ocr: bool = False, max_pages: int = 5) -> str:
+def _extract_text_sync(pdf_bytes: bytes, use_ocr: bool = False, max_pages: int = 15) -> str:
     """Synchronous function to extract text from PDF, designed to be run in a thread pool."""
     text = ""
     
     try:
         with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
             for page in pdf.pages[:max_pages]:
-                extracted = page.extract_text()
+                extracted = page.extract_text(layout=True)
                 if extracted:
                     text += extracted + "\n"
     except Exception as e:
@@ -88,8 +90,8 @@ async def analyze_statement(
         parent_bytes = await parent_file.read()
         
         # 2. Extract text in background threads so we don't block the async event loop
-        s_text = await asyncio.to_thread(_extract_text_sync, student_bytes, use_ocr, 10)
-        p_text = await asyncio.to_thread(_extract_text_sync, parent_bytes, use_ocr, 10)
+        s_text = await asyncio.to_thread(_extract_text_sync, student_bytes, use_ocr, 15)
+        p_text = await asyncio.to_thread(_extract_text_sync, parent_bytes, use_ocr, 15)
         
         # 3. Use LLM to intelligently extract structured financial data (with Redis caching)
         async def get_cached_extraction(text: str, doc_name: str) -> FinancialExtraction:

@@ -42,6 +42,8 @@ services:
   # 3. Python Risk Engine
   risk-engine:
     build: ./risk-engine
+    environment:
+      - RISK_ENGINE_API_KEY=credixa_internal_engine_key_2026
     volumes:
       - ./risk-engine:/app
 
