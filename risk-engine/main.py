@@ -21,16 +21,15 @@ async def verify_api_key(x_api_key: str = Header(...)):
     if x_api_key != API_KEY:
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
-# Load the trained ML model, scaler, and SHAP explainer globally
+# Load the trained ML model and scaler globally
 try:
     xgb_model = joblib.load("risk_model.pkl")
     scaler = joblib.load("scaler.pkl")
-    explainer = joblib.load("explainer.pkl")
-    print("AI Model, Scaler, and Explainer Loaded Successfully")
+    print("AI Model and Scaler Loaded Successfully")
 except Exception as e:
     print(f"CRITICAL ERROR: Failed to load ML assets: {e}")
     # In production, we might want to fail startup if models aren't found.
-    xgb_model, scaler, explainer = None, None, None
+    xgb_model, scaler = None, None
 
 def _extract_text_sync(pdf_bytes: bytes, use_ocr: bool = False, max_pages: int = 5) -> str:
     """Synchronous function to extract text from PDF, designed to be run in a thread pool."""
@@ -66,7 +65,7 @@ async def analyze_statement(
     """
     The main scoring endpoint that analyzes both Student and Parent PDFs using LLMs and Explainable AI
     """
-    if xgb_model is None or scaler is None or explainer is None:
+    if xgb_model is None or scaler is None:
         raise HTTPException(status_code=500, detail="Risk models are not loaded. Cannot process request.")
 
     if student_file.content_type != "application/pdf" or parent_file.content_type != "application/pdf":
@@ -184,7 +183,7 @@ async def validate_document(
 # Health check endpoint
 @app.get("/health")
 def health_check():
-    models_ready = all(v is not None for v in [xgb_model, scaler, explainer])
+    models_ready = all(v is not None for v in [xgb_model, scaler])
     return {
         "status": "Risk Engine is online", 
         "models_ready": models_ready,

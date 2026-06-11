@@ -62,19 +62,12 @@ print(f"F1-Score:  {f1:.4f}")
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 
-# 5. Generate SHAP Explainer
-print("Generating SHAP Explainer for Explainable AI...")
-explainer = shap.TreeExplainer(xgb_model)
-
-# 6. Export the Model, Scaler, and Explainer
+# 6. Export the Model and Scaler
 model_filename = "risk_model.pkl"
 scaler_filename = "scaler.pkl"
-explainer_filename = "explainer.pkl"
 
 joblib.dump(xgb_model, model_filename)
 joblib.dump(scaler, scaler_filename)
-joblib.dump(explainer, explainer_filename)
 
 print(f"Success! Model saved to '{model_filename}'")
 print(f"Scaler saved to '{scaler_filename}'")
-print(f"SHAP Explainer saved to '{explainer_filename}'")
