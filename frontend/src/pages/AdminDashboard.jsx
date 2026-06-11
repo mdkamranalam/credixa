@@ -834,8 +834,8 @@ const AdminDashboard = () => {
       {/* --- APPROVAL MODAL --- */}
       {selectedLoan && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full flex flex-col max-h-[90vh]">
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
               <h3 className="text-lg font-bold text-gray-900">
                 Review Application
               </h3>
@@ -847,7 +847,7 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-4 overflow-y-auto flex-1">
               {actionError && (
                 <div className="p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">
                   {actionError}
@@ -969,7 +969,7 @@ const AdminDashboard = () => {
             </div>
 
             {confirmAction ? (
-              <div className="bg-orange-50 px-6 py-4 border-t border-orange-200">
+              <div className="bg-orange-50 px-6 py-4 border-t border-orange-200 flex-shrink-0">
                 <p className="text-sm font-bold text-orange-800 mb-4 text-center">
                   {confirmAction === "APPROVED" 
                     ? `Are you sure you want to approve this application and disburse ₹${parseFloat(selectedLoan.requested_amount).toLocaleString("en-IN")}?` 
@@ -993,7 +993,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex space-x-3">
+              <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex space-x-3 flex-shrink-0">
                 <button
                   onClick={() => setConfirmAction("REJECTED")}
                   disabled={isProcessing}
