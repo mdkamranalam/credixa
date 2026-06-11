@@ -113,7 +113,7 @@ async def analyze_statement(
         prediction = xgb_model.predict(features_scaled)[0]
         probabilities = xgb_model.predict_proba(features_scaled)[0]
         
-        omniscore = round(probabilities[1] * 100, 2)
+        omniscore = float(round(probabilities[1] * 100, 2))
         decision = "APPROVED" if prediction == 1 else "REJECTED"
 
         # 7. Generate Explainable AI Reasoning (SHAP + LLM)
