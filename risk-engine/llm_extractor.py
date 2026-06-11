@@ -111,7 +111,18 @@ async def validate_document_with_llm(text: str, expected_doc_type: str, expected
     except Exception as e:
         print(f"Hugging Face Validation failed: {e}")
         doc_type_upper = expected_doc_type.upper()
-        is_valid = ("STATEMENT" in doc_type_upper and "BALANCE" in text.upper()) or ("ADMISSION" in doc_type_upper and "UNIVERSITY" in text.upper())
+        text_upper = text.upper()
+        is_valid = True
+        
+        if "STATEMENT" in doc_type_upper:
+            is_valid = "BALANCE" in text_upper or "ACCOUNT" in text_upper or "TRANSACTION" in text_upper
+        elif "ADMISSION" in doc_type_upper:
+            is_valid = "UNIVERSITY" in text_upper or "COLLEGE" in text_upper or "ADMISSION" in text_upper
+        elif "MARKSHEET" in doc_type_upper:
+            is_valid = "MARKS" in text_upper or "GRADE" in text_upper or "BOARD" in text_upper or "UNIVERSITY" in text_upper
+        elif "FEE" in doc_type_upper:
+            is_valid = "FEE" in text_upper or "TUITION" in text_upper or "PAYMENT" in text_upper
+            
         return {"is_valid": is_valid, "confidence": 50, "structured_details": {}, "reason": "Used local fallback validation."}
 
 async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:

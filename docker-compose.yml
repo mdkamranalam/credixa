@@ -29,6 +29,8 @@ services:
         condition: service_healthy
       risk-engine:
         condition: service_started
+    env_file:
+      - ./backend-gateway/.env
     environment:
       - DB_HOST=credixa-postgres
       - DB_PASSWORD=${DB_PASSWORD:-admin@123}
@@ -43,13 +45,15 @@ services:
     volumes:
       - ./risk-engine:/app
 
-  # 4. React Frontend
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
+    env_file:
+      - ./frontend/.env
     volumes:
-      - ./frontend/src:/app/src
+      - ./frontend:/app
+      - /app/node_modules
     stdin_open: true
     tty: true
 
