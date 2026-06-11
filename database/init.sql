@@ -38,6 +38,7 @@ CREATE TABLE institutions (
     bank_account_number VARCHAR(50) NOT NULL,
     ifsc_code VARCHAR(20) NOT NULL,
     bank_name VARCHAR(100) NOT NULL,
+    checklist JSONB,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -49,7 +50,7 @@ CREATE TABLE users (
     institution_id UUID REFERENCES institutions(institution_id) ON DELETE SET NULL,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(155) UNIQUE NOT NULL,
-    mobile_number VARCHAR(15) UNIQUE NOT NULL CHECK (mobile_number ~ '^[0-9]{10,15}$'),
+    mobile_number VARCHAR(15) UNIQUE CHECK (mobile_number ~ '^[0-9]{10,15}$'),
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) NOT NULL,
     pan_number VARCHAR(10) UNIQUE CHECK (pan_number ~ '^[A-Z]{5}[0-9]{4}[A-Z]{1}$'),
@@ -189,6 +190,9 @@ CREATE INDEX idx_loans_user ON loans(user_id);
 CREATE INDEX idx_loans_status ON loans(status);
 CREATE INDEX idx_txn_loan ON transactions(loan_id);
 CREATE INDEX idx_txn_date ON transactions(created_at);
+CREATE INDEX idx_repayment_schedules_loan_id_status ON repayment_schedules(loan_id, status);
+CREATE INDEX idx_loans_institution_id ON loans(institution_id);
+CREATE INDEX idx_loan_documents_user_id ON loan_documents(user_id);
 
 -- =========================================================
 -- 7. TRIGGERS

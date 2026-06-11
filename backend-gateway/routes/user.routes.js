@@ -1,5 +1,5 @@
 import express from "express";
-import pg from "pg";
+import pool from "../utils/db.js";
 import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import { upload as diskUpload } from "../middleware/upload.middleware.js";
@@ -10,21 +10,6 @@ import { createReadStream, unlinkSync } from "fs";
 
 dotenv.config();
 const router = express.Router();
-
-const { Pool } = pg;
-const pool = new Pool({
-  user: process.env.DB_USER || "credixa_admin",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || "credixa_db",
-  password: process.env.DB_PASSWORD || "securepassword",
-  port: process.env.DB_PORT || 5432,
-});
-
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
-});
-
-
 router.get("/profile", authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
@@ -195,6 +180,7 @@ router.post(
         const riskResponse = await axios.post(`${riskEngineUrl}?expected_name=${encodeURIComponent(expectedName)}${ocrQuery}`, formData, {
           headers: {
             ...formData.getHeaders(),
+            "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026"
           },
         });
 

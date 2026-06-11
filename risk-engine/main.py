@@ -1,10 +1,11 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Query
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Query, Header, Depends
 import pdfplumber
 import joblib
 import numpy as np
 import io
 import re
 import asyncio
+import os
 import pytesseract
 from pdf2image import convert_from_bytes
 import shap
@@ -13,6 +14,12 @@ from llm_extractor import extract_financial_data_with_llm, validate_document_wit
 
 # Initialize the API
 app = FastAPI(title="Credixa Risk Engine (AI Overhauled)", version="2.0")
+
+API_KEY = os.getenv("RISK_ENGINE_API_KEY", "credixa_internal_engine_key_2026")
+
+async def verify_api_key(x_api_key: str = Header(...)):
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=403, detail="Invalid API Key")
 
 # Load the trained ML model, scaler, and SHAP explainer globally
 try:
@@ -28,27 +35,28 @@ except Exception as e:
 def _extract_text_sync(pdf_bytes: bytes, use_ocr: bool = False, max_pages: int = 5) -> str:
     """Synchronous function to extract text from PDF, designed to be run in a thread pool."""
     text = ""
-    if use_ocr:
+    
+    try:
+        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+            for page in pdf.pages[:max_pages]:
+                extracted = page.extract_text()
+                if extracted:
+                    text += extracted + "\n"
+    except Exception as e:
+        print(f"Native PDF extraction failed: {e}")
+            
+    if not text.strip() or len(text.strip()) < 50 or use_ocr:
         try:
+            print("Falling back to OCR...")
             images = convert_from_bytes(pdf_bytes)
             for image in images[:max_pages]:
                 text += pytesseract.image_to_string(image) + "\n"
         except Exception as e:
             print(f"OCR Failed: {e}")
-    
-    if not text.strip():
-        try:
-            with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-                for page in pdf.pages[:max_pages]:
-                    extracted = page.extract_text()
-                    if extracted:
-                        text += extracted + "\n"
-        except Exception as e:
-            print(f"Native PDF extraction failed: {e}")
             
     return text
 
-@app.post("/analyze-statement")
+@app.post("/analyze-statement", dependencies=[Depends(verify_api_key)])
 async def analyze_statement(
     student_file: UploadFile = File(...), 
     parent_file: UploadFile = File(...),
@@ -137,7 +145,7 @@ async def analyze_statement(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing statement: {str(e)}")
 
-@app.post("/validate-document")
+@app.post("/validate-document", dependencies=[Depends(verify_api_key)])
 async def validate_document(
     doc_type: str = Form(...),
     expected_name: str = Query(None),

@@ -1,48 +1,55 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import pg from "pg";
 import dotenv from "dotenv";
+import { createClient } from "redis";
+import pool from "../utils/db.js";
 
 dotenv.config();
 const router = express.Router();
-const JWT_SECRET =
-  process.env.JWT_SECRET || "super_secret_credixa_key_change_in_production";
+const JWT_SECRET = process.env.JWT_SECRET;
 
-const { Pool } = pg;
-const pool = new Pool({
-  user: process.env.DB_USER || "credixa_admin",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || "credixa_db",
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
+// Redis Rate Limiter Setup
+const redisClient = createClient({
+  url: process.env.REDIS_URL || 'redis://credixa-redis:6379'
 });
 
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
-});
+redisClient.on('error', (err) => console.error('Redis Client Error', err));
 
-// Simple in-memory rate limiter for registration
-const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+(async () => {
+    try {
+        await redisClient.connect();
+        console.log("Successfully connected to Redis");
+    } catch (err) {
+        console.error("Failed to connect to Redis:", err);
+    }
+})();
+
+const RATE_LIMIT_WINDOW_SECONDS = 15 * 60;
 const MAX_REQUESTS = 5;
 
-const registerRateLimiter = (req, res, next) => {
+const registerRateLimiter = async (req, res, next) => {
     const ip = req.ip;
-    const now = Date.now();
-    const records = rateLimitMap.get(ip) || [];
-    const windowStart = now - RATE_LIMIT_WINDOW_MS;
+    const key = `ratelimit:register:${ip}`;
     
-    // Filter out old records
-    const validRecords = records.filter(timestamp => timestamp > windowStart);
-    
-    if (validRecords.length >= MAX_REQUESTS) {
-        return res.status(429).json({ error: "Too many registration attempts. Please try again later." });
+    try {
+        if (!redisClient.isReady) {
+            return next(); // Fallback if redis is down
+        }
+        
+        const current = await redisClient.incr(key);
+        if (current === 1) {
+            await redisClient.expire(key, RATE_LIMIT_WINDOW_SECONDS);
+        }
+        
+        if (current > MAX_REQUESTS) {
+            return res.status(429).json({ error: "Too many registration attempts. Please try again later." });
+        }
+        next();
+    } catch (err) {
+        console.error("Redis Rate Limiter Error:", err);
+        next();
     }
-    
-    validRecords.push(now);
-    rateLimitMap.set(ip, validRecords);
-    next();
 };
 
 // 1. User Registration
@@ -52,11 +59,13 @@ router.post("/register", registerRateLimiter, async (req, res) => {
     email,
     mobile_number,
     password,
-    role,
     institution_id,
     dob,
     college_roll_number,
   } = req.body;
+
+  // Prevent role injection: Force STUDENT role for public registration
+  const assignedRole = "STUDENT";
 
   try {
     const saltRounds = 10;
@@ -73,7 +82,7 @@ router.post("/register", registerRateLimiter, async (req, res) => {
       email,
       mobile_number,
       passwordHash,
-      role,
+      assignedRole,
       institution_id,
       dob || null,
       college_roll_number || "UNKNOWN",

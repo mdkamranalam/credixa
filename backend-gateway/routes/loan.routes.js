@@ -3,9 +3,10 @@ import multer from "multer";
 import FormData from "form-data";
 import axios from "axios";
 import { createReadStream, unlinkSync, existsSync, mkdirSync } from "fs";
-import pg from "pg";
+import pool from "../utils/db.js";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import dotenv from "dotenv";
+import { calculateEMI } from "../utils/loan.utils.js";
 
 dotenv.config();
 const router = express.Router();
@@ -14,20 +15,6 @@ const router = express.Router();
 const memoryUpload = multer({ storage: multer.memoryStorage() });
 import { upload as diskUpload } from "../middleware/upload.middleware.js";
 import { uploadDocument, addCoApplicant } from "../controllers/loan.controller.js";
-
-// Database pool for saving the final score
-const { Pool } = pg;
-const pool = new Pool({
-  user: process.env.DB_USER || "credixa_admin",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || "credixa_db",
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
-});
-
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
-});
 
 
 // The Python Risk Engine URL
@@ -149,6 +136,7 @@ router.post(
         {
           headers: {
             ...formData.getHeaders(),
+            "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026"
           },
         },
       );
@@ -409,12 +397,8 @@ router.put("/loans/:loanId/status", authenticateToken, async (req, res) => {
     // 2. If APPROVED, generate the 12-month schedule (Table 6)
     if (status === "APPROVED" || status === "ACTIVE") {
       const months = loan.tenure_months;
-      const p = parseFloat(approved_amount);
-      const r = parseFloat(loan.interest_rate) / 100 / 12;
-
       // EMI Formula
-      const emi =
-        (p * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
+      const emi = calculateEMI(approved_amount, loan.interest_rate, months);
 
       for (let i = 1; i <= months; i++) {
         const dueDate = new Date();

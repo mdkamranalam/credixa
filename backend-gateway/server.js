@@ -3,6 +3,7 @@ import cors from "cors";
 import pg from "pg";
 import dotenv from "dotenv";
 
+import pool from "./utils/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import loanRoutes from "./routes/loan.routes.js";
 import transactionRoutes from "./routes/transaction.routes.js";
@@ -17,22 +18,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true
+}));
 app.use('/uploads', express.static('uploads'));
-
-// Establish PostgreSQL Connection Pool
-const { Pool } = pg;
-const pool = new Pool({
-  user: process.env.DB_USER || "credixa_admin",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || "credixa_db",
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
-});
-
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
-});
 
 
 // Test the DB Connection on Startup
@@ -54,6 +44,11 @@ if (!process.env.JWT_SECRET) {
 
 if (!process.env.DB_PASSWORD) {
   console.error("ERROR: DB_PASSWORD environment variable is not set. Exiting.");
+  process.exit(1);
+}
+
+if (!process.env.ENCRYPTION_KEY) {
+  console.error("ERROR: ENCRYPTION_KEY environment variable is not set. Exiting.");
   process.exit(1);
 }
 

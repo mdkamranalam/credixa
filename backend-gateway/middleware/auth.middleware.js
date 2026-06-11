@@ -56,7 +56,8 @@ export const requireRole = (role) => {
       return res.status(403).json({ error: "Unauthorized access." });
     }
 
-    if (!role.includes(req.user.role)) {
+    const allowedRoles = Array.isArray(role) ? role : [role];
+    if (!allowedRoles.includes(req.user.role)) {
       logger.warn(`Role access denied: User ${req.user.user_id} tried to access ${req.path} with role ${req.user.role}`);
       return res
         .status(403)

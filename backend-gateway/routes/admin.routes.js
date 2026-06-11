@@ -1,48 +1,14 @@
 import express from "express";
-import pg from "pg";
+import pool from "../utils/db.js";
 import dotenv from "dotenv";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
 import { enhancedAuthenticateToken, authenticateToken } from "../middleware/auth.middleware.js";
+import { calculateEMI } from "../utils/loan.utils.js";
 
 dotenv.config();
 const router = express.Router();
-
-const { Pool } = pg;
-// Enhanced connection pool configuration with additional security
-const pool = new Pool({
-  user: process.env.DB_USER || "credixa_admin",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || "credixa_db",
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  // Additional security settings
-  allowExitOnIdle: true,
-  maxUses: 1000,
-});
-
-// Enhanced error handling for database connections
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
-  // Log the error and potentially restart the pool or alert admins
-  // In production, you might want to implement more sophisticated error handling
-});
-
-// Pool connection monitoring
-pool.on('connect', (client) => {
-  // Set client timeout for security
-  client.query('SET statement_timeout = 5000'); // 5 second timeout
-});
-
-// Monitor pool health
-setInterval(() => {
-  console.log(`Pool stats - Total: ${pool.totalCount}, Idle: ${pool.idleCount}`);
-}, 60000); // Log every minute
 
 // Configure storage for the "Document Vault" with enhanced security
 const storage = multer.diskStorage({
@@ -271,7 +237,7 @@ router.put("/loans/:loanId/status", enhancedAuthenticateToken, async (req, res) 
     // 2. TRIGGER: Populate repayment_schedules (Table 6)
     if (status === "APPROVED" || status === "ACTIVE") {
       const months = loan.tenure_months;
-      const emi = parseFloat(loan.approved_amount) / months;
+      const emi = calculateEMI(loan.approved_amount, loan.interest_rate, months);
 
       // Validate tenure and EMI calculation
       if (months <= 0 || isNaN(emi) || emi <= 0) {
@@ -434,12 +400,18 @@ router.get("/students/:userId", authenticateToken, async (req, res) => {
 
 // --- DYNAMIC CHECKLIST ROUTES ---
 
-const CHECKLIST_FILE = path.resolve("./data/checklist.json");
-
-router.get("/checklist", async (req, res) => {
+router.get("/checklist", authenticateToken, async (req, res) => {
+  if (req.user.role !== "INSTITUTION_ADMIN" && req.user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Admins only." });
+  }
+  
   try {
-    const data = await fs.readFile(CHECKLIST_FILE, "utf-8");
-    res.status(200).json(JSON.parse(data));
+    const institutionId = req.user.institution_id;
+    const query = `SELECT checklist FROM institutions WHERE institution_id = $1`;
+    const result = await pool.query(query, [institutionId]);
+    
+    const checklistData = result.rows[0]?.checklist || [];
+    res.status(200).json(checklistData);
   } catch (err) {
     console.error("Failed to read checklist:", err);
     res.status(500).json({ error: "Failed to load checklist configuration." });
@@ -453,26 +425,22 @@ router.put("/checklist", authenticateToken, async (req, res) => {
 
   try {
     const newChecklist = req.body;
+    const institutionId = req.user.institution_id;
 
     // Input validation for checklist data
     if (!newChecklist || typeof newChecklist !== 'object') {
       return res.status(400).json({ error: "Valid checklist data is required." });
     }
 
-    // Validate checklist structure to prevent malicious input
-    // This is a basic validation - in a production system, you might want more comprehensive validation
     const checklistJson = JSON.stringify(newChecklist, null, 2);
 
-    // Basic check to prevent malicious file content
     if (checklistJson.length > 100000) { // 100KB limit
       return res.status(400).json({ error: "Checklist data too large." });
     }
 
-    // Additional security checks for checklist content
     try {
       const parsedChecklist = JSON.parse(checklistJson);
 
-      // Check for potentially dangerous keys or structures
       const dangerousPatterns = ['__proto__', 'constructor', 'prototype'];
       const hasDangerousKeys = Object.keys(parsedChecklist).some(key =>
         dangerousPatterns.includes(key)
@@ -482,13 +450,11 @@ router.put("/checklist", authenticateToken, async (req, res) => {
         return res.status(400).json({ error: "Invalid checklist structure detected." });
       }
 
-      // Validate that checklist items are properly formatted
       if (Array.isArray(parsedChecklist)) {
         for (const item of parsedChecklist) {
           if (typeof item !== 'object' || !item.title || !item.description) {
             return res.status(400).json({ error: "Invalid checklist item format." });
           }
-          // Additional validation for item content
           if (typeof item.title !== 'string' || typeof item.description !== 'string') {
             return res.status(400).json({ error: "Checklist item title and description must be strings." });
           }
@@ -499,7 +465,9 @@ router.put("/checklist", authenticateToken, async (req, res) => {
       return res.status(400).json({ error: "Invalid checklist JSON format." });
     }
 
-    await fs.writeFile(CHECKLIST_FILE, checklistJson, "utf-8");
+    const updateQuery = `UPDATE institutions SET checklist = $1 WHERE institution_id = $2`;
+    await pool.query(updateQuery, [checklistJson, institutionId]);
+    
     res.status(200).json({ message: "Checklist updated successfully." });
   } catch (err) {
     console.error("Failed to update checklist:", err);

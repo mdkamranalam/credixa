@@ -1,9 +1,8 @@
 import express from "express";
-import pg from "pg";
+import pool from "../utils/db.js";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
-const pool = new pg.Pool();
 
 router.post("/request", authenticateToken, async (req, res) => {
   const { aa_handle } = req.body;

@@ -13,6 +13,11 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U credixa_admin -d credixa_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # 2. Node.js Gateway
   backend:
@@ -20,7 +25,10 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - risk-engine
+      postgres:
+        condition: service_healthy
+      risk-engine:
+        condition: service_started
     environment:
       - DB_HOST=credixa-postgres
       - DB_PASSWORD=${DB_PASSWORD:-admin@123}
@@ -32,8 +40,6 @@ services:
   # 3. Python Risk Engine
   risk-engine:
     build: ./risk-engine
-    ports:
-      - "8000:8000"
     volumes:
       - ./risk-engine:/app
 
