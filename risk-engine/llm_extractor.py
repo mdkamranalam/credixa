@@ -4,10 +4,19 @@ import re
 from pydantic import BaseModel, Field
 from huggingface_hub import AsyncInferenceClient
 from typing import Optional
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 # Initialize Hugging Face Inference API client
 # Uses a powerful free model. Optionally set HF_TOKEN in your environment.
 client = AsyncInferenceClient("meta-llama/Meta-Llama-3-8B-Instruct")
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
+async def _call_hf_api(messages, max_tokens=250, temperature=0.1):
+    return await client.chat_completion(
+        messages=messages,
+        max_tokens=max_tokens,
+        temperature=temperature
+    )
 
 class FinancialExtraction(BaseModel):
     average_balance: float = Field(default=5000.0)
@@ -22,12 +31,18 @@ def fallback_financial_extraction(text: str) -> FinancialExtraction:
     text_upper = text.upper()
     
     avg_balance = 5000.0
-    balance_match = re.search(r"AVERAGE BALANCE[:\s]*\$?([\d,]+\.?\d*)", text_upper)
+    balance_match = re.search(r"(?:AVERAGE\s*BALANCE|CLOSING\s*BALANCE|AVAILABLE\s*BALANCE)[:\s]*\$?(?:RS\.?)?\s*([\d,]+\.?\d*)", text_upper)
     if balance_match:
         try: avg_balance = float(balance_match.group(1).replace(",", ""))
         except ValueError: pass
         
-    overdrafts = text_upper.count("OVERDRAFT") + text_upper.count("NSF FEE")
+    income = 3000.0
+    income_match = re.search(r"(?:SALARY|INCOME|TOTAL\s*CREDIT)[:\s]*\$?(?:RS\.?)?\s*([\d,]+\.?\d*)", text_upper)
+    if income_match:
+        try: income = float(income_match.group(1).replace(",", ""))
+        except ValueError: pass
+        
+    overdrafts = text_upper.count("OVERDRAFT") + text_upper.count("NSF FEE") + text_upper.count("BOUNCE")
     gambling_keywords = ["GAMBLING", "CASINO", "BETTING", "POKER", "LOTTERY", "DREAM11", "BET365", "MY11CIRCLE"]
     gambling_flags = sum(text_upper.count(kw) for kw in gambling_keywords)
     
@@ -35,9 +50,9 @@ def fallback_financial_extraction(text: str) -> FinancialExtraction:
         average_balance=avg_balance,
         overdraft_count=overdrafts,
         high_risk_transaction_count=gambling_flags,
-        monthly_income=3000.0, # Estimate
-        monthly_debt_payments=500.0,
-        monthly_savings=500.0
+        monthly_income=income, # Estimate based on found income
+        monthly_debt_payments=income * 0.15,
+        monthly_savings=income * 0.20
     )
 
 async def extract_financial_data_with_llm(text: str) -> FinancialExtraction:
@@ -48,7 +63,7 @@ async def extract_financial_data_with_llm(text: str) -> FinancialExtraction:
         return FinancialExtraction()
         
     try:
-        completion = await client.chat_completion(
+        completion = await _call_hf_api(
             messages=[
                 {
                     "role": "system",
@@ -86,7 +101,7 @@ async def validate_document_with_llm(text: str, expected_doc_type: str, expected
     name_check = f" Also check if the name '{expected_name}' is associated." if expected_name else ""
     
     try:
-        completion = await client.chat_completion(
+        completion = await _call_hf_api(
             messages=[
                 {
                     "role": "system",
@@ -130,7 +145,7 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
     Uses the LLM to generate a dynamic, professional explanation for the risk score, including pros and cons.
     """
     try:
-        completion = await client.chat_completion(
+        completion = await _call_hf_api(
             messages=[
                 {
                     "role": "system",

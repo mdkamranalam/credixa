@@ -10,7 +10,18 @@ import pytesseract
 from pdf2image import convert_from_bytes
 import shap
 import pandas as pd
-from llm_extractor import extract_financial_data_with_llm, validate_document_with_llm, generate_dynamic_reasoning
+import hashlib
+import json
+import redis.asyncio as redis
+from llm_extractor import extract_financial_data_with_llm, validate_document_with_llm, generate_dynamic_reasoning, FinancialExtraction
+
+# Initialize Redis client
+try:
+    redis_url = os.getenv("REDIS_URL", "redis://credixa-redis:6379/1")
+    redis_client = redis.from_url(redis_url, decode_responses=True)
+except Exception as e:
+    print(f"Failed to connect to Redis: {e}")
+    redis_client = None
 
 # Initialize the API
 app = FastAPI(title="Credixa Risk Engine (AI Overhauled)", version="2.0")
@@ -80,9 +91,36 @@ async def analyze_statement(
         s_text = await asyncio.to_thread(_extract_text_sync, student_bytes, use_ocr, 10)
         p_text = await asyncio.to_thread(_extract_text_sync, parent_bytes, use_ocr, 10)
         
-        # 3. Use LLM to intelligently extract structured financial data
-        s_data = await extract_financial_data_with_llm(s_text)
-        p_data = await extract_financial_data_with_llm(p_text)
+        # 3. Use LLM to intelligently extract structured financial data (with Redis caching)
+        async def get_cached_extraction(text: str, doc_name: str) -> FinancialExtraction:
+            if not redis_client:
+                return await extract_financial_data_with_llm(text)
+                
+            text_hash = hashlib.sha256(text.encode()).hexdigest()
+            cache_key = f"risk:extraction:{text_hash}"
+            
+            try:
+                cached = await redis_client.get(cache_key)
+                if cached:
+                    print(f"Cache Hit for {doc_name} extraction!")
+                    return FinancialExtraction(**json.loads(cached))
+            except Exception as e:
+                print(f"Redis get failed: {e}")
+                
+            print(f"Cache Miss for {doc_name} extraction. Running LLM...")
+            result = await extract_financial_data_with_llm(text)
+            
+            try:
+                if redis_client:
+                    # Cache the result for 24 hours
+                    await redis_client.setex(cache_key, 86400, result.model_dump_json())
+            except Exception as e:
+                print(f"Redis set failed: {e}")
+                
+            return result
+            
+        s_data = await get_cached_extraction(s_text, "student")
+        p_data = await get_cached_extraction(p_text, "parent")
         
         # 4. Combine the features for the Household Risk ML Model
         combined_balance = (s_data.average_balance + p_data.average_balance) / 2
