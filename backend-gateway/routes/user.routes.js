@@ -107,6 +107,19 @@ router.post("/kyc", authenticateToken, async (req, res) => {
   await new Promise((resolve) => setTimeout(resolve, 50));
 
   try {
+    // Check Aadhaar uniqueness across all users
+    const existingUsers = await pool.query("SELECT user_id, aadhaar_hash FROM users WHERE aadhaar_hash IS NOT NULL");
+    for (let u of existingUsers.rows) {
+        if (u.user_id !== userId) {
+            try {
+                const decryptedAadhaar = decryptData(u.aadhaar_hash);
+                if (decryptedAadhaar === aadhaar_number) {
+                    return res.status(400).json({ error: "Aadhaar already linked to another account." });
+                }
+            } catch (e) {}
+        }
+    }
+
     const aadhaarHash = encryptData(aadhaar_number);
 
     const updateQuery = `
@@ -241,8 +254,25 @@ router.post("/co-applicant", authenticateToken, async (req, res) => {
   }
 
   try {
+    // 1. Fetch student's PAN and Aadhaar
+    const studentRes = await pool.query("SELECT pan_number, aadhaar_hash FROM users WHERE user_id = $1", [userId]);
+    const student = studentRes.rows[0];
+    
+    if (student) {
+        if (student.pan_number === pan_number) {
+            return res.status(400).json({ error: "Co-applicant PAN cannot be the same as the student's PAN." });
+        }
+        if (student.aadhaar_hash && aadhaar_number) {
+            try {
+                const decryptedStudentAadhaar = decryptData(student.aadhaar_hash);
+                if (decryptedStudentAadhaar === aadhaar_number) {
+                    return res.status(400).json({ error: "Co-applicant Aadhaar cannot be the same as the student's Aadhaar." });
+                }
+            } catch (e) {}
+        }
+    }
+
     const encryptedAadhaar = aadhaar_number ? encryptData(aadhaar_number) : null;
-    const encryptedPan = pan_number ? encryptData(pan_number) : null;
 
     // We use a simple SELECT then INSERT/UPDATE because `user_id` might not be strictly UNIQUE on co_applicants in all setups
     // But conceptually, one student = one co_applicant (for the prototype)
@@ -263,7 +293,7 @@ router.post("/co-applicant", authenticateToken, async (req, res) => {
         full_name,
         relationship,
         encryptedAadhaar,
-        encryptedPan,
+        pan_number,
         income_type,
         monthly_income || 0,
         userId,
@@ -280,7 +310,7 @@ router.post("/co-applicant", authenticateToken, async (req, res) => {
         full_name,
         relationship,
         encryptedAadhaar,
-        encryptedPan,
+        pan_number,
         income_type,
         monthly_income || 0,
       ]);

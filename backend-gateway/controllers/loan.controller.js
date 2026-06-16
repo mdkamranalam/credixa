@@ -1,5 +1,6 @@
 import pg from "pg";
 import dotenv from "dotenv";
+import { encryptData, decryptData } from "../utils/encryption.js";
 
 dotenv.config();
 
@@ -67,11 +68,35 @@ export const addCoApplicant = async (req, res) => {
     }
 
     try {
-        // 1. Verify user owns loan
-        const verification = await pool.query("SELECT * FROM loans WHERE loan_id = $1 AND user_id = $2", [loanId, userId]);
+        // 1. Verify user owns loan and fetch their PAN/Aadhaar
+        const verification = await pool.query(`
+            SELECT l.*, u.pan_number as student_pan, u.aadhaar_hash as student_aadhaar_hash
+            FROM loans l 
+            JOIN users u ON l.user_id = u.user_id 
+            WHERE l.loan_id = $1 AND l.user_id = $2
+        `, [loanId, userId]);
+        
         if (verification.rows.length === 0) {
             return res.status(403).json({ error: "Unauthorized or loan not found." });
         }
+        
+        const student = verification.rows[0];
+        
+        if (student.student_pan === pan_number) {
+            return res.status(400).json({ error: "Co-applicant PAN cannot be the same as the student's PAN." });
+        }
+        
+        if (student.student_aadhaar_hash && aadhaar_number) {
+            try {
+                const decryptedStudentAadhaar = decryptData(student.student_aadhaar_hash);
+                if (decryptedStudentAadhaar === aadhaar_number) {
+                    return res.status(400).json({ error: "Co-applicant Aadhaar cannot be the same as the student's Aadhaar." });
+                }
+            } catch (e) {}
+        }
+
+        // Encrypt Aadhaar, leave PAN plaintext
+        const encryptedAadhaar = aadhaar_number ? encryptData(aadhaar_number) : null;
 
         // 2. Insert Co-Applicant
         const insertQuery = `
@@ -83,7 +108,7 @@ export const addCoApplicant = async (req, res) => {
             loanId,
             full_name,
             relationship,
-            aadhaar_number,
+            encryptedAadhaar,
             pan_number,
             income_type,
             monthly_income || 0
