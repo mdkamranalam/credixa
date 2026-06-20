@@ -69,3 +69,4 @@ CLAUDE.md
 # Generated output
 graphify-out/
 .graphifyignore
+risk-engine/historical_loans.csv

@@ -35,32 +35,32 @@ const setRefreshCookie = (res, refreshToken) => {
   });
 };
 
-const RATE_LIMIT_WINDOW_SECONDS = 15 * 60;
-const MAX_REQUESTS = 5;
-
-const registerRateLimiter = async (req, res, next) => {
+const createRateLimiter = (action, windowSeconds, maxRequests, errorMessage) => async (req, res, next) => {
     const ip = req.ip;
-    const key = `ratelimit:register:${ip}`;
+    const key = `ratelimit:${action}:${ip}`;
     
     try {
         if (!redisClient.isReady) {
-            return next(); // Fallback if redis is down
+            return next();
         }
         
         const current = await redisClient.incr(key);
         if (current === 1) {
-            await redisClient.expire(key, RATE_LIMIT_WINDOW_SECONDS);
+            await redisClient.expire(key, windowSeconds);
         }
         
-        if (current > MAX_REQUESTS) {
-            return res.status(429).json({ error: "Too many registration attempts. Please try again later." });
+        if (current > maxRequests) {
+            return res.status(429).json({ error: errorMessage });
         }
         next();
     } catch (err) {
-        console.error("Redis Rate Limiter Error:", err);
+        console.error(`Redis Rate Limiter Error (${action}):`, err);
         next();
     }
 };
+
+const registerRateLimiter = createRateLimiter("register", 15 * 60, 5, "Too many registration attempts. Please try again later.");
+const loginRateLimiter = createRateLimiter("login", 15 * 60, 10, "Too many login attempts. Please try again later.");
 
 // 1. User Registration
 router.post("/register", registerRateLimiter, async (req, res) => {
@@ -166,9 +166,6 @@ router.post('/register-institution', async (req, res) => {
         const newInstitutionId = instResult.rows[0].institution_id;
 
         // 3. Auto-Create the Admin User in the users table so they can actually log in!
-        // We generate a random 10-digit mobile number just to satisfy the strict database constraints
-        const dummyMobile = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-
         const userQuery = `
             INSERT INTO users (
                 full_name, email, mobile_number, password_hash, 
@@ -179,7 +176,7 @@ router.post('/register-institution', async (req, res) => {
         const userValues = [
             `${name} Admin`,      // Creates a name like "BITS Pilani Admin"
             contact_email,        // They will log in using their admin email
-            dummyMobile,          // Fulfills the NOT NULL mobile constraint
+            null,                 // No mobile needed for admin
             passwordHash,         // Same password they typed in the form
             'INSTITUTION_ADMIN',  // Sets their role perfectly
             newInstitutionId,     // Links them directly to the college we just created
@@ -231,7 +228,7 @@ router.get("/institutions", async (req, res) => {
 });
 
 // 2. User Login
-router.post("/login", async (req, res) => {
+router.post("/login", loginRateLimiter, async (req, res) => {
     const {email, password} = req.body;
 
     try {

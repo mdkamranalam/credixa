@@ -129,9 +129,11 @@ router.post(
         }
       }
 
+      formData.append("academic_score", academicScore.toString());
+
       // 4. Send to Python ML Engine using AXIOS
       const pythonResponse = await axios.post(
-        `${RISK_ENGINE_URL}?academic_score=${academicScore}`,
+        RISK_ENGINE_URL,
         formData,
         {
           headers: {

@@ -1,30 +1,9 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { createLogger, format, transports } from "winston";
+import logger from "../utils/logger.js";
 import redisClient from "../utils/redis.js";
 
 dotenv.config();
-
-// Setup logging
-const logger = createLogger({
-  level: 'info',
-  format: format.combine(
-    format.timestamp(),
-    format.errors({ stack: true }),
-    format.json()
-  ),
-  transports: [
-    new transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new transports.File({ filename: 'logs/combined.log' })
-  ]
-});
-
-// If we're not in production, also log to the console
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new transports.Console({
-    format: format.simple()
-  }));
-}
 
 const JWT_SECRET = process.env.JWT_SECRET;
 

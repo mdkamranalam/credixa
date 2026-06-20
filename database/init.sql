@@ -80,17 +80,7 @@ CREATE TABLE users (
 -- =========================================================
 -- 5. DEPENDENT TABLES
 -- =========================================================
--- TABLE - 3: CONSENT HANDLES (Sahamati)
-CREATE TABLE consent_handles (
-    consent_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
-    aa_handle VARCHAR(100),
-    -- e.g., 'user@onemoney'
-    consent_status VARCHAR(50) DEFAULT 'PENDING',
-    valid_from TIMESTAMP WITH TIME ZONE,
-    valid_to TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+
 -- TABLE - 4: LOAN APPLICATIONS
 CREATE TABLE loans (
     loan_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

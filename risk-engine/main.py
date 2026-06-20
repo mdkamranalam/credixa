@@ -72,7 +72,7 @@ def _extract_text_sync(pdf_bytes: bytes, use_ocr: bool = False, max_pages: int =
 async def analyze_statement(
     student_file: UploadFile = File(...), 
     parent_file: UploadFile = File(...),
-    academic_score: float = Query(7.0),
+    academic_score: float = Form(7.0),
     use_ocr: bool = Query(False)
 ):
     """
