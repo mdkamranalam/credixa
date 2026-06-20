@@ -5,7 +5,7 @@ services:
     container_name: credixa-postgres
     environment:
       POSTGRES_USER: credixa_admin
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin@123}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in environment}
       POSTGRES_DB: credixa_db
     ports:
       - "5432:5432"
@@ -33,7 +33,7 @@ services:
       - ./backend-gateway/.env
     environment:
       - DB_HOST=credixa-postgres
-      - DB_PASSWORD=${DB_PASSWORD:-admin@123}
+      - DB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD must be set in environment}
       - RISK_ENGINE_URL=http://risk-engine:8000/analyze-statement
     volumes:
       - ./backend-gateway:/app
@@ -43,7 +43,7 @@ services:
   risk-engine:
     build: ./risk-engine
     environment:
-      - RISK_ENGINE_API_KEY=credixa_internal_engine_key_2026
+      - RISK_ENGINE_API_KEY=${RISK_ENGINE_API_KEY:?RISK_ENGINE_API_KEY must be set in environment}
     volumes:
       - ./risk-engine:/app
 
