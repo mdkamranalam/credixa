@@ -18,8 +18,8 @@ import { uploadDocument, addCoApplicant } from "../controllers/loan.controller.j
 
 
 // The Python Risk Engine URL
-const RISK_ENGINE_URL =
-  process.env.RISK_ENGINE_URL || "http://localhost:8000/analyze-statement";
+const RISK_ENGINE_BASE = process.env.RISK_ENGINE_BASE_URL || "http://localhost:8000";
+const RISK_ENGINE_URL = `${RISK_ENGINE_BASE}/analyze-statement`;
 
 // The Co-Borrower Score Endoint
 router.post(
@@ -205,6 +205,16 @@ router.post("/initialize", authenticateToken, async (req, res) => {
     ifsc_code,
   } = req.body;
 
+  if (!requested_amount || isNaN(requested_amount) || requested_amount <= 0) {
+    return res.status(400).json({ error: "Valid requested_amount (> 0) is required." });
+  }
+  if (interest_rate === undefined || isNaN(interest_rate) || interest_rate < 0 || interest_rate > 100) {
+    return res.status(400).json({ error: "Valid interest_rate (0-100) is required." });
+  }
+  if (!tenure_months || isNaN(tenure_months) || tenure_months <= 0 || tenure_months > 360) {
+    return res.status(400).json({ error: "Valid tenure_months (1-360) is required." });
+  }
+
   const client = await pool.connect();
 
   try {
@@ -300,6 +310,16 @@ router.post("/repay", authenticateToken, async (req, res) => {
 
   try {
     await client.query("BEGIN");
+
+    // Verify user owns the loan before allowing repayment
+    const checkLoan = await client.query(
+      "SELECT loan_id FROM loans WHERE loan_id = $1 AND user_id = $2",
+      [loan_id, req.user.id]
+    );
+    if (checkLoan.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(403).json({ error: "Unauthorized or loan not found." });
+    }
 
     const txnQuery = `
       INSERT INTO transactions (loan_id, user_id, amount, txn_type, status, gateway_txn_id)

@@ -100,12 +100,12 @@ export const addCoApplicant = async (req, res) => {
 
         // 2. Insert Co-Applicant
         const insertQuery = `
-      INSERT INTO co_applicants (loan_id, full_name, relationship, aadhaar_number, pan_number, income_type, monthly_income)
+      INSERT INTO co_applicants (user_id, full_name, relationship, aadhaar_number, pan_number, income_type, monthly_income)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
     `;
         const result = await pool.query(insertQuery, [
-            loanId,
+            userId,
             full_name,
             relationship,
             encryptedAadhaar,

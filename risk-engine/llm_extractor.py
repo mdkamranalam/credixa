@@ -6,9 +6,11 @@ from huggingface_hub import AsyncInferenceClient
 from typing import Optional
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+import logging
+
 # Initialize Hugging Face Inference API client
 # Uses a powerful free model. Optionally set HF_TOKEN in your environment.
-client = AsyncInferenceClient("meta-llama/Meta-Llama-3-8B-Instruct")
+client = AsyncInferenceClient("meta-llama/Meta-Llama-3-8B-Instruct", token=os.getenv("HF_TOKEN"))
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _call_hf_api(messages, max_tokens=250, temperature=0.1):
@@ -88,7 +90,7 @@ async def extract_financial_data_with_llm(text: str) -> FinancialExtraction:
         data_dict = json.loads(result_str.strip())
         return FinancialExtraction(**data_dict)
     except Exception as e:
-        print(f"Hugging Face Extraction failed: {e}. Using local Regex fallback.")
+        logging.warning(f"Hugging Face Extraction failed: {e}. Using local Regex fallback.")
         return fallback_financial_extraction(text)
 
 async def validate_document_with_llm(text: str, expected_doc_type: str, expected_name: Optional[str] = None) -> dict:
@@ -124,7 +126,7 @@ async def validate_document_with_llm(text: str, expected_doc_type: str, expected
             
         return json.loads(result_str.strip())
     except Exception as e:
-        print(f"Hugging Face Validation failed: {e}")
+        logging.warning(f"Hugging Face Validation failed: {e}")
         doc_type_upper = expected_doc_type.upper()
         text_upper = text.upper()
         is_valid = True
@@ -171,7 +173,7 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
             raise ValueError("LLM returned incomplete JSON keys")
         return data
     except Exception as e:
-        print(f"Dynamic Reasoning Generation failed: {e}")
+        logging.warning(f"Dynamic Reasoning Generation failed: {e}")
         decision = "Approved" if omniscore >= 50 else "Rejected"
         return {
             "reasoning": f"The model {decision} the application with a score of {omniscore} based on standard thresholds.",

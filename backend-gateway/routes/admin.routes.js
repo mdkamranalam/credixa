@@ -61,11 +61,15 @@ router.post("/loans/:loanId/co-applicant", authenticateToken, async (req, res) =
   const { full_name, relationship, income_type, monthly_income, aadhaar, pan } = req.body;
 
   try {
+    const userRes = await pool.query("SELECT user_id FROM loans WHERE loan_id = $1", [loanId]);
+    if (userRes.rows.length === 0) return res.status(404).json({ error: "Loan not found" });
+    const userId = userRes.rows[0].user_id;
+
     const query = `
-      INSERT INTO co_applicants (loan_id, full_name, relationship, income_type, monthly_income, aadhaar_number, pan_number)
+      INSERT INTO co_applicants (user_id, full_name, relationship, income_type, monthly_income, aadhaar_number, pan_number)
       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
     `;
-    const result = await pool.query(query, [loanId, full_name, relationship, income_type, monthly_income, aadhaar, pan]);
+    const result = await pool.query(query, [userId, full_name, relationship, income_type, monthly_income, aadhaar, pan]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: "Failed to save co-applicant details." });
@@ -118,7 +122,7 @@ router.get("/loans/:loanId/details", authenticateToken, async (req, res) => {
   try {
     const [loanInfo, coAppInfo, docsInfo] = await Promise.all([
       pool.query("SELECT * FROM loans WHERE loan_id = $1", [loanId]),
-      pool.query("SELECT * FROM co_applicants WHERE loan_id = $1", [loanId]),
+      pool.query("SELECT * FROM co_applicants WHERE user_id = (SELECT user_id FROM loans WHERE loan_id = $1) LIMIT 1", [loanId]),
       pool.query("SELECT * FROM loan_documents WHERE loan_id = $1", [loanId])
     ]);
 

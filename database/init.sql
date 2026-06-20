@@ -156,7 +156,6 @@ CREATE TABLE risk_scores (
 -- TABLE - 8: Co-Applicants
 CREATE TABLE co_applicants (
     co_app_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    loan_id UUID REFERENCES loans(loan_id) ON DELETE CASCADE,
     user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
     full_name VARCHAR(255) NOT NULL,
     relationship VARCHAR(50) NOT NULL,

@@ -18,8 +18,16 @@ if not os.path.exists(csv_path):
 df = pd.read_csv(csv_path)
 print(f"Successfully loaded {len(df)} historical records.")
 
-# Ensure there are no missing values (Imputation logic can be added here)
-df.fillna(df.mean(), inplace=True)
+# Ensure there are no missing values using column-specific strategies
+fill_values = {
+    "avg_balance": df["avg_balance"].median() if "avg_balance" in df.columns else 0,
+    "academic_score": df["academic_score"].median() if "academic_score" in df.columns else 0,
+    "dti_ratio": df["dti_ratio"].median() if "dti_ratio" in df.columns else 0,
+    "savings_rate": df["savings_rate"].median() if "savings_rate" in df.columns else 0,
+    "overdrafts": 0,
+    "gambling_flags": 0,
+}
+df.fillna(fill_values, inplace=True)
 
 X = df[["avg_balance", "overdrafts", "gambling_flags", "academic_score", "dti_ratio", "savings_rate"]]
 y = df["status"]

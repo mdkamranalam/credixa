@@ -171,9 +171,8 @@ router.post(
       formData.append("doc_type", doc_type);
       formData.append("file", createReadStream(req.file.path));
 
-      const riskEngineUrl = process.env.RISK_ENGINE_URL 
-        ? process.env.RISK_ENGINE_URL.replace("/analyze-statement", "/validate-document")
-        : "http://risk-engine:8000/validate-document";
+      const riskEngineBase = process.env.RISK_ENGINE_BASE_URL || "http://risk-engine:8000";
+      const riskEngineUrl = `${riskEngineBase}/validate-document`;
 
       // Fetch expected name based on owner_type for matching
       let expectedName = "";
