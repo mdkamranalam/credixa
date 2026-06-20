@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { createLogger, format, transports } from "winston";
+import redisClient from "../utils/redis.js";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const authenticateToken = (req, res, next) => {
+export const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -38,13 +39,23 @@ export const authenticateToken = (req, res, next) => {
 
   try {
     const verifiedUser = jwt.verify(token, JWT_SECRET);
+    
+    // Check if token is blacklisted in Redis
+    if (verifiedUser.jti && redisClient.isReady) {
+      const isBlacklisted = await redisClient.get(`bl_${verifiedUser.jti}`);
+      if (isBlacklisted) {
+        logger.warn(`Authentication failed: Token blacklisted for ${req.path}`);
+        return res.status(401).json({ error: "Token has been revoked. Please log in again." });
+      }
+    }
+
     req.user = verifiedUser;
-    logger.info(`User authenticated successfully: ${verifiedUser.user_id}`);
+    logger.info(`User authenticated successfully: ${verifiedUser.user_id || verifiedUser.id}`);
     next();
   } catch (error) {
     logger.warn(`Authentication failed: Invalid or expired token for ${req.path}`);
     // Don't expose specific error details to client
-    return res.status(403).json({ error: "Invalid or expired token." });
+    return res.status(401).json({ error: "Invalid or expired token." });
   }
 };
 
@@ -68,7 +79,7 @@ export const requireRole = (role) => {
 };
 
 // Enhanced authentication middleware with additional security checks
-export const enhancedAuthenticateToken = (req, res, next) => {
+export const enhancedAuthenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -79,6 +90,15 @@ export const enhancedAuthenticateToken = (req, res, next) => {
 
   try {
     const verifiedUser = jwt.verify(token, JWT_SECRET);
+
+    // Check if token is blacklisted in Redis
+    if (verifiedUser.jti && redisClient.isReady) {
+      const isBlacklisted = await redisClient.get(`bl_${verifiedUser.jti}`);
+      if (isBlacklisted) {
+        logger.warn(`Enhanced authentication failed: Token blacklisted for ${req.path}`);
+        return res.status(401).json({ error: "Token has been revoked." });
+      }
+    }
 
     // Additional security checks
     if (!verifiedUser || (!verifiedUser.id && !verifiedUser.user_id) || !verifiedUser.role) {
@@ -91,7 +111,6 @@ export const enhancedAuthenticateToken = (req, res, next) => {
     next();
   } catch (error) {
     logger.warn(`Enhanced authentication failed: Invalid or expired token for ${req.path}`);
-    // Don't expose specific error details to client
-    return res.status(403).json({ error: "Invalid or expired token." });
+    return res.status(401).json({ error: "Invalid or expired token." });
   }
 };

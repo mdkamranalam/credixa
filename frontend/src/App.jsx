@@ -1,56 +1,65 @@
+import { lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import { Toaster } from "react-hot-toast";
+import ErrorBoundary from "./components/ErrorBoundary";
+import LoadingSkeleton from "./components/LoadingSkeleton";
 import ProtectedRoute from "./components/ProtectedRoute";
-import StudentDashboard from "./pages/StudentDashboard.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
-import LoanChecklist from "./pages/LoanChecklist.jsx";
-import LandingPage from "./pages/LandingPage.jsx";
-import Onboarding from "./pages/Onboarding.jsx";
+
+// Lazy load all pages for better performance
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const Register = lazy(() => import("./pages/Register"));
+const Login = lazy(() => import("./pages/Login"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const LoanChecklist = lazy(() => import("./pages/LoanChecklist"));
+const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
 function App() {
   return (
-    <>
+    <ErrorBoundary>
+      <Toaster position="top-right" />
       <Router>
-        <Routes>
-          {/* Public Route */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/register/:type" element={<Register />} />
-          <Route path="/register" element={<Navigate to="/register/student" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/loan-checklist" element={<LoanChecklist />} />
-          <Route path="/onboarding" element={<ProtectedRoute allowedRoles={["STUDENT"]}><Onboarding /></ProtectedRoute>} />
+        <Suspense fallback={<LoadingSkeleton />}>
+          <Routes>
+            {/* Public Route */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/register/:type" element={<Register />} />
+            <Route path="/register" element={<Navigate to="/register/student" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/loan-checklist" element={<LoanChecklist />} />
+            <Route path="/onboarding" element={<ProtectedRoute allowedRoles={["STUDENT"]}><Onboarding /></ProtectedRoute>} />
 
-          {/* Protected Student Route */}
-          <Route
-            path="/student-dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["STUDENT"]}>
-                <StudentDashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Student Route */}
+            <Route
+              path="/student-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["STUDENT"]}>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Protected Admin Route */}
-          <Route
-            path="/admin-dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["INSTITUTION_ADMIN"]}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Admin Route */}
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["INSTITUTION_ADMIN"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Catch-all redirect */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            {/* Catch-all redirect */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Suspense>
       </Router>
-    </>
+    </ErrorBoundary>
   );
 }
 

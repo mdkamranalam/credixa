@@ -2,28 +2,38 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { createClient } from "redis";
+import { v4 as uuidv4 } from "uuid";
+import redisClient from "../utils/redis.js";
 import pool from "../utils/db.js";
 
 dotenv.config();
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
+const REFRESH_SECRET = process.env.JWT_SECRET + "_refresh"; // Using secret derivation for prototype
 
-// Redis Rate Limiter Setup
-const redisClient = createClient({
-  url: process.env.REDIS_URL || 'redis://credixa-redis:6379'
-});
+const generateTokens = (user) => {
+  const jti = uuidv4();
+  const payload = {
+    id: user.user_id,
+    role: user.role,
+    institution_id: user.institution_id,
+    jti
+  };
+  
+  const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
+  const refreshToken = jwt.sign({ ...payload, type: "refresh" }, REFRESH_SECRET, { expiresIn: "7d" });
+  
+  return { accessToken, refreshToken, jti };
+};
 
-redisClient.on('error', (err) => console.error('Redis Client Error', err));
-
-(async () => {
-    try {
-        await redisClient.connect();
-        console.log("Successfully connected to Redis");
-    } catch (err) {
-        console.error("Failed to connect to Redis:", err);
-    }
-})();
+const setRefreshCookie = (res, refreshToken) => {
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  });
+};
 
 const RATE_LIMIT_WINDOW_SECONDS = 15 * 60;
 const MAX_REQUESTS = 5;
@@ -89,21 +99,14 @@ router.post("/register", registerRateLimiter, async (req, res) => {
     ]);
 
     const user = result.rows[0];
-    const token = jwt.sign(
-      {
-        id: user.user_id,
-        role: user.role,
-        institution_id: user.institution_id,
-      },
-      JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    const { accessToken, refreshToken } = generateTokens(user);
+    setRefreshCookie(res, refreshToken);
 
     res
       .status(201)
       .json({
         message: "User registered successfully",
-        token,
+        token: accessToken,
         user: {
           id: user.user_id,
           full_name: user.full_name,
@@ -188,19 +191,12 @@ router.post('/register-institution', async (req, res) => {
 
         await client.query('COMMIT'); // Save everything permanently!
 
-        const token = jwt.sign(
-          {
-            id: user.user_id,
-            role: user.role,
-            institution_id: user.institution_id,
-          },
-          JWT_SECRET,
-          { expiresIn: "24h" }
-        );
+        const { accessToken, refreshToken } = generateTokens(user);
+        setRefreshCookie(res, refreshToken);
 
         res.status(201).json({
           message: "Institution and Admin account created perfectly!",
-          token,
+          token: accessToken,
           user: {
             id: user.user_id,
             full_name: user.full_name,
@@ -255,20 +251,12 @@ router.post("/login", async (req, res) => {
             return res.status(401).json({error: "Invalid email or password."});
         }
 
-        // Generate the JWT Payload
-        const token = jwt.sign(
-          {
-            id: user.user_id,
-            role: user.role,
-            institution_id: user.institution_id,
-          },
-          JWT_SECRET,
-          { expiresIn: "24h" },
-        ); 
+        const { accessToken, refreshToken } = generateTokens(user);
+        setRefreshCookie(res, refreshToken);
 
         res.status(200).json({
           message: "Login successful",
-          token: token,
+          token: accessToken,
           user: {
             id: user.user_id,
             full_name: user.full_name,
@@ -281,6 +269,50 @@ router.post("/login", async (req, res) => {
         console.error("Login Error:", error.message);
         res.status(500).json({ error: "Failed to login." });        
     }
+});
+
+router.post("/refresh", async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.status(401).json({ error: "No refresh token provided." });
+
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+    
+    // Generate new tokens
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens({
+      user_id: decoded.id,
+      role: decoded.role,
+      institution_id: decoded.institution_id
+    });
+    
+    setRefreshCookie(res, newRefreshToken);
+    res.json({ token: accessToken });
+  } catch (err) {
+    res.status(403).json({ error: "Invalid or expired refresh token." });
+  }
+});
+
+router.post("/logout", async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  
+  if (token) {
+    try {
+      const decoded = jwt.decode(token);
+      if (decoded && decoded.jti) {
+        // Calculate remaining TTL of the token to store in Redis
+        const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+        if (ttl > 0 && redisClient.isReady) {
+          await redisClient.setEx(`bl_${decoded.jti}`, ttl, "revoked");
+        }
+      }
+    } catch (e) {
+      console.error("Logout decode error", e);
+    }
+  }
+  
+  res.clearCookie("refreshToken");
+  res.status(200).json({ message: "Logged out successfully." });
 });
 
 export default router;

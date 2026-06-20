@@ -28,7 +28,7 @@ services:
       postgres:
         condition: service_healthy
       risk-engine:
-        condition: service_started
+        condition: service_healthy
     env_file:
       - ./backend-gateway/.env
     environment:
@@ -46,6 +46,11 @@ services:
       - RISK_ENGINE_API_KEY=${RISK_ENGINE_API_KEY:?RISK_ENGINE_API_KEY must be set in environment}
     volumes:
       - ./risk-engine:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build: ./frontend
@@ -66,6 +71,10 @@ services:
     ports:
       - "6379:6379"
     restart: unless-stopped
+    command: redis-server --appendonly yes --appendfsync everysec
+    volumes:
+      - redisdata:/data
 
 volumes:
   pgdata:
+  redisdata:

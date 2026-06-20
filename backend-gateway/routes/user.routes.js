@@ -372,72 +372,99 @@ router.post("/run-analysis", authenticateToken, async (req, res) => {
     );
 
     const docs = docsRes.rows;
-    let score = 20; // Base score for completed KYC
-    let pros = ["Identity (PAN/Aadhaar) successfully verified."];
+    let score = 0;
+    let pros = [];
     let cons = [];
+
+    // 1. Identity & KYC Readiness (Base 30 points)
+    score += 30;
+    pros.push("Identity (PAN/Aadhaar) successfully verified (30/30 pts).");
 
     if (docs.length === 0) {
       return res.status(400).json({ error: "No documents found for analysis." });
     }
 
+    // 2. Document Extraction Quality (30 points max)
+    let extractionScore = 0;
     let validDocs = 0;
+    let hasFinancialData = false;
+    let marksPercentage = null;
+    let riskKeywords = 0;
+
     docs.forEach(doc => {
       if (doc.is_verified) {
         validDocs++;
         let details = typeof doc.structured_details === 'string' ? JSON.parse(doc.structured_details) : doc.structured_details;
         
-        // If we found meaningful structured data
         if (details && Object.keys(details).length > 0 && !Object.values(details).includes("Not Found")) {
-          score += (80 / docs.length);
-
-          // PRE-APPROVAL RISK CHECKS
+          extractionScore += (30 / docs.length);
+          
+          if (details["Average Balance"] !== undefined) hasFinancialData = true;
+          
           if (details["Risk Keywords Found"] && details["Risk Keywords Found"] > 0) {
-            const numKeywords = parseInt(details["Risk Keywords Found"]);
-            score -= (numKeywords * 10);
-            cons.push(`High risk alert: Detected ${numKeywords} risk keyword(s) in ${doc.doc_type.replace(/_/g, ' ')}.`);
+            riskKeywords += parseInt(details["Risk Keywords Found"]);
           }
           
           if (details["Extracted Marks/Score"]) {
             const marksStr = String(details["Extracted Marks/Score"]);
             if (!isNaN(parseFloat(marksStr))) {
               const marks = parseFloat(marksStr);
-              // Normalize to percentage if it's a CGPA (<= 10)
-              const percentage = marks <= 10 ? marks * 10 : marks; 
-              if (percentage < 60) {
-                score -= 15;
-                cons.push(`Academic risk: Low scores detected (${marks}) in ${doc.doc_type.replace(/_/g, ' ')}. This may affect final eligibility.`);
-              }
+              marksPercentage = marks <= 10 ? marks * 10 : marks; 
             }
           }
         } else {
-          score += (40 / docs.length); // Partial points
-          cons.push(`Extraction for ${doc.doc_type.replace(/_/g, ' ')} was partial. Ensure clarity.`);
+          extractionScore += (15 / docs.length); // Partial points for unreadable docs
+          cons.push(`Extraction for ${doc.doc_type.replace(/_/g, ' ')} was partial. Quality (-${Math.round(15/docs.length)} pts).`);
         }
       }
     });
 
-    if (validDocs === docs.length) {
-      pros.push("All required documents uploaded and verified.");
-    }
-    
-    // Bonus for specific positive extractions
-    if (docs.some(d => {
-      let details = typeof d.structured_details === 'string' ? JSON.parse(d.structured_details) : d.structured_details;
-      return details && details["Average Balance"];
-    })) {
-      pros.push("Financial data successfully digitized and structured.");
+    score += extractionScore;
+    if (extractionScore > 25) {
+      pros.push(`Excellent document readability (${Math.round(extractionScore)}/30 pts).`);
+    } else {
+      cons.push(`Average document readability (${Math.round(extractionScore)}/30 pts).`);
     }
 
+    // 3. Financial & Academic Health (40 points max)
+    let healthScore = 40;
+    
+    if (hasFinancialData) {
+      pros.push("Financial statements successfully parsed for underwriting.");
+    } else {
+      healthScore -= 10;
+      cons.push("Missing core financial liquidity data (-10 pts).");
+    }
+
+    if (riskKeywords > 0) {
+      const penalty = Math.min(20, riskKeywords * 5);
+      healthScore -= penalty;
+      cons.push(`Detected ${riskKeywords} high-risk keyword(s) in statements (-${penalty} pts).`);
+    }
+
+    if (marksPercentage !== null) {
+      if (marksPercentage < 60) {
+        healthScore -= 15;
+        cons.push(`Academic risk: Low scores detected (${marksPercentage}%) (-15 pts).`);
+      } else {
+        pros.push(`Strong academic standing (${marksPercentage}%).`);
+      }
+    } else {
+      // Missing academic data
+      healthScore -= 5;
+    }
+
+    score += healthScore;
+    
     const finalScore = Math.max(0, Math.min(Math.round(score), 100));
     let reasoning = "";
 
-    if (finalScore >= 90) {
+    if (finalScore >= 85) {
       reasoning = "Excellent Profile Readiness: Your documents have been successfully parsed and no immediate risk flags were detected. You are fully ready to apply for a loan.";
-    } else if (finalScore >= 70) {
+    } else if (finalScore >= 65) {
       reasoning = "Good Profile Readiness: Most of your documents were digitized. Minor risks or manual verifications might be required during loan processing.";
     } else {
-      reasoning = "Action Recommended: We detected potential risks in your academic/financial profile, or several documents could not be fully parsed. You may proceed, but expect manual reviews or higher scrutiny.";
-      if (cons.length === 0) cons.push("Overall data extraction confidence is low.");
+      reasoning = "Action Recommended: We detected potential risks in your academic/financial profile, or several documents could not be fully parsed. Expect higher scrutiny.";
     }
 
     await pool.query(
