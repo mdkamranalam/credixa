@@ -57,3 +57,21 @@ export const decryptData = (encryptedData) => {
     
     return decrypted;
 };
+
+/**
+ * Produces a deterministic HMAC-SHA256 of the given plaintext using the
+ * ENCRYPTION_KEY as the HMAC secret. Used for equality checks (deduplication)
+ * on PII fields without revealing the plaintext. Store alongside the AES
+ * ciphertext and put a UNIQUE index on the HMAC column.
+ *
+ * @param {string} text - The plaintext to hash (e.g. an Aadhaar number).
+ * @returns {string|null} - A 64-character hex HMAC string, or null if input is falsy.
+ */
+export const hmacData = (text) => {
+    if (!text) return null;
+    return crypto
+        .createHmac('sha256', getKey())
+        .update(String(text))
+        .digest('hex');
+};
+

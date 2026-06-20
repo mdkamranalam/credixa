@@ -17,6 +17,7 @@ CREATE TYPE loan_status_enum AS ENUM (
 );
 CREATE TYPE txn_type_enum AS ENUM ('DISBURSAL', 'REPAYMENT', 'LATE_FEE', 'REFUND');
 CREATE TYPE txn_status_enum AS ENUM ('INITIATED', 'SUCCESS', 'FAILED', 'PENDING');
+CREATE TYPE schedule_status_enum AS ENUM ('PENDING', 'PAID', 'OVERDUE', 'WAIVED');
 
 -- 3. UTILITY FUNCTIONS
 CREATE OR REPLACE FUNCTION update_modified_column() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW();
@@ -55,6 +56,9 @@ CREATE TABLE users (
     role VARCHAR(20) NOT NULL,
     pan_number VARCHAR(10) UNIQUE CHECK (pan_number ~ '^[A-Z]{5}[0-9]{4}[A-Z]{1}$'),
     aadhaar_hash VARCHAR(255),
+    -- Deterministic HMAC-SHA256 of Aadhaar; used for indexed deduplication
+    -- without decrypting every row. See utils/encryption.js:hmacData().
+    aadhaar_hmac VARCHAR(64) UNIQUE,
     kyc_status kyc_status_enum DEFAULT 'PENDING',
     dob DATE,
     current_address TEXT,
@@ -128,8 +132,10 @@ CREATE TABLE repayment_schedules (
     emi_amount DECIMAL(12, 2) NOT NULL,
     principal_component DECIMAL(12, 2),
     interest_component DECIMAL(12, 2),
-    status VARCHAR(20) DEFAULT 'PENDING',
-    paid_at TIMESTAMP WITH TIME ZONE
+    status schedule_status_enum DEFAULT 'PENDING',
+    paid_at TIMESTAMP WITH TIME ZONE,
+    -- Prevents double-generation of schedules if two paths both approve a loan
+    CONSTRAINT uq_repayment_loan_due UNIQUE (loan_id, due_date)
 );
 -- TABLE - 7: RISK SCORES
 CREATE TABLE risk_scores (
@@ -186,6 +192,8 @@ CREATE TABLE loan_documents (
 -- =========================================================
 CREATE INDEX idx_users_mobile ON users(mobile_number);
 CREATE INDEX idx_users_email ON users(email);
+-- Partial index for fast Aadhaar HMAC deduplication (only non-null rows)
+CREATE UNIQUE INDEX idx_users_aadhaar_hmac ON users(aadhaar_hmac) WHERE aadhaar_hmac IS NOT NULL;
 CREATE INDEX idx_loans_user ON loans(user_id);
 CREATE INDEX idx_loans_status ON loans(status);
 CREATE INDEX idx_txn_loan ON transactions(loan_id);

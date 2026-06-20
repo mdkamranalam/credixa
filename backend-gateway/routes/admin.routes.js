@@ -4,8 +4,9 @@ import dotenv from "dotenv";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
-import { enhancedAuthenticateToken, authenticateToken } from "../middleware/auth.middleware.js";
+import { enhancedAuthenticateToken, authenticateToken, requireRole } from "../middleware/auth.middleware.js";
 import { calculateEMI } from "../utils/loan.utils.js";
+import { isValidUUID } from "../utils/validators.js";
 
 dotenv.config();
 const router = express.Router();
@@ -19,9 +20,8 @@ const storage = multer.diskStorage({
     const timestamp = Date.now();
     const sanitizedFilename = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '');
 
-    // Additional validation for loan ID
-    const loanIdPattern = /^[a-zA-Z0-9\-_]+$/;
-    if (!loanIdPattern.test(loanId)) {
+    // Validate that loanId is a proper UUID before using it in the filename
+    if (!isValidUUID(loanId)) {
       return cb(new Error("Invalid loan ID format"));
     }
 
@@ -79,14 +79,8 @@ router.post("/loans/:loanId/upload-doc", enhancedAuthenticateToken, upload.singl
 
   try {
     // Input validation
-    if (!loanId || typeof loanId !== 'string' || loanId.trim() === '') {
-      return res.status(400).json({ error: "Valid loan ID is required." });
-    }
-
-    // Additional validation for loan ID format
-    const loanIdPattern = /^[a-zA-Z0-9\-_]+$/;
-    if (!loanIdPattern.test(loanId)) {
-      return res.status(400).json({ error: "Invalid loan ID format." });
+    if (!loanId || !isValidUUID(loanId)) {
+      return res.status(400).json({ error: "Valid loan UUID is required." });
     }
 
     // Validate document type
@@ -138,11 +132,7 @@ router.get("/loans/:loanId/details", authenticateToken, async (req, res) => {
   }
 });
 
-router.get("/loans", authenticateToken, async (req, res) => {
-  if (req.user.role !== "INSTITUTION_ADMIN") {
-    return res.status(403).json({ error: "Admins only." });
-  }
-
+router.get("/loans", authenticateToken, requireRole("INSTITUTION_ADMIN"), async (req, res) => {
   try {
     const query = `
     SELECT
@@ -177,25 +167,15 @@ router.get("/loans", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/loans/:loanId/status", enhancedAuthenticateToken, async (req, res) => {
-  if (req.user.role !== "INSTITUTION_ADMIN") {
-    return res.status(403).json({ error: "Access denied." });
-  }
-
+router.put("/loans/:loanId/status", enhancedAuthenticateToken, requireRole("INSTITUTION_ADMIN"), async (req, res) => {
   const { loanId } = req.params;
   const { status, approved_amount } = req.body;
   const client = await pool.connect();
 
   try {
     // Input validation
-    if (!loanId || typeof loanId !== 'string' || loanId.trim() === '') {
-      return res.status(400).json({ error: "Valid loan ID is required." });
-    }
-
-    // Additional validation for loan ID format
-    const loanIdPattern = /^[a-zA-Z0-9\-_]+$/;
-    if (!loanIdPattern.test(loanId)) {
-      return res.status(400).json({ error: "Invalid loan ID format." });
+    if (!loanId || !isValidUUID(loanId)) {
+      return res.status(400).json({ error: "Valid loan UUID is required." });
     }
 
     if (status && typeof status !== 'string') {
@@ -236,6 +216,20 @@ router.put("/loans/:loanId/status", enhancedAuthenticateToken, async (req, res) 
 
     // 2. TRIGGER: Populate repayment_schedules (Table 6)
     if (status === "APPROVED" || status === "ACTIVE") {
+      // Guard: ensure schedules have not already been generated for this loan.
+      // The DB has a UNIQUE(loan_id, due_date) constraint as a final backstop,
+      // but this provides a cleaner error than a constraint violation at runtime.
+      const existingSchedules = await client.query(
+        "SELECT COUNT(*) FROM repayment_schedules WHERE loan_id = $1",
+        [loanId]
+      );
+      if (parseInt(existingSchedules.rows[0].count) > 0) {
+        await client.query("ROLLBACK");
+        return res.status(409).json({
+          error: "Repayment schedule already exists for this loan. Re-approval is not permitted."
+        });
+      }
+
       const months = loan.tenure_months;
       const emi = calculateEMI(loan.approved_amount, loan.interest_rate, months);
 
@@ -331,11 +325,7 @@ router.get("/transactions", authenticateToken, async (req, res) => {
   }
 });
 
-router.get("/portfolio-summary", authenticateToken, async (req, res) => {
-  if (req.user.role !== "INSTITUTION_ADMIN") {
-    return res.status(403).json({ error: "Access denied." });
-  }
-
+router.get("/portfolio-summary", authenticateToken, requireRole("INSTITUTION_ADMIN"), async (req, res) => {
   try {
     const query = `
     SELECT
@@ -361,11 +351,7 @@ router.get("/portfolio-summary", authenticateToken, async (req, res) => {
 });
 
 // --- STUDENT PROFILE VIEWER ---
-router.get("/students/:userId", authenticateToken, async (req, res) => {
-  if (req.user.role !== "INSTITUTION_ADMIN" && req.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Admins only." });
-  }
-
+router.get("/students/:userId", authenticateToken, requireRole(["INSTITUTION_ADMIN", "ADMIN"]), async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -400,11 +386,7 @@ router.get("/students/:userId", authenticateToken, async (req, res) => {
 
 // --- DYNAMIC CHECKLIST ROUTES ---
 
-router.get("/checklist", authenticateToken, async (req, res) => {
-  if (req.user.role !== "INSTITUTION_ADMIN" && req.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Admins only." });
-  }
-  
+router.get("/checklist", authenticateToken, requireRole(["INSTITUTION_ADMIN", "ADMIN"]), async (req, res) => {
   try {
     const institutionId = req.user.institution_id;
     const query = `SELECT checklist FROM institutions WHERE institution_id = $1`;
@@ -418,11 +400,7 @@ router.get("/checklist", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/checklist", authenticateToken, async (req, res) => {
-  if (req.user.role !== "INSTITUTION_ADMIN" && req.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Admins only." });
-  }
-
+router.put("/checklist", authenticateToken, requireRole(["INSTITUTION_ADMIN", "ADMIN"]), async (req, res) => {
   try {
     const newChecklist = req.body;
     const institutionId = req.user.institution_id;

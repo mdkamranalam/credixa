@@ -136,7 +136,7 @@ router.post(
         {
           headers: {
             ...formData.getHeaders(),
-            "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026"
+            "x-api-key": process.env.RISK_ENGINE_API_KEY,
           },
         },
       );
@@ -376,54 +376,8 @@ router.get("/repayments", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/loans/:loanId/status", authenticateToken, async (req, res) => {
-  const { loanId } = req.params;
-  const { status, approved_amount } = req.body;
 
-  const client = await pool.connect();
 
-  try {
-    await client.query("BEGIN");
-    console.log("Attempting to approve loan:", loanId);
-
-    // 1. Update the Loan Status
-    const updateResult = await client.query(
-      `UPDATE loans SET status = $1, approved_amount = $2, updated_at = NOW() 
-             WHERE loan_id = $3 RETURNING *`,
-      [status, approved_amount, loanId],
-    );
-    const loan = updateResult.rows[0];
-
-    // 2. If APPROVED, generate the 12-month schedule (Table 6)
-    if (status === "APPROVED" || status === "ACTIVE") {
-      const months = loan.tenure_months;
-      // EMI Formula
-      const emi = calculateEMI(approved_amount, loan.interest_rate, months);
-
-      for (let i = 1; i <= months; i++) {
-        const dueDate = new Date();
-        dueDate.setMonth(dueDate.getMonth() + i);
-
-        await client.query(
-          `INSERT INTO repayment_schedules (loan_id, due_date, emi_amount, status) 
-                     VALUES ($1, $2, $3, 'PENDING')`,
-          [loanId, dueDate, Math.round(emi)],
-        );
-      }
-    }
-
-    await client.query("COMMIT");
-    res
-      .status(200)
-      .json({ message: "Loan status updated and schedule generated!" });
-  } catch (error) {
-    await client.query("ROLLBACK");
-    console.error("Schedule Error:", error.message);
-    res.status(500).json({ error: "Failed to process approval." });
-  } finally {
-    client.release();
-  }
-});
 
 router.get("/next-payment", authenticateToken, async (req, res) => {
   try {

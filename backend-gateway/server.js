@@ -54,6 +54,11 @@ if (!process.env.ENCRYPTION_KEY) {
   process.exit(1);
 }
 
+if (!process.env.RISK_ENGINE_API_KEY) {
+  console.error("ERROR: RISK_ENGINE_API_KEY environment variable is not set. Exiting.");
+  process.exit(1);
+}
+
 // Basic Health Check Route
 app.get("/health", (req, res) => {
   res.status(200).json({

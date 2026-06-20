@@ -3,7 +3,7 @@ import pool from "../utils/db.js";
 import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import { upload as diskUpload } from "../middleware/upload.middleware.js";
-import { encryptData, decryptData } from "../utils/encryption.js";
+import { encryptData, decryptData, hmacData } from "../utils/encryption.js";
 import axios from "axios";
 import FormData from "form-data";
 import { createReadStream, unlinkSync } from "fs";
@@ -107,28 +107,29 @@ router.post("/kyc", authenticateToken, async (req, res) => {
   await new Promise((resolve) => setTimeout(resolve, 50));
 
   try {
-    // Check Aadhaar uniqueness across all users
-    const existingUsers = await pool.query("SELECT user_id, aadhaar_hash FROM users WHERE aadhaar_hash IS NOT NULL");
-    for (let u of existingUsers.rows) {
-        if (u.user_id !== userId) {
-            try {
-                const decryptedAadhaar = decryptData(u.aadhaar_hash);
-                if (decryptedAadhaar === aadhaar_number) {
-                    return res.status(400).json({ error: "Aadhaar already linked to another account." });
-                }
-            } catch (e) {}
-        }
+    // Compute a deterministic HMAC for O(1) indexed deduplication.
+    // This avoids fetching and decrypting every row in the users table.
+    const aadhaarHmac = hmacData(aadhaar_number);
+
+    // Single indexed query — no full table scan
+    const duplicateCheck = await pool.query(
+      "SELECT user_id FROM users WHERE aadhaar_hmac = $1 AND user_id != $2",
+      [aadhaarHmac, userId]
+    );
+    if (duplicateCheck.rows.length > 0) {
+      return res.status(400).json({ error: "Aadhaar already linked to another account." });
     }
 
     const aadhaarHash = encryptData(aadhaar_number);
 
     const updateQuery = `
       UPDATE users 
-      SET kyc_status = 'VERIFIED', kyc_source = 'INDIASTACK_SIMULATION', pan_number = $1, aadhaar_hash = $2, updated_at = NOW()
-      WHERE user_id = $3
+      SET kyc_status = 'VERIFIED', kyc_source = 'INDIASTACK_SIMULATION', pan_number = $1,
+          aadhaar_hash = $2, aadhaar_hmac = $3, updated_at = NOW()
+      WHERE user_id = $4
       RETURNING user_id, kyc_status, pan_number;
     `;
-    const result = await pool.query(updateQuery, [pan_number, aadhaarHash, userId]);
+    const result = await pool.query(updateQuery, [pan_number, aadhaarHash, aadhaarHmac, userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "User not found." });
@@ -193,7 +194,7 @@ router.post(
         const riskResponse = await axios.post(`${riskEngineUrl}?expected_name=${encodeURIComponent(expectedName)}${ocrQuery}`, formData, {
           headers: {
             ...formData.getHeaders(),
-            "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026"
+            "x-api-key": process.env.RISK_ENGINE_API_KEY,
           },
         });
 
