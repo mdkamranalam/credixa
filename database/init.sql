@@ -140,6 +140,7 @@ CREATE TABLE risk_scores (
     income_consistency_score DECIMAL(5, 2),
     risk_flags JSONB,
     decision_latency_ms FLOAT,
+    model_version VARCHAR(50),
     calculated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -174,6 +175,28 @@ CREATE TABLE loan_documents (
     verified_at TIMESTAMP WITH TIME ZONE,
     uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE - 10: Audit Logs
+CREATE TABLE audit_logs (
+    log_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    loan_id UUID REFERENCES loans(loan_id) ON DELETE CASCADE,
+    actor_user_id UUID REFERENCES users(user_id) ON DELETE SET NULL,
+    action VARCHAR(50) NOT NULL,
+    old_status VARCHAR(50),
+    new_status VARCHAR(50),
+    notes TEXT,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABLE - 11: Notifications
+CREATE TABLE notifications (
+    notification_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =========================================================

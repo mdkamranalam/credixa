@@ -8,7 +8,7 @@ import asyncio
 import os
 import pytesseract
 from pdf2image import convert_from_bytes
-import shap
+
 import pandas as pd
 import hashlib
 import json
@@ -179,7 +179,8 @@ async def analyze_statement(
                 "pros": dynamic_reasoning_data["pros"],
                 "cons": dynamic_reasoning_data["cons"]
             },
-            "extracted_metrics": metrics_for_llm
+            "extracted_metrics": metrics_for_llm,
+            "model_version": "v2.0-20260620"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing statement: {str(e)}")

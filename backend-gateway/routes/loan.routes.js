@@ -7,6 +7,7 @@ import pool from "../utils/db.js";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import dotenv from "dotenv";
 import { calculateEMI } from "../utils/loan.utils.js";
+import { logLoanAction, createNotification } from "../utils/audit.js";
 
 dotenv.config();
 const router = express.Router();
@@ -158,14 +159,15 @@ router.post(
 
       // 6. Insert Risk Score
       const riskInsert = `
-            INSERT INTO risk_scores (loan_id, omniscore, probability_of_default, risk_tier)
-            VALUES ($1, $2, $3, $4);
+            INSERT INTO risk_scores (loan_id, omniscore, probability_of_default, risk_tier, model_version)
+            VALUES ($1, $2, $3, $4, $5);
         `;
       await client.query(riskInsert, [
         loanId,
         cibilScore,
         defaultProb,
         riskTier,
+        aiResult.model_version || "v1.0"
       ]);
 
       await client.query("COMMIT");
@@ -354,9 +356,28 @@ router.post("/repay", authenticateToken, async (req, res) => {
     let loanClosed = false;
     if (parseInt(checkRemaining.rows[0].count) === 0) {
       await client.query(
-        "UPDATE loans SET status = 'CLOSED', updated_at = NOW() WHERE loan_id = $1",
+        "UPDATE loans SET status = 'CLOSED', updated_at = NOW(), closed_at = NOW() WHERE loan_id = $1",
         [loan_id],
       );
+      
+      const adminId = req.user.id || req.user.user_id;
+      await logLoanAction(
+        client, 
+        loan_id, 
+        adminId, 
+        "STATUS_CHANGE", 
+        "ACTIVE", // We can assume active since they just paid the last EMI
+        "CLOSED", 
+        `Loan fully repaid`
+      );
+
+      await createNotification(
+        client,
+        adminId,
+        `Loan Repaid`,
+        `Congratulations, your loan has been fully repaid and closed.`
+      );
+
       loanClosed = true;
     }
 

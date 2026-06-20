@@ -10,8 +10,11 @@ import loanRoutes from "./routes/loan.routes.js";
 import transactionRoutes from "./routes/transaction.routes.js";
 import institutionRoutes from "./routes/institution.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import kycRoutes from "./routes/kyc.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import fileRoutes from "./routes/file.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
+import { startLoanScheduler } from "./jobs/loan_scheduler.js";
 import { authenticateToken, requireRole } from "./middleware/auth.middleware.js";
 
 dotenv.config();
@@ -27,7 +30,6 @@ app.use(cors({
   credentials: true
 }));
 
-app.use("/uploads", fileRoutes);
 
 
 // Test the DB Connection on Startup
@@ -99,6 +101,12 @@ app.use("/api/auth", authRoutes);
 app.use("/api/institutions", institutionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", authenticateToken, userRoutes);
+app.use("/api/kyc", kycRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/uploads", authenticateToken, fileRoutes);
+
+// Start background jobs
+startLoanScheduler();
 app.use("/api/loans", authenticateToken, loanRoutes);
 app.use("/api/transactions", authenticateToken, requireRole("INSTITUTION_ADMIN"), transactionRoutes);
 

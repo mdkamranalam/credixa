@@ -7,6 +7,7 @@ import fs from "fs/promises";
 import { enhancedAuthenticateToken, authenticateToken, requireRole } from "../middleware/auth.middleware.js";
 import { calculateEMI } from "../utils/loan.utils.js";
 import { isValidUUID } from "../utils/validators.js";
+import { logLoanAction, createNotification } from "../utils/audit.js";
 
 dotenv.config();
 const router = express.Router();
@@ -198,6 +199,10 @@ router.put("/loans/:loanId/status", enhancedAuthenticateToken, requireRole("INST
 
     await client.query("BEGIN");
 
+    // Fetch old status for audit log
+    const oldLoanRes = await client.query("SELECT status FROM loans WHERE loan_id = $1", [loanId]);
+    const oldStatus = oldLoanRes.rows.length > 0 ? oldLoanRes.rows[0].status : 'UNKNOWN';
+
     // 1. Update the Loan Status
     const updateQuery = `
             UPDATE loans
@@ -270,6 +275,26 @@ router.put("/loans/:loanId/status", enhancedAuthenticateToken, requireRole("INST
         `DISB - ${loanId} `,
       ]);
     }
+
+    // 3. Audit Log and Notifications
+    const adminId = req.user.id || req.user.user_id;
+    await logLoanAction(
+      client, 
+      loanId, 
+      adminId, 
+      "STATUS_CHANGE", 
+      oldStatus,
+      status, 
+      `Loan status updated to ${status}`
+    );
+
+    // Provide an informative notification to the user
+    await createNotification(
+      client,
+      loan.user_id,
+      `Loan ${status}`,
+      `Your loan application has been marked as ${status}.`
+    );
 
     await client.query("COMMIT");
     res
