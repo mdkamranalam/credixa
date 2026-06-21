@@ -19,7 +19,7 @@ import { uploadDocument, addCoApplicant } from "../controllers/loan.controller.j
 
 
 // The Python Risk Engine URL
-const RISK_ENGINE_BASE = process.env.RISK_ENGINE_BASE_URL || "http://localhost:8000";
+const RISK_ENGINE_BASE = process.env.RISK_ENGINE_BASE_URL || "http://risk-engine:8000";
 const RISK_ENGINE_URL = `${RISK_ENGINE_BASE}/analyze-statement`;
 
 // The Co-Borrower Score Endoint
@@ -47,54 +47,46 @@ router.post(
         .status(400)
         .json({ error: "Student statement and parent statement are required." });
     }
-    if (!existing_loan_id) {
-      return res.status(400).json({ error: "existing_loan_id is required." });
-    }
-    
-    // Validate existing_loan_id is a UUID
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(existing_loan_id)) {
-      return res.status(400).json({ error: "existing_loan_id must be a valid UUID." });
-    }
-
     const client = await pool.connect();
 
     try {
       await client.query("BEGIN");
 
-      // Verify user owns the loan
-      const verifyQuery = await client.query("SELECT * FROM loans WHERE loan_id = $1 AND user_id = $2", [existing_loan_id, userId]);
-      if (verifyQuery.rows.length === 0) {
+      const userQuery = await client.query(
+        "SELECT institution_id FROM users WHERE user_id = $1",
+        [userId],
+      );
+
+      if (userQuery.rows.length === 0 || !userQuery.rows[0].institution_id) {
         await client.query("ROLLBACK");
-        return res.status(403).json({ error: "Unauthorized or loan not found." });
+        return res.status(400).json({
+          error: "No institution linked to this user.",
+        });
       }
 
-      // Update the loan to change status to UNDER_REVIEW
+      const dbInstitutionId = userQuery.rows[0].institution_id;
+
       // Trim and validate IFSC code (max 11 chars)
-        const trimmedIfsc = (ifsc_code || "").trim();
-        if (trimmedIfsc.length > 11) {
-          return res.status(400).json({ error: "IFSC code exceeds maximum length of 11 characters." });
-        }
-        const loanUpdate = `
-          UPDATE loans 
-          SET 
-            requested_amount = COALESCE($1, requested_amount),
-            interest_rate = COALESCE($2, interest_rate),
-            tenure_months = COALESCE($3, tenure_months),
-            student_account_number = COALESCE($4, student_account_number),
-            student_ifsc_code = COALESCE($5, student_ifsc_code),
-            status = 'UNDER_REVIEW',
-            updated_at = NOW()
-          WHERE loan_id = $6
-          RETURNING *;
-        `;
-      const loanRes = await client.query(loanUpdate, [
+      const trimmedIfsc = (ifsc_code || "").trim();
+      if (trimmedIfsc.length > 11) {
+        await client.query("ROLLBACK");
+        return res.status(400).json({ error: "IFSC code exceeds maximum length of 11 characters." });
+      }
+
+      const loanInsert = `
+        INSERT INTO loans (
+          user_id, institution_id, requested_amount, interest_rate, tenure_months, student_account_number, student_ifsc_code, status
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'UNDER_REVIEW')
+        RETURNING *;
+      `;
+      const loanRes = await client.query(loanInsert, [
+        userId,
+        dbInstitutionId,
         requested_amount,
         interest_rate,
         tenure_months,
         student_account_number,
-        ifsc_code,
-        existing_loan_id
+        trimmedIfsc,
       ]);
       const loanId = loanRes.rows[0].loan_id;
 
@@ -206,76 +198,7 @@ router.post(
   },
 );
 
-router.post("/initialize", authenticateToken, async (req, res) => {
-  const userId = req.user.id;
-  const {
-    requested_amount,
-    interest_rate,
-    tenure_months,
-    student_account_number,
-    ifsc_code,
-  } = req.body;
 
-  if (!requested_amount || isNaN(requested_amount) || requested_amount <= 0) {
-    return res.status(400).json({ error: "Valid requested_amount (> 0) is required." });
-  }
-  if (interest_rate === undefined || isNaN(interest_rate) || interest_rate < 0 || interest_rate > 100) {
-    return res.status(400).json({ error: "Valid interest_rate (0-100) is required." });
-  }
-  if (!tenure_months || isNaN(tenure_months) || tenure_months <= 0 || tenure_months > 360) {
-    return res.status(400).json({ error: "Valid tenure_months (1-360) is required." });
-  }
-
-  const client = await pool.connect();
-
-  try {
-    await client.query("BEGIN");
-
-    const userQuery = await client.query(
-      "SELECT institution_id FROM users WHERE user_id = $1",
-      [userId],
-    );
-
-    if (userQuery.rows.length === 0 || !userQuery.rows[0].institution_id) {
-      await client.query("ROLLBACK");
-      return res.status(400).json({
-        error: "No institution linked to this user.",
-      });
-    }
-
-    const dbInstitutionId = userQuery.rows[0].institution_id;
-
-    // Trim and validate IFSC code (max 11 chars)
-    const trimmedIfscInit = (ifsc_code || "").trim();
-    if (trimmedIfscInit.length > 11) {
-      return res.status(400).json({ error: "IFSC code exceeds maximum length of 11 characters." });
-    }
-
-    const loanInsert = `
-        INSERT INTO loans (
-          user_id, institution_id, requested_amount, interest_rate, tenure_months, student_account_number, student_ifsc_code, status
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'APPLIED') 
-        RETURNING *;
-      `;
-    const loanRes = await client.query(loanInsert, [
-      userId, dbInstitutionId, requested_amount, interest_rate, tenure_months, student_account_number, trimmedIfscInit,
-    ]);
-    const loanId = loanRes.rows[0].loan_id;
-
-    await client.query("COMMIT");
-
-    res.status(200).json({
-      message: "Application initialized",
-      loan_id: loanId,
-    });
-  } catch (error) {
-    await client.query("ROLLBACK");
-    console.error("Initialize Loan Error:", error.message);
-    res.status(500).json({ error: "Failed to initialize application." });
-  } finally {
-    client.release();
-  }
-});
 
 // Upload a specific document for a loan application
 router.post(

@@ -100,23 +100,7 @@ const StudentDashboard = () => {
     setApplyError("");
 
     if (step === 3) {
-      setIsApplying(true);
-      try {
-        const payload = {
-          requested_amount: loanAmount,
-          interest_rate: SYSTEM_INTEREST_RATE,
-          tenure_months: loanTenure,
-          student_account_number: selectedBank.split(" ")[1].replace(/\*/g, "0"),
-          ifsc_code: selectedBank.split(" ")[0] + "0001234",
-        };
-        const response = await api.post("/loans/initialize", payload);
-        setTempLoanId(response.data.loan_id);
-        setStepSync(4);
-      } catch (error) {
-        setApplyError(error.response?.data?.error || "Initial application failed.");
-      } finally {
-        setIsApplying(false);
-      }
+      setStepSync(4);
     } else {
       setStepSync(step + 1);
     }
@@ -145,7 +129,6 @@ const StudentDashboard = () => {
     if (!isFirstSemester && latestMarksheetFile) {
       data.append("latest_marksheet", latestMarksheetFile);
     }
-    data.append("existing_loan_id", tempLoanId);
 
     try {
       const response = await api.post("/loans/apply", data, {

@@ -225,11 +225,11 @@ router.put("/loans/:loanId/status", enhancedAuthenticateToken, requireRole("INST
     // 1. Update the Loan Status
     const updateQuery = `
             UPDATE loans
-            SET status = $1, 
+            SET status = $1::loan_status_enum, 
                 approved_amount = COALESCE($2, requested_amount), 
                 updated_at = NOW(),
-                disbursed_at = CASE WHEN $1 IN ('APPROVED', 'ACTIVE') AND disbursed_at IS NULL THEN NOW() ELSE disbursed_at END,
-                closed_at = CASE WHEN $1 = 'CLOSED' AND closed_at IS NULL THEN NOW() ELSE closed_at END
+                disbursed_at = CASE WHEN $1::loan_status_enum IN ('APPROVED', 'ACTIVE') AND disbursed_at IS NULL THEN NOW() ELSE disbursed_at END,
+                closed_at = CASE WHEN $1::loan_status_enum = 'CLOSED' AND closed_at IS NULL THEN NOW() ELSE closed_at END
             WHERE loan_id = $3 AND institution_id = $4
     RETURNING *;
     `;
