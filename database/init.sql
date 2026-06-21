@@ -145,9 +145,15 @@ CREATE TABLE risk_scores (
 );
 
 -- TABLE - 8: Co-Applicants
+-- loan_id is nullable so guarantors can be added during onboarding (before a loan
+-- is created). Once the student submits a loan application, the backend sets this
+-- FK to the specific loan — enabling correct scoped lookups when a student has
+-- multiple sequential loans (instead of an unscoped LIMIT 1 by user_id).
 CREATE TABLE co_applicants (
     co_app_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    -- Nullable FK: set to the associated loan once the application is submitted
+    loan_id UUID REFERENCES loans(loan_id) ON DELETE SET NULL,
     full_name VARCHAR(255) NOT NULL,
     relationship VARCHAR(50) NOT NULL,
     aadhaar_number VARCHAR(255) UNIQUE,
@@ -213,6 +219,7 @@ CREATE INDEX idx_txn_date ON transactions(created_at);
 CREATE INDEX idx_repayment_schedules_loan_id_status ON repayment_schedules(loan_id, status);
 CREATE INDEX idx_loans_institution_id ON loans(institution_id);
 CREATE INDEX idx_loan_documents_user_id ON loan_documents(user_id);
+CREATE INDEX idx_co_applicants_loan_id ON co_applicants(loan_id) WHERE loan_id IS NOT NULL;
 
 -- =========================================================
 -- 7. TRIGGERS

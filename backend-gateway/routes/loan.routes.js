@@ -170,6 +170,13 @@ router.post(
         aiResult.model_version || "v1.0"
       ]);
 
+      // Issue 13 fix: link the student's co-applicant record to this specific loan
+      // so that future queries can use loan_id instead of unscoped user_id LIMIT 1.
+      await client.query(
+        "UPDATE co_applicants SET loan_id = $1 WHERE user_id = $2 AND loan_id IS NULL",
+        [loanId, userId]
+      );
+
       await client.query("COMMIT");
 
       res.status(200).json({

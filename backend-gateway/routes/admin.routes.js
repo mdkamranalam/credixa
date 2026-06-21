@@ -121,15 +121,34 @@ router.post("/loans/:loanId/upload-doc", enhancedAuthenticateToken, upload.singl
 router.get("/loans/:loanId/details", authenticateToken, async (req, res) => {
   const { loanId } = req.params;
   try {
-    const [loanInfo, coAppInfo, docsInfo] = await Promise.all([
+    const [loanInfo, docsInfo] = await Promise.all([
       pool.query("SELECT * FROM loans WHERE loan_id = $1", [loanId]),
-      pool.query("SELECT * FROM co_applicants WHERE user_id = (SELECT user_id FROM loans WHERE loan_id = $1) LIMIT 1", [loanId]),
       pool.query("SELECT * FROM loan_documents WHERE loan_id = $1", [loanId])
     ]);
 
+    // Issue 13 fix: prefer loan-scoped co-applicant lookup; fall back to
+    // unscoped user_id query for records created before the loan_id FK was added.
+    const loanRow = loanInfo.rows[0];
+    let coAppRow = null;
+    if (loanRow) {
+      const loanScopedRes = await pool.query(
+        "SELECT * FROM co_applicants WHERE loan_id = $1 LIMIT 1",
+        [loanId]
+      );
+      if (loanScopedRes.rows.length > 0) {
+        coAppRow = loanScopedRes.rows[0];
+      } else {
+        const userScopedRes = await pool.query(
+          "SELECT * FROM co_applicants WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1",
+          [loanRow.user_id]
+        );
+        coAppRow = userScopedRes.rows[0] || null;
+      }
+    }
+
     res.status(200).json({
-      loan: loanInfo.rows[0],
-      coApplicant: coAppInfo.rows[0],
+      loan: loanRow,
+      coApplicant: coAppRow,
       documents: docsInfo.rows
     });
   } catch (err) {
@@ -388,7 +407,7 @@ router.get("/students/:userId", authenticateToken, requireRole(["INSTITUTION_ADM
   const { userId } = req.params;
 
   try {
-    const [userRes, docsRes, coAppRes] = await Promise.all([
+    const [userRes, docsRes] = await Promise.all([
       pool.query(
         "SELECT user_id, full_name, email, mobile_number, pan_number, kyc_status, dob, current_address, college_roll_number, academic_status FROM users WHERE user_id = $1",
         [userId]
@@ -397,14 +416,21 @@ router.get("/students/:userId", authenticateToken, requireRole(["INSTITUTION_ADM
         "SELECT doc_id, category, doc_type, is_verified, file_url, uploaded_at FROM loan_documents WHERE user_id = $1",
         [userId]
       ),
-      pool.query("SELECT * FROM co_applicants WHERE user_id = $1 LIMIT 1", [
-        userId,
-      ]),
     ]);
 
     if (userRes.rows.length === 0) {
       return res.status(404).json({ error: "Student not found." });
     }
+
+    // Issue 13 fix: fetch the most recent active co-applicant.
+    // Prefer the most recently loan-linked record; fall back to latest by created_at.
+    const coAppRes = await pool.query(
+      `SELECT * FROM co_applicants
+       WHERE user_id = $1
+       ORDER BY (loan_id IS NOT NULL) DESC, created_at DESC
+       LIMIT 1`,
+      [userId]
+    );
 
     res.status(200).json({
       user: userRes.rows[0],
