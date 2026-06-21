@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
 import redisClient from "../utils/redis.js";
 import pool from "../utils/db.js";
 
@@ -12,7 +12,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.JWT_SECRET + "_refresh"; // Using secret derivation for prototype
 
 const generateTokens = (user) => {
-  const jti = uuidv4();
+  const jti = crypto.randomUUID();
   const payload = {
     id: user.user_id,
     role: user.role,
@@ -205,7 +205,7 @@ router.post('/register-institution', async (req, res) => {
 
     } catch (error) {
         await client.query('ROLLBACK'); // If anything fails, undo everything to protect the DB
-        console.error("Institution Registration Error:", error.message);
+        console.error("Institution Registration Error:\n", error.stack);
         
         if (error.code === '23505') {
             return res.status(400).json({ error: "An institution with this code or email already exists." });
