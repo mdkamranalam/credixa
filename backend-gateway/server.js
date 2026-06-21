@@ -10,7 +10,7 @@ import loanRoutes from "./routes/loan.routes.js";
 import transactionRoutes from "./routes/transaction.routes.js";
 import institutionRoutes from "./routes/institution.routes.js";
 import userRoutes from "./routes/user.routes.js";
-import kycRoutes from "./routes/kyc.routes.js";
+
 import adminRoutes from "./routes/admin.routes.js";
 import fileRoutes from "./routes/file.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
@@ -101,7 +101,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/institutions", institutionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", authenticateToken, userRoutes);
-app.use("/api/kyc", kycRoutes);
+
 app.use("/api/notifications", notificationRoutes);
 app.use("/uploads", authenticateToken, fileRoutes);
 
