@@ -3,20 +3,32 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const { Pool } = pg;
-// Enhanced connection pool configuration with additional security
-const pool = new Pool({
-  user: process.env.DB_USER || "credixa_admin",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || "credixa_db",
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  allowExitOnIdle: true,
-  maxUses: 1000,
-});
+// Enhanced connection pool configuration supporting Render/Cloud DATABASE_URL
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+        max: 20,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 5000,
+        allowExitOnIdle: true,
+        maxUses: 1000,
+      }
+    : {
+        user: process.env.DB_USER || "credixa_admin",
+        host: process.env.DB_HOST || "localhost",
+        database: process.env.DB_NAME || "credixa_db",
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT || 5432,
+        max: 20,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 5000,
+        ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+        allowExitOnIdle: true,
+        maxUses: 1000,
+      }
+);
 
 // Enhanced error handling for database connections
 pool.on('error', (err, client) => {

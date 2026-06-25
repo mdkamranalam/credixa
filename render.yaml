@@ -1,0 +1,54 @@
+databases:
+  - name: credixa-db
+    databaseName: credixa_db
+    user: credixa_admin
+    plan: free
+
+services:
+  - type: redis
+    name: credixa-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: credixa-risk-engine
+    runtime: python
+    rootDir: risk-engine
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MODEL_PROVIDER
+        value: HuggingFace
+
+  - type: web
+    name: credixa-backend
+    runtime: node
+    rootDir: backend-gateway
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: credixa-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: credixa-redis
+          property: connectionString
+      - key: RISK_ENGINE_URL
+        value: http://credixa-risk-engine:8000/analyze-statement
+      - key: RISK_ENGINE_API_KEY
+        value: credixa_internal_engine_key_2026
+
+  - type: web
+    name: credixa-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://credixa-backend-7r4k.onrender.com/api
