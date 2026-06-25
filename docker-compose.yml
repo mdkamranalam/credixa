@@ -21,7 +21,7 @@ services:
 
   # 1.5 PgBouncer Connection Pooler
   pgbouncer:
-    image: edoburu/pgbouncer:1.21.0
+    image: edoburu/pgbouncer:latest
     container_name: credixa-pgbouncer
     environment:
       - DB_USER=credixa_admin
