@@ -19,7 +19,7 @@ import { uploadDocument, addCoApplicant } from "../controllers/loan.controller.j
 
 
 // The Python Risk Engine URL
-const RISK_ENGINE_BASE = process.env.RISK_ENGINE_BASE_URL || "http://risk-engine:8000";
+const RISK_ENGINE_BASE = process.env.RISK_ENGINE_BASE_URL || "https://credixa-risk-engine.onrender.com";
 const RISK_ENGINE_URL = `${RISK_ENGINE_BASE}/analyze-statement`;
 
 // The Co-Borrower Score Endoint
@@ -131,7 +131,7 @@ router.post(
         {
           headers: {
             ...formData.getHeaders(),
-            "x-api-key": process.env.RISK_ENGINE_API_KEY,
+            "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026",
           },
         },
       );

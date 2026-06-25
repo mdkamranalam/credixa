@@ -171,7 +171,7 @@ router.post(
       formData.append("doc_type", doc_type);
       formData.append("file", createReadStream(req.file.path));
 
-      const riskEngineBase = process.env.RISK_ENGINE_BASE_URL || "http://risk-engine:8000";
+      const riskEngineBase = process.env.RISK_ENGINE_BASE_URL || "https://credixa-risk-engine.onrender.com";
       const riskEngineUrl = `${riskEngineBase}/validate-document`;
 
       // Fetch expected name based on owner_type for matching
@@ -193,7 +193,7 @@ router.post(
         const riskResponse = await axios.post(`${riskEngineUrl}?expected_name=${encodeURIComponent(expectedName)}${ocrQuery}`, formData, {
           headers: {
             ...formData.getHeaders(),
-            "x-api-key": process.env.RISK_ENGINE_API_KEY,
+            "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026",
           },
         });
 
