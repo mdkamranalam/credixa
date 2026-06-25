@@ -158,6 +158,12 @@ router.get("/loans/:loanId/details", authenticateToken, async (req, res) => {
 
 router.get("/loans", authenticateToken, requireRole("INSTITUTION_ADMIN"), async (req, res) => {
   try {
+    const page = req.query.page ? parseInt(req.query.page, 10) : null;
+    const limit = req.query.limit ? parseInt(req.query.limit, 10) : 20;
+    const offset = page ? (page - 1) * limit : 0;
+    const limitClause = page ? `LIMIT $2 OFFSET $3` : "";
+    const params = page ? [req.user.institution_id, limit, offset] : [req.user.institution_id];
+
     const query = `
     SELECT
     l.loan_id,
@@ -170,20 +176,28 @@ router.get("/loans", authenticateToken, requireRole("INSTITUTION_ADMIN"), async 
       l.status,
       rs.omniscore,
       rs.risk_tier,
-      --Fetches total installments for the progress bar
-        (SELECT COUNT(*) FROM repayment_schedules WHERE loan_id = l.loan_id) as total_installments,
-        --Fetches paid installments for real - time progress tracking
-          (SELECT COUNT(*) FROM repayment_schedules WHERE loan_id = l.loan_id AND status = 'PAID') as installments_paid,
-          --Needed for the 'Total Disbursed' summary card
-    l.approved_amount
+      (SELECT COUNT(*) FROM repayment_schedules WHERE loan_id = l.loan_id) as total_installments,
+      (SELECT COUNT(*) FROM repayment_schedules WHERE loan_id = l.loan_id AND status = 'PAID') as installments_paid,
+      l.approved_amount
   FROM loans l
   JOIN users u ON l.user_id = u.user_id
   LEFT JOIN risk_scores rs ON l.loan_id = rs.loan_id
   WHERE l.institution_id = $1
-  ORDER BY l.created_at DESC;
+  ORDER BY l.created_at DESC
+  ${limitClause};
     `;
 
-    const result = await pool.query(query, [req.user.institution_id]);
+    const result = await pool.query(query, params);
+
+    if (page) {
+      const countRes = await pool.query("SELECT COUNT(*) FROM loans WHERE institution_id = $1", [req.user.institution_id]);
+      const total = parseInt(countRes.rows[0].count, 10);
+      return res.status(200).json({
+        data: result.rows,
+        pagination: { total, page, limit, totalPages: Math.ceil(total / limit) }
+      });
+    }
+
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Admin Fetch Error:", error.message);
@@ -353,7 +367,12 @@ router.get("/institution-profile", authenticateToken, async (req, res) => {
 
 router.get("/transactions", authenticateToken, async (req, res) => {
   try {
-    const institutionId = req.user.institution_id; //
+    const institutionId = req.user.institution_id;
+    const page = req.query.page ? parseInt(req.query.page, 10) : null;
+    const limit = req.query.limit ? parseInt(req.query.limit, 10) : 20;
+    const offset = page ? (page - 1) * limit : 0;
+    const limitClause = page ? `LIMIT $2 OFFSET $3` : "";
+    const params = page ? [institutionId, limit, offset] : [institutionId];
 
     const query = `
     SELECT
@@ -366,14 +385,25 @@ router.get("/transactions", authenticateToken, async (req, res) => {
       FROM transactions t
       JOIN users u ON t.user_id = u.user_id
       WHERE t.loan_id IN(SELECT loan_id FROM loans WHERE institution_id = $1)
-      ORDER BY t.created_at DESC;
+      ORDER BY t.created_at DESC
+      ${limitClause};
     `;
 
-    const result = await pool.query(query, [institutionId]);
+    const result = await pool.query(query, params);
+
+    if (page) {
+      const countRes = await pool.query("SELECT COUNT(*) FROM transactions t WHERE t.loan_id IN (SELECT loan_id FROM loans WHERE institution_id = $1)", [institutionId]);
+      const total = parseInt(countRes.rows[0].count, 10);
+      return res.status(200).json({
+        data: result.rows,
+        pagination: { total, page, limit, totalPages: Math.ceil(total / limit) }
+      });
+    }
+
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Admin Txn Fetch Error:", error.message);
-    res.status(500).json({ error: "Failed to fetch global transactions." });
+    res.status(500).json({ error: "Failed to fetch transactions." });
   }
 });
 

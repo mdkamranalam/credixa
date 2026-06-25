@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = (authHeader && authHeader.split(" ")[1]) || req.query.token || req.cookies?.token;
 
   if (!token) {
     logger.warn(`Authentication failed: No token provided for ${req.path}`);
@@ -60,7 +60,7 @@ export const requireRole = (role) => {
 // Enhanced authentication middleware with additional security checks
 export const enhancedAuthenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = (authHeader && authHeader.split(" ")[1]) || req.query.token || req.cookies?.token;
 
   if (!token) {
     logger.warn(`Enhanced authentication failed: No token provided for ${req.path}`);

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { useRealtimeEvents } from "./useRealtimeEvents";
 
 /**
  * useStudentData — owns all remote data for the Student Dashboard.
@@ -85,11 +86,13 @@ const useStudentData = () => {
     }
   }, [navigate]);
 
+  useRealtimeEvents(load);
+
   useEffect(() => {
     load();
     const id = setInterval(() => {
       if (document.visibilityState === "visible") load();
-    }, 15000);
+    }, 60000); // 60s fallback backstop
     return () => clearInterval(id);
   }, [load]);
 
