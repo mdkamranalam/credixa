@@ -28,6 +28,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD must be set in environment}
       - DB_HOST=credixa-postgres
       - DB_NAME=credixa_db
+      - AUTH_TYPE=scram-sha-256
       - POOL_MODE=transaction
       - MAX_CLIENT_CONN=100
       - DEFAULT_POOL_SIZE=20
@@ -53,7 +54,7 @@ services:
     env_file:
       - ./backend-gateway/.env
     environment:
-      - DB_HOST=credixa-pgbouncer
+      - DB_HOST=credixa-postgres
       - DB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD must be set in environment}
       - RISK_ENGINE_URL=http://risk-engine:8000/analyze-statement
     volumes:
