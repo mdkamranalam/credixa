@@ -2,19 +2,14 @@ import os
 import json
 import re
 from pydantic import BaseModel, Field
-from huggingface_hub import AsyncInferenceClient
 from typing import Optional
-from tenacity import retry, stop_after_attempt, wait_exponential
 
 import logging
+from providers.llm_provider import get_llm_provider
 
-# Initialize Hugging Face Inference API client
-# Uses a powerful free model. Optionally set HF_TOKEN in your environment.
-client = AsyncInferenceClient("meta-llama/Meta-Llama-3-8B-Instruct", token=os.getenv("HF_TOKEN"))
-
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def _call_hf_api(messages, max_tokens=250, temperature=0.1):
-    return await client.chat_completion(
+    provider = get_llm_provider()
+    return await provider.generate_chat(
         messages=messages,
         max_tokens=max_tokens,
         temperature=temperature
