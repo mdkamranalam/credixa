@@ -51,6 +51,8 @@ database/data/
 
 # Machine Learning
 *.pkl
+!risk-engine/risk_model.pkl
+!risk-engine/scaler.pkl
 
 # Editor directories and files
 .idea/
@@ -69,4 +71,3 @@ CLAUDE.md
 # Generated output
 graphify-out/
 .graphifyignore
-risk-engine/historical_loans.csv
