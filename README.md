@@ -1,88 +1,115 @@
-# Credixa BNPL Platform
+<div align="center">
 
-Credixa is a comprehensive Buy Now Pay Later (BNPL) platform specifically designed for students, featuring an AI-driven risk engine to assess creditworthiness based on bank statement analysis.
+# 🎓 Credixa | Next-Gen Education BNPL & Autonomous Underwriting
 
-## 🏗️ Architecture Overview
+[![Live Frontend](https://img.shields.io/badge/Live%20Demo-Credixa%20Portal-00D084?style=for-the-badge&logo=render&logoColor=white)](https://credixa-8wlw.onrender.com/)
+[![Backend API](https://img.shields.io/badge/Gateway%20API-Live%20Node.js-3178C6?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://credixa-backend-7r4k.onrender.com/)
+[![AI Risk Engine](https://img.shields.io/badge/AI%20Engine-XGBoost%20%2B%20FastAPI-FF6F00?style=for-the-badge&logo=fastapi&logoColor=white)](https://credixa-risk-engine.onrender.com/)
+[![Database](https://img.shields.io/badge/Database-PostgreSQL%2016-336791?style=for-the-badge&logo=postgresql&logoColor=white)](#)
+[![Cache](https://img.shields.io/badge/Cache-Redis%207-DC382D?style=for-the-badge&logo=redis&logoColor=white)](#)
 
-The platform uses a modern microservices architecture powered by Docker:
+<p align="center">
+  <b>A comprehensive, state-of-the-art Buy Now Pay Later (BNPL) financial ecosystem for students.</b><br>
+  Featuring real-time college verifications, OCR document digitization, and predictive creditworthiness assessments via bank statement analysis.
+</p>
 
-### 1. Frontend (`/frontend`)
-- **Tech Stack:** React 19, Vite, TailwindCSS, React Router
-- **Overview:** Provides distinct interfaces for Students (to apply for loans, upload documents, and track progress) and Institution Admins (to review applications and monitor metrics).
-
-### 2. Backend Gateway (`/backend-gateway`)
-- **Tech Stack:** Node.js, Express, PostgreSQL, JWT, Multer
-- **Overview:** The central API gateway handles user authentication, loan application routing, document uploads, repayment scheduling, and acts as the orchestrator between the frontend and the AI risk engine.
-
-### 3. AI Risk Engine (`/risk-engine`)
-- **Tech Stack:** Python, FastAPI, scikit-learn, pdfplumber
-- **Overview:** A dedicated machine learning service that ingests student and parent bank statements (PDFs), extracts behavioral financial features (average balance, overdrafts, risk keywords), and runs a Random Forest model to generate an `omniscore` (CIBIL equivalent) and a deterministic approval decision.
-
-### 4. Database (`/database`)
-- **Tech Stack:** PostgreSQL 16
-- **Overview:** Relational database storing user profiles, loan applications, documents metadata, repayment schedules, and transaction history.
+</div>
 
 ---
 
-## 🚀 Getting Started
+## 🌐 Live Cloud Ecosystem
 
-The entire application stack (frontend, backend, AI risk engine, and databases) can be launched seamlessly using Docker Compose.
+Credixa is deployed globally across a highly scalable 5-pillar cloud microservice architecture:
 
-### Running the Services
+| Service Pillar | Live URL / Endpoint | Technology | Status |
+| :--- | :--- | :--- | :---: |
+| **🖥️ React Frontend** | [credixa-8wlw.onrender.com](https://credixa-8wlw.onrender.com/) | React 19, Vite, Tailwind CSS | 🟢 **ONLINE** |
+| **⚡ API Gateway** | [credixa-backend-7r4k.onrender.com](https://credixa-backend-7r4k.onrender.com/) | Node.js, Express, JWT | 🟢 **ONLINE** |
+| **🧠 AI Risk Engine** | [credixa-risk-engine.onrender.com](https://credixa-risk-engine.onrender.com/) | Python, FastAPI, XGBoost, LLM | 🟢 **ONLINE** |
+| **🗄️ Database Vault** | Managed Render DB (`credixa_db`) | PostgreSQL 16 | 🟢 **ONLINE** |
+| **🔥 Session Cache** | Managed Render Redis | Redis 7 Alpine | 🟢 **ONLINE** |
 
-**1. Set up environment variables:**
-Before running the application, copy the `.env.example` file to `.env` in the `backend-gateway` folder:
+---
+
+## 🏛️ System Architecture
+
+```mermaid
+graph TD
+    Client["🖥️ Student / Admin Browser"] -->|HTTPS / REST| Gateway["⚡ API Gateway (Node.js/Express)"]
+    Gateway <-->|SQL Queries| DB[("🗄️ PostgreSQL Database")]
+    Gateway <-->|Session / Rate Limit| Redis[("🔥 Redis Cache")]
+    Gateway <-->|Async Stream / API Key| AI["🧠 AI Risk Engine (FastAPI)"]
+    AI -->|Feature Scaling| ML["📈 XGBoost Classifier"]
+    AI -->|OCR Digitation| HuggingFace["🤖 HuggingFace LLM Extractor"]
+```
+
+---
+
+## ✨ Key Platform Features
+
+### 🎒 For Students & Co-Applicants
+* **⚡ Instant 5-Step Onboarding Workflow:** Register educational institution details, select financing semesters, and input co-borrower credentials seamlessly.
+* **📂 Intelligent Document Vault:** Upload academic mark sheets, fee structures, and bank statements with automated OCR validation.
+* **📈 Real-Time Credit Scoring:** AI evaluation of non-traditional indicators (savings rate, academic performance, DTI ratio, gambling flags) to compute a proprietary **Omniscore**.
+* **🗓️ Transparent Repayment Schedules:** Automated amortization schedules with clear installment breakdowns and zero hidden fees.
+
+### 🏛️ For Educational Institutions & Admins
+* **🔐 Partner Portal:** Dedicated dashboard to monitor student enrollments, pending disbursements, and active BNPL credit lines.
+* **📋 Verification Engine:** Approve or query student academic documents directly through digitized records.
+* **🛡️ Fraud Scrutiny:** Immutable audit logs tracking every state change, document upload, and login attempt.
+
+---
+
+## 🚀 Getting Started (Local Development)
+
+Launch the entire 5-pillar ecosystem on your local machine with a single Docker command.
+
+### Prerequisites
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) (v4.0+)
+* [Git](https://git-scm.com/)
+
+### 1️⃣ Clone & Configure
 ```bash
+git clone https://github.com/mdkamranalam/credixa.git
+cd credixa
+
+# Copy gateway environment defaults
 cp backend-gateway/.env.example backend-gateway/.env
 ```
 
-**2. Start all services:**
+### 2️⃣ One-Click Container Launch
 ```bash
 docker-compose up --build
 ```
-This will spin up:
-- PostgreSQL database (`credixa-postgres` on port `5432`)
-- Redis cache (`credixa-redis` on port `6379`)
-- Node.js Gateway (`backend` on port `3000`)
-- Python Risk Engine (`risk-engine` on port `8000`)
-- React Frontend (`frontend` on port `5173`)
+*This automatically orchestrates PostgreSQL (`:5432`), Redis (`:6379`), Node Gateway (`:3000`), FastAPI Risk Engine (`:8000`), and Vite UI (`:5173`).*
 
-**3. Access the Application:**
-The frontend will be accessible at `http://localhost:5173`.
-
-### Database Management Commands
-
-**Verify the tables exist:**
-```bash
-docker exec -it credixa-postgres psql -U credixa_admin -d credixa_db -c "\dt"
-```
-
-**Access the PostgreSQL shell:**
-```bash
-docker exec -it credixa-postgres psql -U credixa_admin -d credixa_db
-```
-
-**Shut down services and remove volumes (reset database):**
-```bash
-docker-compose down -v
-```
+### 3️⃣ Access Local Portals
+* **Frontend Portal:** `http://localhost:5173`
+* **API Gateway Health:** `http://localhost:3000/health`
+* **AI Engine Swagger UI:** `http://localhost:8000/docs`
 
 ---
 
-## 🔒 Key Features
+## ☁️ One-Click Cloud Deployment (Render)
 
-- **Document Vault:** Secure upload and storage of academic and financial documents.
-- **AI-Powered Underwriting:** Automated loan decisioning using predictive ML models evaluating non-traditional financial indicators.
-- **Dynamic Dashboards:** Real-time application tracking and repayment schedules.
-- **Role-Based Access:** Dedicated portals and functionality for students and administrators.
+Credixa supports automated Infrastructure-as-Code (IaC) deployment via Render Blueprints.
 
-## 🔒 Security Improvements
+1. Fork this repository to your GitHub account.
+2. Log into [Render Dashboard](https://dashboard.render.com/).
+3. Click **New +** ➔ **Blueprint**.
+4. Connect your GitHub repository. Render will automatically detect [`render.yaml`](file:///render.yaml) and provision all 5 cloud pillars with zero manual configuration.
 
-This platform has been updated with critical security enhancements:
+---
 
-1. **Environment Variable Management**: All sensitive credentials are now managed through environment variables instead of hardcoded values
-2. **Health Checks**: Added comprehensive health check endpoints for monitoring service status
-3. **Validation**: Implemented validation to ensure required environment variables are set
-4. **Docker Security**: Enhanced Docker configurations with proper health checks
+## 🔒 Security & Compliance Protocols
 
-For detailed information on security improvements, please refer to [SECURITY_IMPROVEMENTS.md](SECURITY_IMPROVEMENTS.md)
+* **🔐 API Key Mandate:** Inter-service ML requests between Gateway and Risk Engine are strictly authenticated via `x-api-key` headers.
+* **🛡️ Universal CORS Whitelisting:** Gateway middleware dynamically verifies incoming origins against authorized cloud subdomains.
+* **📇 Resilient OCR Fallbacks:** Zero-failure document digitization pipeline with intelligent local heuristics.
+* **📦 Secret Management:** Zero hardcoded database strings or private keys in repository commits.
+
+---
+
+<div align="center">
+  <b>Built with ❤️ for Financial Inclusion & Accessible Education.</b>
+</div>
