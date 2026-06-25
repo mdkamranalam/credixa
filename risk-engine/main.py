@@ -32,15 +32,19 @@ async def verify_api_key(x_api_key: str = Header(...)):
     if x_api_key != API_KEY:
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
-# Load the trained ML model and scaler globally
+# Load the trained ML model and scaler globally using robust relative paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 try:
-    xgb_model = joblib.load("risk_model.pkl")
-    scaler = joblib.load("scaler.pkl")
+    xgb_model = joblib.load(os.path.join(BASE_DIR, "risk_model.pkl"))
+    scaler = joblib.load(os.path.join(BASE_DIR, "scaler.pkl"))
     print("AI Model and Scaler Loaded Successfully")
 except Exception as e:
     print(f"CRITICAL ERROR: Failed to load ML assets: {e}")
-    # In production, we might want to fail startup if models aren't found.
     xgb_model, scaler = None, None
+
+@app.get("/")
+async def root():
+    return {"status": "online", "service": "Credixa AI Risk Engine v2.0", "models_loaded": xgb_model is not None}
 
 def _extract_text_sync(pdf_bytes: bytes, use_ocr: bool = False, max_pages: int = 15) -> str:
     """Synchronous function to extract text from PDF, designed to be run in a thread pool."""
