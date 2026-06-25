@@ -19,12 +19,33 @@ services:
       timeout: 5s
       retries: 5
 
+  # 1.5 PgBouncer Connection Pooler
+  pgbouncer:
+    image: edoburu/pgbouncer:1.21.0
+    container_name: credixa-pgbouncer
+    environment:
+      - DB_USER=credixa_admin
+      - DB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD must be set in environment}
+      - DB_HOST=credixa-postgres
+      - DB_NAME=credixa_db
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=100
+      - DEFAULT_POOL_SIZE=20
+    ports:
+      - "6432:5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   # 2. Node.js Gateway
   backend:
     build: ./backend-gateway
     ports:
       - "3000:3000"
     depends_on:
+      pgbouncer:
+        condition: service_started
       postgres:
         condition: service_healthy
       risk-engine:
@@ -32,7 +53,7 @@ services:
     env_file:
       - ./backend-gateway/.env
     environment:
-      - DB_HOST=credixa-postgres
+      - DB_HOST=credixa-pgbouncer
       - DB_PASSWORD=${DB_PASSWORD:?DB_PASSWORD must be set in environment}
       - RISK_ENGINE_URL=http://risk-engine:8000/analyze-statement
     volumes:
