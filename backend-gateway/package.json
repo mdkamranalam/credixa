@@ -8,8 +8,8 @@
     "dev": "nodemon server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Md Kamran Alam",
+  "license": "MIT",
   "type": "module",
   "devDependencies": {
     "nodemon": "^3.1.11"

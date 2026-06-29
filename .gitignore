@@ -1,17 +1,25 @@
+# ==========================================
+# Credixa Ecosystem .gitignore
+# ==========================================
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+backend-gateway/logs/
 
-# Runtime data
-pids
+# Runtime & Process Data
+pids/
 *.pid
 *.seed
 *.pid.lock
+*.state
 
-# Operating System
+# Operating System & Filesystem
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -19,55 +27,73 @@ Icon
 ._*
 .Spotlight-V100
 .Trashes
+Thumbs.db
 
-# Node / JS
+# Node.js / JavaScript / TypeScript
 node_modules/
 dist/
 build/
 .npm/
+.eslintcache
+*.tsbuildinfo
 
-# Environment Variables
+# Coverage & Testing
+coverage/
+.nyc_output/
+.pytest_cache/
+htmlcov/
+.coverage
+*.lcov
+
+# Environment Variables & Secrets
 .env
-.env.test
-.env.production
-.env.local
+.env.*
+!.env.example
+!.env.template
 risk-engine/env/
 
-# Python
+# Python / Machine Learning / FastAPI
 __pycache__/
 *.py[cod]
 *$py.class
 venv/
 env/
 .venv/
+*.egg-info/
+.eggs/
+.mypy_cache/
+.ruff_cache/
+*.ipynb_checkpoints/
 
-# Vite / React
+# Vite / React Frontend
 frontend/dist/
 frontend/dist-ssr/
 
-# Project Specific
+# Project Specific Runtime & Uploads
 backend-gateway/uploads/
 database/data/
 
-# Machine Learning
+# Machine Learning Artifacts (Ignore generic pickles, keep core models)
 *.pkl
 !risk-engine/risk_model.pkl
 !risk-engine/scaler.pkl
 
-# Editor directories and files
+# IDE & Editor Directories
 .idea/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
-# Other
-docs/*
+# AI & Agent Tooling
+.agent/
 assist.md
 CLAUDE.md
 
-# AI / agent tooling
-.agent/
-
-# Generated output
+# Generated Knowledge Graphs
 graphify-out/
 .graphifyignore
