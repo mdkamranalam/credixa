@@ -16,6 +16,7 @@ import LoanStatusCard from "../components/dashboard/LoanStatusCard.jsx";
 import RepaymentSchedule from "../components/dashboard/RepaymentSchedule.jsx";
 import DocumentVault from "../components/dashboard/DocumentVault.jsx";
 import ProfileModal from "../components/dashboard/ProfileModal.jsx";
+import SupportChatWidget from "../components/dashboard/SupportChatWidget.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure EMI calculator (kept here because loan application steps need it too)
@@ -69,6 +70,7 @@ const StudentDashboard = () => {
   const [applyError, setApplyError] = useState("");
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
 
   // ── Loan Form State ──────────────────────────────────────────────────────
   const [loanAmount, setLoanAmount] = useState(20000);
@@ -614,7 +616,10 @@ const StudentDashboard = () => {
             </div>
 
             {/* Support */}
-            <button className="w-full bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
+            <button 
+              onClick={() => setSupportOpen(true)}
+              className="w-full bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group"
+            >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center mr-3 group-hover:bg-indigo-100 transition-colors">
                   <MessageCircle className="w-5 h-5 text-indigo-600" />
@@ -633,6 +638,12 @@ const StudentDashboard = () => {
       <ProfileModal
         profile={showProfileModal ? profile : null}
         onClose={() => setShowProfileModal(false)}
+      />
+
+      <SupportChatWidget
+        open={supportOpen}
+        onClose={() => setSupportOpen(false)}
+        studentProfile={profile}
       />
     </div>
   );
