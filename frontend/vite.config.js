@@ -6,7 +6,7 @@ const securityHeaders = () => {
     name: 'security-headers',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: http://localhost:3000; connect-src 'self' http://localhost:* ws://localhost:*; font-src 'self' data: https://fonts.gstatic.com;");
+        res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: http://localhost:3000; connect-src 'self' http://localhost:* ws://localhost:* https://*.onrender.com wss://*.onrender.com; font-src 'self' data: https://fonts.gstatic.com;");
         res.setHeader('X-Frame-Options', 'DENY');
         res.setHeader('X-Content-Type-Options', 'nosniff');
         next();
@@ -14,7 +14,7 @@ const securityHeaders = () => {
     },
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
-        res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: http://localhost:3000; connect-src 'self' http://localhost:* ws://localhost:*; font-src 'self' data: https://fonts.gstatic.com;");
+        res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: http://localhost:3000; connect-src 'self' http://localhost:* ws://localhost:* https://*.onrender.com wss://*.onrender.com; font-src 'self' data: https://fonts.gstatic.com;");
         res.setHeader('X-Frame-Options', 'DENY');
         res.setHeader('X-Content-Type-Options', 'nosniff');
         next();

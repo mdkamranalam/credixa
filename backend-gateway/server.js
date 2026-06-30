@@ -16,6 +16,7 @@ import fileRoutes from "./routes/file.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import sseRoutes from "./routes/sse.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
+import supportRoutes from "./routes/support.routes.js";
 import { startLoanScheduler } from "./jobs/loan_scheduler.js";
 import { authenticateToken, requireRole } from "./middleware/auth.middleware.js";
 import { initObservability, timingMiddleware } from "./utils/observability.js";
@@ -122,6 +123,7 @@ app.use("/uploads", authenticateToken, fileRoutes);
 startLoanScheduler();
 app.use("/api/loans", authenticateToken, loanRoutes);
 app.use("/api/transactions", authenticateToken, requireRole("INSTITUTION_ADMIN"), transactionRoutes);
+app.use("/api/support", authenticateToken, supportRoutes);
 
 app.listen(PORT, () => {
   console.log(`API Gateway is running on http://localhost:${PORT}`);
