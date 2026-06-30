@@ -45,11 +45,34 @@ app.use(cors({
 
 
 // Test the DB Connection on Startup
-pool.connect((err, client, release) => {
+pool.connect(async (err, client, release) => {
   if (err) {
     console.error("Error aquiring client: ", err.stack);
   } else {
     console.log("Successfully connected to PostgreSQL database");
+    try {
+      const res = await client.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE  table_schema = 'public'
+          AND    table_name   = 'support_tickets'
+        );
+      `);
+      if (!res.rows[0].exists) {
+        console.log("Running 002_support_chat.sql migration...");
+        const fs = await import('fs');
+        const path = await import('path');
+        const { fileURLToPath } = await import('url');
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        const sqlPath = path.join(__dirname, '../database/migrations/002_support_chat.sql');
+        const sql = fs.readFileSync(sqlPath, 'utf8');
+        await client.query(sql);
+        console.log("Migration 002_support_chat.sql completed.");
+      }
+    } catch (migErr) {
+      console.error("Error running migration:", migErr);
+    }
   }
 
   if (client) release();
