@@ -1,4 +1,4 @@
-import { useState, useContext, useRef } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LogOut, X, FileText, XCircle, ShieldCheck, GraduationCap,
@@ -36,9 +36,62 @@ const calcEMI = (principal, annualRate, months) => {
 const APPROVED_LIMIT = 100000;
 const HEALTH_SCORE = 785;
 const SYSTEM_INTEREST_RATE = 12.5;
-const SAVED_BANKS = [
-  { id: 1, name: "HDFC Bank", account: "HDFC ****4532", verified: true },
-  { id: 2, name: "ICICI Bank", account: "ICICI ****8721", verified: true },
+const STUDENT_BANK_ACCOUNTS = {
+  "Rahul Sharma": [
+    { id: 1, name: "State Bank of India (Student)", account: "SBI ****6771", verified: true },
+    { id: 2, name: "ICICI Bank (Co-Applicant)", account: "ICICI ****4655", verified: true },
+    { id: 3, name: "HDFC Bank (Secondary)", account: "HDFC ****4556", verified: true },
+  ],
+  "Kamran Khan": [
+    { id: 1, name: "Canara Bank (Student)", account: "Canara ****4550", verified: true },
+    { id: 2, name: "ICICI Bank (Co-Applicant)", account: "ICICI ****3344", verified: true },
+    { id: 3, name: "State Bank of India (Secondary)", account: "SBI ****7766", verified: true },
+  ],
+  "Harpreet Singh": [
+    { id: 1, name: "HDFC Bank (Student)", account: "HDFC ****6667", verified: true },
+    { id: 2, name: "Bank of Baroda (Co-Applicant)", account: "BOB ****1122", verified: true },
+    { id: 3, name: "Bank of Baroda (Secondary)", account: "BOB ****8899", verified: true },
+  ],
+  "Rhea DSouza": [
+    { id: 1, name: "Bank of Maharashtra (Student)", account: "BOM ****3344", verified: true },
+    { id: 2, name: "HDFC Bank (Co-Applicant)", account: "HDFC ****3445", verified: true },
+    { id: 3, name: "State Bank of India (Secondary)", account: "SBI ****3399", verified: true },
+  ],
+  "Rohan Mehta": [
+    { id: 1, name: "Axis Bank (Student)", account: "Axis ****4455", verified: true },
+    { id: 2, name: "ICICI Bank (Co-Applicant)", account: "ICICI ****4455", verified: true },
+    { id: 3, name: "State Bank of India (Secondary)", account: "SBI ****9988", verified: true },
+  ],
+  "Pooja Nair": [
+    { id: 1, name: "Canara Bank (Student)", account: "Canara ****3344", verified: true },
+    { id: 2, name: "HDFC Bank (Co-Applicant)", account: "HDFC ****6667", verified: true },
+    { id: 3, name: "State Bank of India (Secondary)", account: "SBI ****8877", verified: true },
+  ],
+  "Arjun Deshmukh": [
+    { id: 1, name: "Axis Bank (Student)", account: "Axis ****3344", verified: true },
+    { id: 2, name: "HDFC Bank (Co-Applicant)", account: "HDFC ****6778", verified: true },
+    { id: 3, name: "ICICI Bank (Secondary)", account: "ICICI ****8899", verified: true },
+  ],
+  "Darius Mistry": [
+    { id: 1, name: "ICICI Bank (Student)", account: "ICICI ****9900", verified: true },
+    { id: 2, name: "HDFC Bank (Co-Applicant)", account: "HDFC ****6778", verified: true },
+    { id: 3, name: "State Bank of India (Secondary)", account: "SBI ****7766", verified: true },
+  ],
+  "Divya Iyer": [
+    { id: 1, name: "Axis Bank (Student)", account: "Axis ****3344", verified: true },
+    { id: 2, name: "ICICI Bank (Co-Applicant)", account: "ICICI ****1122", verified: true },
+    { id: 3, name: "State Bank of India (Secondary)", account: "SBI ****1122", verified: true },
+  ],
+  "Abbas Ali": [
+    { id: 1, name: "ICICI Bank (Student)", account: "ICICI ****1122", verified: true },
+    { id: 2, name: "HDFC Bank (Co-Applicant)", account: "HDFC ****6889", verified: true },
+    { id: 3, name: "State Bank of India (Secondary)", account: "SBI ****1122", verified: true },
+  ],
+};
+
+const DEFAULT_BANKS = [
+  { id: 1, name: "State Bank of India (Student)", account: "SBI ****6771", verified: true },
+  { id: 2, name: "ICICI Bank (Co-Applicant)", account: "ICICI ****4655", verified: true },
 ];
 const LOAN_PURPOSES = [
   "Semester Fees", "Hostel Fees", "Laptop Purchase",
@@ -76,7 +129,14 @@ const StudentDashboard = () => {
   const [loanAmount, setLoanAmount] = useState(20000);
   const [loanTenure, setLoanTenure] = useState(6);
   const [loanPurpose, setLoanPurpose] = useState("");
-  const [selectedBank, setSelectedBank] = useState("HDFC ****4532");
+  const userBanks = (profile && STUDENT_BANK_ACCOUNTS[profile.full_name]) || DEFAULT_BANKS;
+  const [selectedBank, setSelectedBank] = useState("");
+
+  useEffect(() => {
+    if (userBanks.length > 0 && (!selectedBank || selectedBank === "HDFC ****4532")) {
+      setSelectedBank(userBanks[0].account);
+    }
+  }, [profile, userBanks, selectedBank]);
 
   // ── Document State ───────────────────────────────────────────────────────
   const [studentFile, setStudentFile] = useState(null);
@@ -418,7 +478,7 @@ const StudentDashboard = () => {
                   <h2 className="text-2xl font-black text-slate-900 mb-2">Where should we send the money?</h2>
                   <p className="text-slate-500 mb-8">Select a verified bank account for instant disbursal upon approval.</p>
                   <div className="space-y-4 mb-6">
-                    {SAVED_BANKS.map((bank) => (
+                    {userBanks.map((bank) => (
                       <div
                         key={bank.id}
                         onClick={() => setSelectedBank(bank.account)}
