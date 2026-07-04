@@ -145,7 +145,7 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
                 },
                 {
                     "role": "user",
-                    "content": f"The ML model assigned this applicant a risk score of {omniscore} (0-100, >70 is Approved, <40 is Rejected). Based on these metrics: {json.dumps(metrics)}, write a short professional paragraph explaining the decision. Then list exactly 2 pros and 2 cons."
+                    "content": f"The AI Underwriting Model assigned this applicant an approval readiness score of {omniscore:.1f} out of 100 (where >70 is Approved / Low Risk, 50-70 is Medium Risk, and <50 is Rejected / High Risk). Note: A high score means low risk! Based on these metrics: {json.dumps(metrics)}, write a short professional paragraph explaining the underwriting decision. Then list exactly 2 pros and 2 cons."
                 }
             ],
             max_tokens=300,
