@@ -3,6 +3,8 @@
 ### 1. STUDENT IDENTIFICATION PROFILE (RAHUL SHARMA)
 
 - Full Legal Name: Rahul Sharma
+- Student ID: 2026APEXCS001
+- Phone No: 9000090000
 - PAN Card No: APZPS2167S
 - Aadhaar No: 0000-1122-3344
 - Father's Name: Alok Sharma
