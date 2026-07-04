@@ -168,16 +168,15 @@ router.post(
 
       // 6. Insert Risk Score
       const riskInsert = `
-            INSERT INTO risk_scores (loan_id, omniscore, probability_of_default, risk_tier, model_version, risk_flags)
-            VALUES ($1, $2, $3, $4, $5, $6);
+            INSERT INTO risk_scores (loan_id, omniscore, probability_of_default, risk_tier, model_version)
+            VALUES ($1, $2, $3, $4, $5);
         `;
       await client.query(riskInsert, [
         loanId,
         cibilScore,
         defaultProb,
         riskTier,
-        aiResult.model_version || "v1.0",
-        riskFlags
+        aiResult.model_version || "v1.0"
       ]);
 
       await client.query(
