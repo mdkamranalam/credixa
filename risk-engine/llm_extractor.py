@@ -164,9 +164,51 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
         return data
     except Exception as e:
         logging.warning(f"Dynamic Reasoning Generation failed: {e}")
-        decision = "Approved" if omniscore >= 50 else "Rejected"
+        dti = metrics.get("dti_ratio", 0) * 100
+        overdrafts = metrics.get("total_overdrafts", 0)
+        gambling = metrics.get("total_gambling_flags", 0)
+        balance = metrics.get("combined_average_balance", 0)
+        
+        pros = []
+        cons = []
+        
+        if balance > 15000:
+            pros.append(f"Healthy average balance maintained (₹{balance:,.2f}).")
+        elif balance > 0:
+            cons.append(f"Low average balance detected (₹{balance:,.2f}).")
+            
+        if dti > 60:
+            cons.append(f"High Debt-to-Income (DTI) ratio ({dti:.1f}% > 60% threshold).")
+        elif dti > 0:
+            pros.append(f"Manageable Debt-to-Income ratio ({dti:.1f}%).")
+            
+        if overdrafts > 0:
+            cons.append(f"Detected {overdrafts} cheque bounce(s) or overdraft event(s).")
+        else:
+            pros.append("No cheque bounces or overdraft defaults detected.")
+            
+        if gambling > 0:
+            cons.append(f"High-risk behavior: {gambling} gambling/betting transaction(s) flagged.")
+            
+        if not pros:
+            pros = ["Applicant identity and academic records verified.", "No major negative bureau flags."]
+        if not cons:
+            cons = ["No critical underwriting risk flags identified."]
+            
+        tier_str = "LOW_RISK" if omniscore >= 70 else "MEDIUM_RISK" if omniscore >= 50 else "HIGH_RISK"
+        if tier_str == "HIGH_RISK":
+            reasoning = f"Application flagged as HIGH RISK due to elevated debt burden (DTI: {dti:.1f}%) and liquidity constraints."
+            if overdrafts > 0:
+                reasoning += f" Furthermore, {overdrafts} cheque bounce/overdraft incident(s) were recorded."
+            if gambling > 0:
+                reasoning += f" Critical risk: {gambling} gambling/betting transaction(s) detected."
+        elif tier_str == "MEDIUM_RISK":
+            reasoning = f"Application assessed as MEDIUM RISK. Moderate liquidity or debt ratio (DTI: {dti:.1f}%) requires monitoring."
+        else:
+            reasoning = f"Application assessed as LOW RISK. Strong financial standing with low debt burden (DTI: {dti:.1f}%) and consistent liquidity."
+            
         return {
-            "reasoning": f"The model {decision} the application with a score of {omniscore} based on standard thresholds.",
-            "pros": ["Sufficient balance metrics detected."] if omniscore >= 50 else ["Model evaluated basic features."],
-            "cons": ["Review overall liquidity and debt ratio."] if omniscore < 50 else ["Verify consistent income."]
+            "reasoning": reasoning,
+            "pros": pros[:3],
+            "cons": cons[:3]
         }

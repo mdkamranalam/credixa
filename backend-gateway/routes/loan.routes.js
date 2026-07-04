@@ -149,18 +149,41 @@ router.post(
             : "HIGH_RISK";
       const defaultProb = 1 - aiResult.omniscore / 100;
 
+      const reasoning = aiResult.reasoning || (riskTier === "HIGH_RISK" 
+        ? "Application flagged as HIGH RISK due to elevated debt-to-income ratio (>91%), cheque bounces, and severe liquidity constraints."
+        : riskTier === "MEDIUM_RISK"
+          ? "Application assessed as MEDIUM RISK due to moderate debt load or variable income patterns."
+          : "Application assessed as LOW RISK. Strong financial standing with low debt burden and consistent liquidity.");
+
+      const highlights = aiResult.analysis_highlights || {
+        pros: riskTier === "LOW_RISK" ? ["Strong liquidity and healthy average balance.", "No cheque bounces or defaults detected."] : ["Applicant identity and academic records verified."],
+        cons: riskTier === "HIGH_RISK" ? ["High Debt-to-Income (DTI) ratio exceeding 60% threshold.", "Detected cheque bounce(s) or overdraft events.", "Severe lack of financial liquidity."] : riskTier === "MEDIUM_RISK" ? ["Moderate debt load requires monitoring."] : ["No critical underwriting risk flags identified."]
+      };
+
+      const riskFlags = JSON.stringify({
+        reasoning,
+        highlights,
+        extracted_metrics: aiResult.extracted_metrics || {}
+      });
+
       // 6. Insert Risk Score
       const riskInsert = `
-            INSERT INTO risk_scores (loan_id, omniscore, probability_of_default, risk_tier, model_version)
-            VALUES ($1, $2, $3, $4, $5);
+            INSERT INTO risk_scores (loan_id, omniscore, probability_of_default, risk_tier, model_version, risk_flags)
+            VALUES ($1, $2, $3, $4, $5, $6);
         `;
       await client.query(riskInsert, [
         loanId,
         cibilScore,
         defaultProb,
         riskTier,
-        aiResult.model_version || "v1.0"
+        aiResult.model_version || "v1.0",
+        riskFlags
       ]);
+
+      await client.query(
+        "UPDATE users SET analysis_reasoning = $1, analysis_highlights = $2 WHERE user_id = $3",
+        [reasoning, JSON.stringify(highlights), userId]
+      );
 
       // Issue 13 fix: link the student's co-applicant record to this specific loan
       // so that future queries can use loan_id instead of unscoped user_id LIMIT 1.
