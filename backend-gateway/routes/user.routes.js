@@ -367,7 +367,7 @@ router.post("/run-analysis", authenticateToken, async (req, res) => {
   const userId = req.user.id;
   try {
     const docsRes = await pool.query(
-      "SELECT doc_type, is_verified, structured_details FROM loan_documents WHERE user_id = $1",
+      "SELECT category, doc_type, is_verified, structured_details FROM loan_documents WHERE user_id = $1",
       [userId]
     );
 
@@ -396,12 +396,13 @@ router.post("/run-analysis", authenticateToken, async (req, res) => {
         validDocs++;
         let details = typeof doc.structured_details === 'string' ? JSON.parse(doc.structured_details) : doc.structured_details;
         
+        const typeLower = (doc.doc_type || "").toLowerCase();
+        if (doc.category === "FINANCIAL" || typeLower.includes("statement") || typeLower.includes("ledger") || (details && (details["Average Balance"] !== undefined || details["verification"] !== undefined))) {
+          hasFinancialData = true;
+        }
+        
         if (details && Object.keys(details).length > 0 && !Object.values(details).includes("Not Found")) {
           extractionScore += (30 / docs.length);
-          
-          if (details["Average Balance"] !== undefined || doc.doc_type.includes("statement") || doc.doc_type.includes("ledger") || details["verification"] !== undefined) {
-            hasFinancialData = true;
-          }
           
           if (details["Risk Keywords Found"] && details["Risk Keywords Found"] > 0) {
             riskKeywords += parseInt(details["Risk Keywords Found"]);
