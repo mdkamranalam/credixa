@@ -399,7 +399,9 @@ router.post("/run-analysis", authenticateToken, async (req, res) => {
         if (details && Object.keys(details).length > 0 && !Object.values(details).includes("Not Found")) {
           extractionScore += (30 / docs.length);
           
-          if (details["Average Balance"] !== undefined) hasFinancialData = true;
+          if (details["Average Balance"] !== undefined || doc.doc_type.includes("statement") || doc.doc_type.includes("ledger") || details["verification"] !== undefined) {
+            hasFinancialData = true;
+          }
           
           if (details["Risk Keywords Found"] && details["Risk Keywords Found"] > 0) {
             riskKeywords += parseInt(details["Risk Keywords Found"]);

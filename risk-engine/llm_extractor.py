@@ -28,13 +28,13 @@ def fallback_financial_extraction(text: str) -> FinancialExtraction:
     text_upper = text.upper()
     
     avg_balance = 5000.0
-    balance_match = re.search(r"(?:AVERAGE\s*BALANCE|CLOSING\s*BALANCE|AVAILABLE\s*BALANCE)[:\s]*\$?(?:RS\.?)?\s*([\d,]+\.?\d*)", text_upper)
+    balance_match = re.search(r"(?:AVERAGE\s*BALANCE|CLOSING\s*BALANCE|AVAILABLE\s*BALANCE)(?:\s*(?:CR|DR|[:\-]))*\s*\$?(?:RS\.?|₹)?\s*([\d,]+\.?\d*)", text_upper)
     if balance_match:
         try: avg_balance = float(balance_match.group(1).replace(",", ""))
         except ValueError: pass
         
     income = 3000.0
-    income_match = re.search(r"(?:SALARY|INCOME|TOTAL\s*CREDIT)[:\s]*\$?(?:RS\.?)?\s*([\d,]+\.?\d*)", text_upper)
+    income_match = re.search(r"(?:SALARY|INCOME|TOTAL\s*CREDITS?)(?:\s*(?:CR|DR|[:\-]))*\s*\$?(?:RS\.?|₹)?\s*([\d,]+\.?\d*)", text_upper)
     if income_match:
         try: income = float(income_match.group(1).replace(",", ""))
         except ValueError: pass
