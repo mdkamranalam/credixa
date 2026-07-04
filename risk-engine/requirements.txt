@@ -10,6 +10,5 @@ pdf2image
 xgboost
 huggingface_hub
 pydantic
-shap
 redis
 tenacity
