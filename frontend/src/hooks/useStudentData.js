@@ -9,17 +9,26 @@ import { useRealtimeEvents } from "./useRealtimeEvents";
  *
  * Returns: { profile, activeLoan, payments, isLoading, reload }
  */
-const useStudentData = () => {
+const useStudentData = (externalStepRef) => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [activeLoan, setActiveLoan] = useState(null);
   const [payments, setPayments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // We use a ref so the polling callback always reads the latest step
-  // without needing it as a dependency.
-  const stepRef = useRef(1);
-  const setStepRef = useCallback((v) => { stepRef.current = v; }, []);
+  // Use external step ref if provided by dashboard so polling knows the actual wizard step
+  const internalStepRef = useRef(1);
+  const stepRef = externalStepRef || internalStepRef;
+  const setStepRef = useCallback((v) => { stepRef.current = v; }, [stepRef]);
+
+  // Track dismissed terminal loans (REJECTED/CLOSED) so background polling doesn't interrupt new loan applications
+  const dismissedLoanIdRef = useRef(null);
+  const dismissLoan = useCallback(() => {
+    if (activeLoan) {
+      dismissedLoanIdRef.current = activeLoan.loan_id;
+    }
+    setActiveLoan(null);
+  }, [activeLoan]);
 
   const load = useCallback(async () => {
     try {
@@ -70,9 +79,13 @@ const useStudentData = () => {
           loan_id: myLoan.loan_id,
         };
 
-        // Only update loan state when the user is not mid-application (step 1)
-        if (stepRef.current === 1) {
-          setActiveLoan(newActiveLoan);
+        // If this loan was explicitly dismissed by the user to start a new application, do not re-set it
+        if (myLoan.loan_id !== dismissedLoanIdRef.current) {
+          // If a new loan ID appeared (different from dismissed), clear the dismissed ref
+          dismissedLoanIdRef.current = null;
+          if (stepRef.current === 1) {
+            setActiveLoan(newActiveLoan);
+          }
         }
       } else {
         if (stepRef.current === 1) {
@@ -96,7 +109,7 @@ const useStudentData = () => {
     return () => clearInterval(id);
   }, [load]);
 
-  return { profile, activeLoan, setActiveLoan, payments, isLoading, reload: load, setStepRef };
+  return { profile, activeLoan, setActiveLoan, dismissLoan, payments, isLoading, reload: load, setStepRef };
 };
 
 export default useStudentData;

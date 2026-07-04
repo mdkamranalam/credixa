@@ -113,7 +113,7 @@ const StudentDashboard = () => {
   // Step ref is shared with the hook so it skips loan state updates
   // while the user is in the middle of the application flow.
   const stepRef = useRef(1);
-  const { profile, activeLoan, setActiveLoan, payments, isLoading, reload } =
+  const { profile, activeLoan, setActiveLoan, dismissLoan, payments, isLoading, reload } =
     useStudentData(stepRef);
 
   // ── Application Flow State ───────────────────────────────────────────────
@@ -359,7 +359,7 @@ const StudentDashboard = () => {
           {activeLoan && (
             <LoanStatusCard
               activeLoan={activeLoan}
-              onStartNew={() => setActiveLoan(null)}
+              onStartNew={dismissLoan || (() => setActiveLoan(null))}
               onPayEMI={handlePayEMI}
               isPaying={isPaying}
               calculateEMI={calcEMI}
