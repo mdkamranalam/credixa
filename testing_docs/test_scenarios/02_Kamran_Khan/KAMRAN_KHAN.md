@@ -3,6 +3,8 @@
 ### 1. STUDENT IDENTIFICATION PROFILE (KAMRAN KHAN)
 
 - Full Legal Name: Kamran Khan
+- Student ID: 2026MITDS002
+- Phone No: 9000090002
 - PAN Card No: BQWPV3145T
 - Aadhaar No: 1111-2233-4455
 - Father's Name: Tariq Khan

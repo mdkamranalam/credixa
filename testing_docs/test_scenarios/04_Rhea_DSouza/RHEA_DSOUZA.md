@@ -3,6 +3,8 @@
 ### 1. STUDENT IDENTIFICATION PROFILE (RHEA D'SOUZA)
 
 - Full Legal Name: Rhea D'Souza
+- Student ID: 2026COEPME004
+- Phone No: 9000090004
 - PAN Card No: DTYPK5189V
 - Aadhaar No: 3333-4455-6677
 - Father's Name: Michael D'Souza

@@ -3,6 +3,8 @@
 ### 1. STUDENT IDENTIFICATION PROFILE (ARJUN DESHMUKH)
 
 - Full Legal Name: Arjun Deshmukh
+- Student ID: 2026BITSCS007
+- Phone No: 9000090007
 - PAN Card No: GTYPD8167Y
 - Aadhaar No: 6666-7788-9900
 - Father's Name: Vijay Deshmukh

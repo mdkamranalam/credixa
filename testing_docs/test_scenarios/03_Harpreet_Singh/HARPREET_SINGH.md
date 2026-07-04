@@ -3,6 +3,8 @@
 ### 1. STUDENT IDENTIFICATION PROFILE (HARPREET SINGH)
 
 - Full Legal Name: Harpreet Singh
+- Student ID: 2026VITEC003
+- Phone No: 9000090003
 - PAN Card No: CRXPS4123U
 - Aadhaar No: 2222-3344-5566
 - Father's Name: Daljit Singh

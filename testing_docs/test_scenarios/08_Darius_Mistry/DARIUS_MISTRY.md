@@ -3,6 +3,8 @@
 ### 1. STUDENT IDENTIFICATION PROFILE (DARIUS MISTRY)
 
 - Full Legal Name: Darius Mistry
+- Student ID: 2026TIETCE008
+- Phone No: 9000090008
 - PAN Card No: HUYPK9123Z
 - Aadhaar No: 7777-8899-0011
 - Father's Name: Farokh Mistry

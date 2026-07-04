@@ -3,6 +3,8 @@
 ### 1. STUDENT IDENTIFICATION PROFILE (POOJA NAIR)
 
 - Full Legal Name: Pooja Nair
+- Student ID: 2026NITEE006
+- Phone No: 9000090006
 - PAN Card No: FSYPN7145X
 - Aadhaar No: 5555-6677-8899
 - Father's Name: Suresh Nair
