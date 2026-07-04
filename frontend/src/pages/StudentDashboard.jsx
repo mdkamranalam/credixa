@@ -184,8 +184,23 @@ const StudentDashboard = () => {
     data.append("requested_amount", loanAmount);
     data.append("interest_rate", SYSTEM_INTEREST_RATE);
     data.append("tenure_months", loanTenure);
-    data.append("student_account_number", selectedBank.split(" ")[1].replace(/\*/g, "0"));
-    data.append("ifsc_code", selectedBank.split(" ")[0] + "0001234");
+    const bankPrefixMap = {
+      "SBI": "SBIN",
+      "ICICI": "ICIC",
+      "HDFC": "HDFC",
+      "Canara": "CNRB",
+      "BOB": "BARB",
+      "BOM": "MAHB",
+      "Axis": "UTIB",
+      "IOB": "IOBA",
+      "DLXB": "DLXB",
+      "IDIB": "IDIB",
+    };
+    const bankWord = (selectedBank || "").split(" ")[0];
+    const ifscPrefix = bankPrefixMap[bankWord] || bankWord.padEnd(4, "X").slice(0, 4).toUpperCase();
+    const validIfsc = `${ifscPrefix}0001234`;
+    data.append("student_account_number", (selectedBank.split(" ")[1] || "0000000000").replace(/\*/g, "0"));
+    data.append("ifsc_code", validIfsc);
     data.append("student_statement", studentFile);
     data.append("parent_statement", parentFile);
     if (!isFirstSemester && latestMarksheetFile) {
