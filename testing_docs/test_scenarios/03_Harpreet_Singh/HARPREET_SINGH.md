@@ -6,13 +6,13 @@
 - Student ID: 2026VITEC003
 - Phone No: 9000090003
 - PAN Card No: CRXPS4123U
-- Aadhaar No: 2222-3344-5566
+- Aadhaar No: 222233445566
 - Father's Name: Daljit Singh
 - Father's PAN Card No: CRXPS7890C
-- Father's Aadhaar No.: 2222-9900-1122
+- Father's Aadhaar No.: 222299001122
 - Mother's Name: Manpreet Kaur
 - Mother's PAN Card No: CRXPS3456L
-- Mother's Aadhaar No: 2222-5566-7788
+- Mother's Aadhaar No: 222255667788
 - Target Institution: Vellore Institute of Technology (VIT), Vellore
 - Target Course: B.Tech Electronics & Communication Engineering (Semester I)
 
@@ -24,14 +24,14 @@
 - Occupation: Textile Trader / Wholesale Merchant
 - Employer Name: Singh Textiles & Fabrics
 - Unique PAN Card No: CRXPS7890C
-- Aadhaar Number Field: 2222-9900-1122
+- Aadhaar Number Field: 222299001122
 
 #### ii. Mother (Secondary Co-Applicant)
 - Full Legal Name: Manpreet Kaur
 - Occupation: Homemaker
 - Employment Type: Unemployed / Homemaker
 - Unique PAN Card No: CRXPS3456L
-- Aadhaar Number Field: 2222-5566-7788
+- Aadhaar Number Field: 222255667788
 
 ---
 
@@ -250,7 +250,7 @@ ENROLLMENT NO: 3099/33105/04123
 NAME: HARPREET SINGH
 S/O: DALJIT SINGH
 DOB: 25/12/2005 | GENDER: MALE
-AADHAAR NO: 2222-3344-5566
+AADHAAR NO: 222233445566
 ADDRESS: BUNGLOW NO. 5, KOREGAON PARK, PUNE, MAHARASHTRA - 411001
 ==================================================================================
 ```
@@ -263,7 +263,7 @@ ADDRESS: BUNGLOW NO. 5, KOREGAON PARK, PUNE, MAHARASHTRA - 411001
 NAME: DALJIT SINGH
 S/O: MANOHAR SINGH
 DOB: 08/08/1972 | GENDER: MALE
-AADHAAR NO: 2222-9900-1122
+AADHAAR NO: 222299001122
 ADDRESS: BUNGLOW NO. 5, KOREGAON PARK, PUNE, MAHARASHTRA - 411001
 ==================================================================================
 ```
@@ -276,7 +276,7 @@ ADDRESS: BUNGLOW NO. 5, KOREGAON PARK, PUNE, MAHARASHTRA - 411001
 NAME: MANPREET KAUR
 W/O: DALJIT SINGH
 DOB: 12/03/1977 | GENDER: FEMALE
-AADHAAR NO: 2222-5566-7788
+AADHAAR NO: 222255667788
 ADDRESS: BUNGLOW NO. 5, KOREGAON PARK, PUNE, MAHARASHTRA - 411001
 ==================================================================================
 ```

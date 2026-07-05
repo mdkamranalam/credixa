@@ -6,13 +6,13 @@
 - Student ID: 2025IIITCS010
 - Phone No: 9000090010
 - PAN Card No: JWYPS1167B
-- Aadhaar No: 9999-0011-2233
+- Aadhaar No: 999900112233
 - Father's Name: Hyder Ali
 - Father's PAN Card No: JWYPS5678K
-- Father's Aadhaar No.: 9999-6677-8899
+- Father's Aadhaar No.: 999966778899
 - Mother's Name: Fatima Ali
 - Mother's PAN Card No: JWYPS9012V
-- Mother's Aadhaar No: 9999-2233-4455
+- Mother's Aadhaar No: 999922334455
 - Target Institution: International Institute of Information Technology (IIIT), Hyderabad
 - Target Course: B.Tech Computer Science & Engineering (Semester II - Fast Track Application)
 
@@ -24,7 +24,7 @@
 - Occupation: Senior Medical Officer / General Surgeon
 - Employer Name: Apollo Hospitals, Hyderabad
 - Unique PAN Card No: JWYPS5678K
-- Aadhaar Number Field: 9999-6677-8899
+- Aadhaar Number Field: 999966778899
 - Returning User Notes: Successfully completed Semester I repayment (all 6 monthly BNPL installments auto-debited without a single bounce or delay). For Semester II, system bypassed KYC and bank ledger uploads, reusing verified baseline data. Approved in under 30 seconds upon uploading the new Semester II fee structure!
 
 #### ii. Mother (Secondary Co-Applicant)
@@ -32,7 +32,7 @@
 - Occupation: Principal / School Headmistress
 - Employer Name: Bharatiya Vidya Bhavan, Hyderabad
 - Unique PAN Card No: JWYPS9012V
-- Aadhaar Number Field: 9999-2233-4455
+- Aadhaar Number Field: 999922334455
 
 ---
 
@@ -250,7 +250,7 @@ ENROLLMENT NO: 1024/44101/01167
 NAME: ABBAS ALI
 S/O: HYDER ALI
 DOB: 01/01/2006 | GENDER: MALE
-AADHAAR NO: 9999-0011-2233
+AADHAAR NO: 999900112233
 ADDRESS: PLOT 88, ROAD NO. 10, JUBILEE HILLS, HYDERABAD, TELANGANA - 500033
 ==================================================================================
 ```
@@ -263,7 +263,7 @@ ADDRESS: PLOT 88, ROAD NO. 10, JUBILEE HILLS, HYDERABAD, TELANGANA - 500033
 NAME: HYDER ALI
 S/O: ASGHAR ALI
 DOB: 15/03/1973 | GENDER: MALE
-AADHAAR NO: 9999-6677-8899
+AADHAAR NO: 999966778899
 ADDRESS: PLOT 88, ROAD NO. 10, JUBILEE HILLS, HYDERABAD, TELANGANA - 500033
 ==================================================================================
 ```
@@ -276,7 +276,7 @@ ADDRESS: PLOT 88, ROAD NO. 10, JUBILEE HILLS, HYDERABAD, TELANGANA - 500033
 NAME: FATIMA ALI
 W/O: HYDER ALI
 DOB: 20/07/1977 | GENDER: FEMALE
-AADHAAR NO: 9999-2233-4455
+AADHAAR NO: 999922334455
 ADDRESS: PLOT 88, ROAD NO. 10, JUBILEE HILLS, HYDERABAD, TELANGANA - 500033
 ==================================================================================
 ```

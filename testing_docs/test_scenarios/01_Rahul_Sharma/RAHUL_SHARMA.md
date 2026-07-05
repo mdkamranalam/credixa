@@ -6,13 +6,13 @@
 - Student ID: 2026APEXCS001
 - Phone No: 9000090000
 - PAN Card No: APZPS2167S
-- Aadhaar No: 0000-1122-3344
+- Aadhaar No: 000011223344
 - Father's Name: Alok Sharma
 - Father's PAN Card No: APZPS5678A
-- Father's Aadhaar No.: 0000-9900-1122
+- Father's Aadhaar No.: 000099001122
 - Mother's Name: Priya Sharma
 - Mother's PAN Card No: APZPS1234H
-- Mother's Aadhaar No: 0000-5566-7788
+- Mother's Aadhaar No: 000055667788
 - Target Institution: Apex Institute of Technology
 - Target Course: B.Tech Computer Science & Engineering (Semester I)
 
@@ -24,14 +24,14 @@
 - Occupation: Director of Engineering
 - Employer Name: Zorvyn Technologies Pvt. Ltd.
 - Unique PAN Card No: APZPS1234H
-- Aadhaar Number Field: 0000-5566-7788
+- Aadhaar Number Field: 000055667788
 
 #### ii. Father (Secondary Co-Applicant)
 - Full Legal Name: Alok Sharma
 - Occupation: Principal Enterprise Consultant
 - Employment Type: Independent Corporate Consultant / Self-Employed
 - Unique PAN Card No: APZPS5678A
-- Aadhaar Number Field: 0000-9900-1122
+- Aadhaar Number Field: 000099001122
 
 ---
 
@@ -260,7 +260,7 @@ ENROLLMENT NO: 1024/55201/09843
 NAME: RAHUL SHARMA
 S/O: ALOK SHARMA
 DOB: 15/08/2005 | GENDER: MALE
-AADHAAR NO: 0000-1122-3344
+AADHAAR NO: 000011223344
 ADDRESS: FLAT 402, RADIANT HEIGHTS, SECTOR 21, DWARKA, NEW DELHI - 110075
 ==================================================================================
 ```
@@ -273,7 +273,7 @@ ADDRESS: FLAT 402, RADIANT HEIGHTS, SECTOR 21, DWARKA, NEW DELHI - 110075
 NAME: PRIYA SHARMA
 W/O: ALOK SHARMA
 DOB: 22/11/1981 | GENDER: FEMALE
-AADHAAR NO: 0000-5566-7788
+AADHAAR NO: 000055667788
 ADDRESS: FLAT 402, RADIANT HEIGHTS, SECTOR 21, DWARKA, NEW DELHI - 110075
 ==================================================================================
 ```
@@ -286,7 +286,7 @@ ADDRESS: FLAT 402, RADIANT HEIGHTS, SECTOR 21, DWARKA, NEW DELHI - 110075
 NAME: ALOK SHARMA
 S/O: RAMESH SHARMA
 DOB: 05/04/1978 | GENDER: MALE
-AADHAAR NO: 0000-9900-1122
+AADHAAR NO: 000099001122
 ADDRESS: FLAT 402, RADIANT HEIGHTS, SECTOR 21, DWARKA, NEW DELHI - 110075
 ==================================================================================
 ```

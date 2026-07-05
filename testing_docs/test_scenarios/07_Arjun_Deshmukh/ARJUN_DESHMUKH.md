@@ -6,13 +6,13 @@
 - Student ID: 2026BITSCS007
 - Phone No: 9000090007
 - PAN Card No: GTYPD8167Y
-- Aadhaar No: 6666-7788-9900
+- Aadhaar No: 666677889900
 - Father's Name: Vijay Deshmukh
 - Father's PAN Card No: GTYPD1234G
-- Father's Aadhaar No.: 6666-3344-5566
+- Father's Aadhaar No.: 666633445566
 - Mother's Name: Kavita Deshmukh
 - Mother's PAN Card No: GTYPD5678Q
-- Mother's Aadhaar No: 6666-9900-1122
+- Mother's Aadhaar No: 666699001122
 - Target Institution: Birla Institute of Technology and Science (BITS), Pilani
 - Target Course: B.E. Computer Science (Semester I)
 
@@ -24,7 +24,7 @@
 - Occupation: Associate Vice President - HR
 - Employer Name: TechMahindra Corporate Ltd.
 - Unique PAN Card No: GTYPD5678Q
-- Aadhaar Number Field: 6666-9900-1122
+- Aadhaar Number Field: 666699001122
 - Case Notes: Student applied for ₹6,00,000 loan on the portal, but the official fee structure shows a 50% BITS Merit Scholarship reducing total payable fee to ₹3,00,000. System automatically flagged the over-borrowing discrepancy and auto-adjusted the loan line to ₹3,00,000!
 
 #### ii. Father (Secondary Co-Applicant)
@@ -32,7 +32,7 @@
 - Occupation: Senior Electrical Engineer
 - Employer Name: Tata Power Ltd.
 - Unique PAN Card No: GTYPD1234G
-- Aadhaar Number Field: 6666-3344-5566
+- Aadhaar Number Field: 666633445566
 
 ---
 
@@ -250,7 +250,7 @@ ENROLLMENT NO: 7168/11204/08167
 NAME: ARJUN DESHMUKH
 S/O: VIJAY DESHMUKH
 DOB: 12/07/2005 | GENDER: MALE
-AADHAAR NO: 6666-7788-9900
+AADHAAR NO: 666677889900
 ADDRESS: SECTOR 17, VASHI, NAVI MUMBAI, MAHARASHTRA - 400703
 ==================================================================================
 ```
@@ -263,7 +263,7 @@ ADDRESS: SECTOR 17, VASHI, NAVI MUMBAI, MAHARASHTRA - 400703
 NAME: KAVITA DESHMUKH
 W/O: VIJAY DESHMUKH
 DOB: 05/05/1981 | GENDER: FEMALE
-AADHAAR NO: 6666-9900-1122
+AADHAAR NO: 666699001122
 ADDRESS: SECTOR 17, VASHI, NAVI MUMBAI, MAHARASHTRA - 400703
 ==================================================================================
 ```
@@ -276,7 +276,7 @@ ADDRESS: SECTOR 17, VASHI, NAVI MUMBAI, MAHARASHTRA - 400703
 NAME: VIJAY DESHMUKH
 S/O: SHIVAJI DESHMUKH
 DOB: 18/09/1976 | GENDER: MALE
-AADHAAR NO: 6666-3344-5566
+AADHAAR NO: 666633445566
 ADDRESS: SECTOR 17, VASHI, NAVI MUMBAI, MAHARASHTRA - 400703
 ==================================================================================
 ```

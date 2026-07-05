@@ -6,13 +6,13 @@
 - Student ID: 2026MITDS002
 - Phone No: 9000090002
 - PAN Card No: BQWPV3145T
-- Aadhaar No: 1111-2233-4455
+- Aadhaar No: 111122334455
 - Father's Name: Tariq Khan
 - Father's PAN Card No: BQWPV6789B
-- Father's Aadhaar No.: 1111-8899-0011
+- Father's Aadhaar No.: 111188990011
 - Mother's Name: Yasmin Khan
 - Mother's PAN Card No: BQWPV2345K
-- Mother's Aadhaar No: 1111-4455-6677
+- Mother's Aadhaar No: 111144556677
 - Target Institution: Manipal Institute of Technology (MIT), Manipal
 - Target Course: B.Tech Data Science & Engineering (Semester I)
 
@@ -24,14 +24,14 @@
 - Occupation: Small Business Owner / Retail Proprietor
 - Employer Name: Khan Electronics & Hardware Store
 - Unique PAN Card No: BQWPV6789B
-- Aadhaar Number Field: 1111-8899-0011
+- Aadhaar Number Field: 111188990011
 
 #### ii. Mother (Secondary Co-Applicant)
 - Full Legal Name: Yasmin Khan
 - Occupation: Homemaker / Part-time Urdu & Arabic Tutor
 - Employment Type: Self-Employed / Informal Tuition
 - Unique PAN Card No: BQWPV2345K
-- Aadhaar Number Field: 1111-4455-6677
+- Aadhaar Number Field: 111144556677
 
 ---
 
@@ -271,7 +271,7 @@ ENROLLMENT NO: 2048/44210/03145
 NAME: KAMRAN KHAN
 S/O: TARIQ KHAN
 DOB: 10/10/2005 | GENDER: MALE
-AADHAAR NO: 1111-2233-4455
+AADHAAR NO: 111122334455
 ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 ==================================================================================
 ```
@@ -284,7 +284,7 @@ ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 NAME: TARIQ KHAN
 S/O: RAHIM KHAN
 DOB: 14/06/1975 | GENDER: MALE
-AADHAAR NO: 1111-8899-0011
+AADHAAR NO: 111188990011
 ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 ==================================================================================
 ```
@@ -297,7 +297,7 @@ ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 NAME: YASMIN KHAN
 W/O: TARIQ KHAN
 DOB: 19/09/1979 | GENDER: FEMALE
-AADHAAR NO: 1111-4455-6677
+AADHAAR NO: 111144556677
 ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 ==================================================================================
 ```

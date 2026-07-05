@@ -6,13 +6,13 @@
 - Student ID: 2026NITEE006
 - Phone No: 9000090006
 - PAN Card No: FSYPN7145X
-- Aadhaar No: 5555-6677-8899
+- Aadhaar No: 555566778899
 - Father's Name: Suresh Nair
 - Father's PAN Card No: FSYPN0123F
-- Father's Aadhaar No.: 5555-2233-4455
+- Father's Aadhaar No.: 555522334455
 - Mother's Name: Lakshmi Nair
 - Mother's PAN Card No: FSYPN4567P
-- Mother's Aadhaar No: 5555-8899-0011
+- Mother's Aadhaar No: 555588990011
 - Target Institution: National Institute of Technology (NIT), Tiruchirappalli (Trichy)
 - Target Course: B.Tech Electrical & Electronics Engineering (Semester I)
 
@@ -24,7 +24,7 @@
 - Occupation: Senior Marketing Manager
 - Employer Name: Global Retail Solutions Ltd.
 - Unique PAN Card No: FSYPN0123F
-- Aadhaar Number Field: 5555-2233-4455
+- Aadhaar Number Field: 555522334455
 - Discrepancy Note: Uploaded KYC reads "Suresh Nair". However, the uploaded bank statement belongs to a joint/business firm titled "Suresh Kumar Nair & Bros Enterprises" (or brother Ramesh Nair), causing an automated OCR Identity Mismatch error in the gateway!
 
 #### ii. Mother (Secondary Co-Applicant)
@@ -32,7 +32,7 @@
 - Occupation: Government School Teacher
 - Employer Name: Kendriya Vidyalaya, Trichy
 - Unique PAN Card No: FSYPN4567P
-- Aadhaar Number Field: 5555-8899-0011
+- Aadhaar Number Field: 555588990011
 
 ---
 
@@ -252,7 +252,7 @@ ENROLLMENT NO: 6144/55209/07145
 NAME: POOJA NAIR
 D/O: SURESH NAIR
 DOB: 22/09/2005 | GENDER: FEMALE
-AADHAAR NO: 5555-6677-8899
+AADHAAR NO: 555566778899
 ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 ==================================================================================
 ```
@@ -265,7 +265,7 @@ ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 NAME: SURESH NAIR
 S/O: BHASKARAN NAIR
 DOB: 15/05/1973 | GENDER: MALE
-AADHAAR NO: 5555-2233-4455
+AADHAAR NO: 555522334455
 ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 ==================================================================================
 ```
@@ -278,7 +278,7 @@ ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 NAME: LAKSHMI NAIR
 W/O: SURESH NAIR
 DOB: 10/11/1977 | GENDER: FEMALE
-AADHAAR NO: 5555-8899-0011
+AADHAAR NO: 555588990011
 ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 ==================================================================================
 ```

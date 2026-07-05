@@ -6,13 +6,13 @@
 - Student ID: 2026AVVCS009
 - Phone No: 9000090009
 - PAN Card No: IVYPD0145A
-- Aadhaar No: 8888-9900-1122
+- Aadhaar No: 888899001122
 - Father's Name: Subramanian Iyer
 - Father's PAN Card No: IVYPD4567J
-- Father's Aadhaar No.: 8888-5566-7788
+- Father's Aadhaar No.: 888855667788
 - Mother's Name: Geetha Iyer
 - Mother's PAN Card No: IVYPD8901S
-- Mother's Aadhaar No: 8888-1122-3344
+- Mother's Aadhaar No: 888811223344
 - Target Institution: Amrita Vishwa Vidyapeetham, Coimbatore
 - Target Course: B.Tech Computer Science & Engineering (Semester I)
 
@@ -24,7 +24,7 @@
 - Occupation: Vice President - Corporate Finance
 - Employer Name: Infosys BPM Ltd.
 - Unique PAN Card No: IVYPD4567J
-- Aadhaar Number Field: 8888-5566-7788
+- Aadhaar Number Field: 888855667788
 - Case Notes: AI Risk Engine assigned an exceptional 980 Omniscore within 15 seconds. Financial approval granted immediately. However, Amrita University portal admin delayed enrollment verification beyond the 7-day SLA window, triggering automated escalation alerts and webhook nudges to the university registrar!
 
 #### ii. Mother (Secondary Co-Applicant)
@@ -32,7 +32,7 @@
 - Occupation: Carnatic Music Vocalist / Instructor
 - Employment Type: Self-Employed / Academy Owner
 - Unique PAN Card No: IVYPD8901S
-- Aadhaar Number Field: 8888-1122-3344
+- Aadhaar Number Field: 888811223344
 
 ---
 
@@ -253,7 +253,7 @@ ENROLLMENT NO: 9216/66112/00145
 NAME: DIVYA IYER
 D/O: SUBRAMANIAN IYER
 DOB: 14/11/2005 | GENDER: FEMALE
-AADHAAR NO: 8888-9900-1122
+AADHAAR NO: 888899001122
 ADDRESS: VILLA 18, HARINI ENCLAVE, R.S. PURAM, COIMBATORE, TAMIL NADU - 641002
 ==================================================================================
 ```
@@ -266,7 +266,7 @@ ADDRESS: VILLA 18, HARINI ENCLAVE, R.S. PURAM, COIMBATORE, TAMIL NADU - 641002
 NAME: SUBRAMANIAN IYER
 S/O: KRISHNAMURTHY IYER
 DOB: 10/06/1973 | GENDER: MALE
-AADHAAR NO: 8888-5566-7788
+AADHAAR NO: 888855667788
 ADDRESS: VILLA 18, HARINI ENCLAVE, R.S. PURAM, COIMBATORE, TAMIL NADU - 641002
 ==================================================================================
 ```
@@ -279,7 +279,7 @@ ADDRESS: VILLA 18, HARINI ENCLAVE, R.S. PURAM, COIMBATORE, TAMIL NADU - 641002
 NAME: GEETHA IYER
 W/O: SUBRAMANIAN IYER
 DOB: 25/08/1978 | GENDER: FEMALE
-AADHAAR NO: 8888-1122-3344
+AADHAAR NO: 888811223344
 ADDRESS: VILLA 18, HARINI ENCLAVE, R.S. PURAM, COIMBATORE, TAMIL NADU - 641002
 ==================================================================================
 ```

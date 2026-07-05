@@ -6,13 +6,13 @@
 - Student ID: 2026TIETCE008
 - Phone No: 9000090008
 - PAN Card No: HUYPK9123Z
-- Aadhaar No: 7777-8899-0011
+- Aadhaar No: 777788990011
 - Father's Name: Farokh Mistry
 - Father's PAN Card No: HUYPK3456H
-- Father's Aadhaar No.: 7777-4455-6677
+- Father's Aadhaar No.: 777744556677
 - Mother's Name: Roshan Mistry
 - Mother's PAN Card No: HUYPK7890R
-- Mother's Aadhaar No: 7777-0011-2233
+- Mother's Aadhaar No: 777700112233
 - Target Institution: Thapar Institute of Engineering & Technology, Patiala
 - Target Course: B.E. Computer Engineering (Semester I)
 
@@ -24,7 +24,7 @@
 - Occupation: Vice President - Sales
 - Employer Name: North India Logistics & Supply Chain Ltd.
 - Unique PAN Card No: HUYPK3456H
-- Aadhaar Number Field: 7777-4455-6677
+- Aadhaar Number Field: 777744556677
 - Risk Engine Notes: Earns a robust corporate salary of ₹2,50,000/month. However, transaction analysis reveals high-frequency debits to online betting, fantasy gaming, and casino platforms accounting for over 35% of monthly net income. XGBoost Classifier flags high probability of default -> Rejection.
 
 #### ii. Mother (Secondary Co-Applicant)
@@ -32,7 +32,7 @@
 - Occupation: Boutique Owner / Fashion Designer
 - Employer Name: Roshan's Ethnic Couture, Chandigarh
 - Unique PAN Card No: HUYPK7890R
-- Aadhaar Number Field: 7777-0011-2233
+- Aadhaar Number Field: 777700112233
 
 ---
 
@@ -255,7 +255,7 @@ ENROLLMENT NO: 8192/22109/09123
 NAME: DARIUS MISTRY
 S/O: FAROKH MISTRY
 DOB: 09/09/2005 | GENDER: MALE
-AADHAAR NO: 7777-8899-0011
+AADHAAR NO: 777788990011
 ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 ==================================================================================
 ```
@@ -268,7 +268,7 @@ ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 NAME: FAROKH MISTRY
 S/O: RUSTOM MISTRY
 DOB: 24/04/1975 | GENDER: MALE
-AADHAAR NO: 7777-4455-6677
+AADHAAR NO: 777744556677
 ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 ==================================================================================
 ```
@@ -281,7 +281,7 @@ ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 NAME: ROSHAN MISTRY
 W/O: FAROKH MISTRY
 DOB: 12/12/1979 | GENDER: FEMALE
-AADHAAR NO: 7777-0011-2233
+AADHAAR NO: 777700112233
 ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 ==================================================================================
 ```
