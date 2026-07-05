@@ -56,7 +56,7 @@ const LandingPage = () => {
             <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
             AI-Driven Education Funding
           </div>
-          <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-8">
+          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-8">
             Fund your education with <br className="hidden lg:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-indigo-600">
               Buy Now, Pay Later.
@@ -97,7 +97,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-[#F0FDF4] rounded-xl flex items-center justify-center mb-6">
                 <Landmark className="w-7 h-7 text-emerald-500" />
               </div>
@@ -107,7 +107,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center mb-6">
                 <PiggyBank className="w-7 h-7 text-indigo-600" />
               </div>
@@ -117,7 +117,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center mb-6">
                 <BookOpen className="w-7 h-7 text-green-600" />
               </div>
@@ -167,7 +167,7 @@ const LandingPage = () => {
 
             <div className="lg:w-1/2 w-full">
               <div className="bg-gradient-to-tr from-emerald-500 to-indigo-600 p-1 rounded-2xl shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                <div className="bg-white rounded-xl p-8 h-full">
+                <div className="bg-white rounded-xl p-5 sm:p-8 h-full">
                   <div className="flex justify-between items-center mb-8 border-b pb-4">
                     <span className="font-bold text-gray-800 flex items-center gap-2">
                       <GraduationCap className="h-5 w-5 text-emerald-500" /> Dashboard Preview
@@ -197,7 +197,7 @@ const LandingPage = () => {
       {/* CTA Section */}
       <div className="bg-emerald-500 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-6">Ready to empower your educational journey?</h2>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6">Ready to empower your educational journey?</h2>
           <p className="text-white mb-10 max-w-2xl mx-auto text-lg">
             Join thousands of students and leading institutions who trust Credixa for simple, transparent, and fair education financing.
           </p>
