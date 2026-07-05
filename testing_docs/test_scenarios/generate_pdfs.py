@@ -142,7 +142,7 @@ def parse_and_generate_for_md(md_path, target_dir):
     return generated_count
 
 def main():
-    base_dir = "/Users/md.kamranalam/Programming/projects/credixa/private_docs/test_scenarios"
+    base_dir = "/Users/md.kamranalam/Programming/projects/credixa/testing_docs/test_scenarios"
     total_generated = 0
     
     print("====================================================")

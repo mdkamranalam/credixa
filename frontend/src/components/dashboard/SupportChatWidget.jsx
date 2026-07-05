@@ -107,7 +107,7 @@ const SupportChatWidget = ({ open, onClose, studentProfile }) => {
     if (!open) return null;
 
     return (
-        <div className="fixed bottom-4 right-4 w-96 h-[600px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col z-50 overflow-hidden font-sans">
+        <div className="fixed bottom-0 sm:bottom-4 right-0 sm:right-4 w-full sm:w-96 h-[500px] max-h-[85vh] sm:rounded-2xl shadow-2xl border border-slate-200 flex flex-col z-50 overflow-hidden font-sans">
             {/* Header */}
             <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between shadow-md z-10">
                 <div className="flex items-center">

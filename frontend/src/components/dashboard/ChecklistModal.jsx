@@ -15,7 +15,7 @@ const ChecklistModal = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden">
-        <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <div className="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h3 className="text-lg font-bold text-gray-900 flex items-center">
             Configure Document Checklist
           </h3>
@@ -27,7 +27,7 @@ const ChecklistModal = ({
           </button>
         </div>
 
-        <div className="p-6 flex-1 overflow-y-auto bg-gray-50">
+        <div className="p-4 sm:p-6 flex-1 overflow-y-auto bg-gray-50">
           <p className="text-sm text-gray-500 mb-6 font-medium">
             Add, remove, or modify the required documents for student loan onboarding.
           </p>
