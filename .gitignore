@@ -100,3 +100,8 @@ graphify-out/
 
 # Docs
 private_docs/
+TESTS.md
+Credixa_Testing_Procedure.pdf
+
+# Others
+generate_procedure_pdf.py
