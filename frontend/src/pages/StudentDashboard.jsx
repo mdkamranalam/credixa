@@ -265,7 +265,7 @@ const StudentDashboard = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans text-slate-800">
       {/* HEADER */}
-      <nav className="bg-white px-8 py-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
+      <nav className="bg-white px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
         <div className="flex items-center gap-2">
           <img src="/credixa-favicon.png" alt="Credixa" className="w-8 h-8" />
           <span className="text-2xl font-black tracking-tight text-slate-900">Credixa</span>
@@ -599,7 +599,7 @@ const StudentDashboard = () => {
               )}
 
               {/* Stepper Navigation */}
-              <div className="mt-10 pt-6 border-t border-slate-100 flex justify-between">
+              <div className="mt-10 pt-6 border-t border-slate-100 flex flex-wrap gap-3 justify-between items-center">
                 {step > 1 ? (
                   <button onClick={() => setStepSync(step - 1)} disabled={isApplying} className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">
                     Back

@@ -98,8 +98,11 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 ## 5. End-to-End (E2E) Integration Scenarios & Mock Document Specifications
 
 1. **Happy Path - Seamless Approval & Instant Disbursement (Rahul Sharma):** 
-   - **Student Profile:** Rahul Sharma | **Co-Applicants:** Rajesh Sharma (Father), Priya Sharma (Mother) | **Institution:** IIT Delhi
-   - **Flow:** Student initiates application -> Parent uploads KYC & Bank Statements -> AI assigns high Omniscore -> Institution verifies -> Auto-approval & disbursement.
+   - **Student Profile:** Rahul Sharma | **Co-Applicants:** Rajesh Sharma (Father), Priya Sharma (Mother) | **Institution:** Apex Institute of Technology
+   - **Institution Prerequisite Details:**
+     - *Name:* Apex Institute of Technology | *Code:* `APEX-001` | *Admin Email:* `admin@apex.edu.in` | *Password:* `ApexAdmin2026!`
+     - *Bank:* HDFC Bank | *IFSC:* `HDFC0001234` | *Account:* `50100234567890` | *Address:* Knowledge Park III, Greater Noida, UP
+   - **Flow:** Institution registers/logins at `/register/institution` -> Student initiates application at `/register/student` -> Parent uploads KYC & Bank Statements -> AI assigns high Omniscore -> Institution verifies -> Auto-approval & disbursement.
    - **Mock Documents Required:**
      - *Student Mark Sheets (`10th_marksheet.pdf`, `12th_marksheet.pdf`):* Name: Rahul Sharma, CBSE Board, 95.2% Class XII aggregate.
      - *Fee Structure (`rahul_fee_structure_happy.pdf`):* ₹2,50,000 Total Semester-I Payable, due in 30 days.
@@ -107,57 +110,84 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
      - *Parent Bank Statement (`rahul's_mother_bank_statement.pdf`):* 6 months history. Starting balance ₹10,00,000, regular ₹60,000 monthly salary credits, closing balance ₹13,00,000. No loan defaults.
 
 2. **Unhappy Path - High-Risk Co-Applicant Rejection due to High DTI (Kamran Khan):**
-   - **Student Profile:** Kamran Khan | **Co-Applicants:** Tariq Khan (Father), Yasmin Khan (Mother) | **Institution:** MIT Manipal
-   - **Flow:** Student completes perfectly -> Parent uploads Bank Statement showing severe liquidity stress and high debt burden -> AI Risk Engine rejects with low Omniscore (<500).
+   - **Student Profile:** Kamran Khan | **Co-Applicants:** Tariq Khan (Father), Yasmin Khan (Mother) | **Institution:** Manipal Institute of Technology (MIT)
+   - **Institution Prerequisite Details:**
+     - *Name:* Manipal Institute of Technology (MIT) | *Code:* `MIT-002` | *Admin Email:* `admin@manipal.edu` | *Password:* `ManipalAdmin2026!`
+     - *Bank:* ICICI Bank | *IFSC:* `ICIC0000072` | *Account:* `007205001234` | *Address:* Madhav Nagar, Manipal, Karnataka
+   - **Flow:** Institution registers/logins -> Student completes registration -> Parent uploads Bank Statement showing severe liquidity stress and high debt burden -> AI Risk Engine rejects with low Omniscore (<500).
    - **Mock Documents Required:**
      - *Parent Bank Statement (`kamran's_father_bank_statement.pdf`):* Tariq Khan (Retail Proprietor). ₹45,000 monthly retail sales receipt, ₹41,000 in existing EMI/loan deductions (Bajaj Finserv Personal Loan, HDFC Car Loan EMI, Muthoot Gold Loan Interest), closing balance ₹500. High velocity of withdrawals demonstrating severe liquidity stress (DTI > 91%).
 
 3. **Unhappy Path - Suspected Fraud & Document Tampering (Harpreet Singh):**
-   - **Student Profile:** Harpreet Singh | **Co-Applicants:** Daljit Singh (Father), Manpreet Kaur (Mother) | **Institution:** VIT Vellore
-   - **Flow:** Parent uploads manipulated bank statement -> AI detects mathematical impossibilities and forged dates -> System locks application instantly and flags for manual investigation.
+   - **Student Profile:** Harpreet Singh | **Co-Applicants:** Daljit Singh (Father), Manpreet Kaur (Mother) | **Institution:** Vellore Institute of Technology (VIT)
+   - **Institution Prerequisite Details:**
+     - *Name:* Vellore Institute of Technology (VIT) | *Code:* `VIT-003` | *Admin Email:* `admin@vit.ac.in` | *Password:* `VitAdmin2026!`
+     - *Bank:* Indian Bank | *IFSC:* `IDIB000V086` | *Account:* `601234567890` | *Address:* Katpadi Road, Vellore, Tamil Nadu
+   - **Flow:** Institution registers/logins -> Student completes registration -> Parent uploads manipulated bank statement -> AI detects mathematical impossibilities and forged dates -> System locks application instantly and flags for manual investigation.
    - **Mock Documents Required:**
      - *Tampered Bank Statement (`harpreet's_father_bank_statement_TAMPERED.pdf`):* Daljit Singh (Textile Trader). Page 1 closing balance is ₹4,50,000, but Page 2 starting balance brought forward is ₹14,50,000 (mathematical impossibility: +₹10,00,000 without credit entry). Forged or illegal calendar dates: `30-Feb-2026` and `31-Apr-2026`.
 
 4. **Edge Case - Discrepancy Resolution Loop via Document Re-upload (Rhea D'Souza):**
-   - **Student Profile:** Rhea D'Souza | **Co-Applicants:** Maria D'Souza (Mother), Michael D'Souza (Father) | **Institution:** COEP Technological University, Pune
-   - **Flow:** Student uploads blurry/unreadable Fee Structure -> Institution rejects document -> Student re-uploads crystal clear version -> Institution approves.
+   - **Student Profile:** Rhea D'Souza | **Co-Applicants:** Maria D'Souza (Mother), Michael D'Souza (Father) | **Institution:** College of Engineering Pune (COEP)
+   - **Institution Prerequisite Details:**
+     - *Name:* College of Engineering Pune (COEP) | *Code:* `COEP-004` | *Admin Email:* `admin@coep.ac.in` | *Password:* `CoepAdmin2026!`
+     - *Bank:* State Bank of India | *IFSC:* `SBIN0001110` | *Account:* `30123456789` | *Address:* Wellesley Road, Shivajinagar, Pune, Maharashtra
+   - **Flow:** Institution registers/logins -> Student uploads blurry/unreadable Fee Structure -> Institution rejects document at `/admin-dashboard` -> Student re-uploads crystal clear version -> Institution approves.
    - **Mock Documents Required:**
      - *Document 1 - Blurry/Rejected (`rhea_fee_structure_REJECTED.jpeg`):* Extremely low resolution, pixelated JPEG of COEP Fee Structure with unreadable OCR text (`C##P T#CHN#L#G#C#L UN#V#RS#TY`).
      - *Document 2 - Clear/Approved (`rhea_fee_structure_APPROVED.pdf`):* High-quality, pristine PDF of COEP Fee Structure showing ₹3,80,000 Total Payable.
 
 5. **Edge Case - Parent Drops Off & Session Abandonment Recovery (Rohan Mehta):**
-   - **Student Profile:** Rohan Mehta | **Co-Applicants:** Suresh Mehta (Father), Bhavna Mehta (Mother) | **Institution:** SRM Institute of Science and Technology (SRMIST), Chennai
-   - **Flow:** Student invites parent -> Parent clicks link but abandons session -> System sends automated 24/48 hr SMS/WhatsApp reminders -> Parent returns and completes application.
+   - **Student Profile:** Rohan Mehta | **Co-Applicants:** Suresh Mehta (Father), Bhavna Mehta (Mother) | **Institution:** SRM Institute of Science and Technology
+   - **Institution Prerequisite Details:**
+     - *Name:* SRM Institute of Science and Technology | *Code:* `SRM-005` | *Admin Email:* `admin@srmist.edu.in` | *Password:* `SrmAdmin2026!`
+     - *Bank:* City Union Bank | *IFSC:* `CIUB0000117` | *Account:* `500101012345678` | *Address:* Kattankulathur, Chengalpattu, Tamil Nadu
+   - **Flow:** Institution registers/logins -> Student invites parent -> Parent clicks link but abandons session -> System sends automated 24/48 hr SMS/WhatsApp reminders -> Parent returns and completes application without losing data.
    - **Mock Documents Required:**
      - *Student Mark Sheets & Fee Structure (`rohan_fee_structure_happy.pdf`):* Valid mock documents (₹3,50,000 payable) pushing application forward to the "Waiting for Co-Applicant" state before recovery.
 
 6. **Unhappy Path - Identity Mismatch & OCR Validation Failure (Pooja Nair):**
-   - **Student Profile:** Pooja Nair | **Co-Applicants:** K. R. Nair (Father), Lakshmi Nair (Mother) | **Institution:** NIT Tiruchirappalli (NITT)
-   - **Flow:** Parent uploads KYC that doesn't match the Bank Statement name -> OCR cross-verification fails -> System blocks progression until resolved.
+   - **Student Profile:** Pooja Nair | **Co-Applicants:** K. R. Nair (Father), Lakshmi Nair (Mother) | **Institution:** National Institute of Technology (NIT), Tiruchirappalli
+   - **Institution Prerequisite Details:**
+     - *Name:* National Institute of Technology (NIT), Tiruchirappalli | *Code:* `NITT-006` | *Admin Email:* `admin@nitt.edu` | *Password:* `NittAdmin2026!`
+     - *Bank:* State Bank of India | *IFSC:* `SBIN0001617` | *Account:* `10892345678` | *Address:* Tanjore Main Road, National Highway 67, Tiruchirappalli
+   - **Flow:** Institution registers/logins -> Parent uploads KYC that doesn't match the Bank Statement name -> OCR cross-verification fails -> System blocks progression until resolved.
    - **Mock Documents Required:**
      - *Parent KYC (`test_coapplicant_father_kyc_raw.pdf`):* Name reads "Amit Patel" (or mismatched identity upload).
      - *Parent Bank Statement (`pooja's_father_bank_statement_MISMATCH.pdf`):* Account holder name reads "K. R. Nair" (or joint firm name "Nair & Sons Enterprises"), causing an OCR name mismatch against the uploaded KYC.
 
 7. **Edge Case - Partial Scholarship & Over-Borrowing Adjustment (Arjun Deshmukh):**
-   - **Student Profile:** Arjun Deshmukh | **Co-Applicants:** Vandana Deshmukh (Mother), Prakash Deshmukh (Father) | **Institution:** BITS Pilani (Navi Mumbai Campus)
-   - **Flow:** Student requests ₹10,00,000 loan -> Fee structure indicates a 50% merit scholarship bringing total to ₹5,00,000 -> AI/Institution flags over-borrowing attempt and auto-adjusts loan sanction to ₹5,00,000.
+   - **Student Profile:** Arjun Deshmukh | **Co-Applicants:** Vandana Deshmukh (Mother), Prakash Deshmukh (Father) | **Institution:** Birla Institute of Technology and Science (BITS), Pilani
+   - **Institution Prerequisite Details:**
+     - *Name:* Birla Institute of Technology and Science (BITS), Pilani | *Code:* `BITS-007` | *Admin Email:* `admin@pilani.bits-pilani.ac.in` | *Password:* `BitsAdmin2026!`
+     - *Bank:* ICICI Bank | *IFSC:* `ICIC0000318` | *Account:* `031805001234` | *Address:* Vidya Vihar, Pilani, Rajasthan
+   - **Flow:** Institution registers/logins -> Student requests ₹10,00,000 loan -> Fee structure indicates a 50% merit scholarship bringing total to ₹5,00,000 -> AI/Institution flags over-borrowing attempt and auto-adjusts loan sanction to ₹5,00,000.
    - **Mock Documents Required:**
      - *Fee Structure (`arjun_fee_structure_scholarship.pdf`):* Shows ₹10,00,000 Base Tuition, a line item for -₹5,00,000 BITS Merit Scholarship, and ₹5,00,000 Final Total Payable.
 
 8. **Unhappy Path - High-Risk Behaviour Pattern & Gambling Flags (Darius Mistry):**
-   - **Student Profile:** Darius Mistry | **Co-Applicants:** Farokh Mistry (Father), Roshan Mistry (Mother) | **Institution:** Thapar Institute of Engineering & Technology, Patiala
-   - **Flow:** Parent uploads Bank Statement -> AI detects frequent high-value transactions to known betting and fantasy gaming merchants -> Drastic Omniscore reduction & rejection.
+   - **Student Profile:** Darius Mistry | **Co-Applicants:** Farokh Mistry (Father), Roshan Mistry (Mother) | **Institution:** Thapar Institute of Engineering & Technology
+   - **Institution Prerequisite Details:**
+     - *Name:* Thapar Institute of Engineering & Technology | *Code:* `TIET-008` | *Admin Email:* `admin@thapar.edu` | *Password:* `ThaparAdmin2026!`
+     - *Bank:* HDFC Bank | *IFSC:* `HDFC0000108` | *Account:* `50100345678901` | *Address:* Bhadson Road, Patiala, Punjab
+   - **Flow:** Institution registers/logins -> Parent uploads Bank Statement -> AI detects frequent high-value transactions to known betting and fantasy gaming merchants -> Drastic Omniscore reduction & rejection.
    - **Mock Documents Required:**
      - *Parent Bank Statement (`darius's_father_bank_statement_GAMBLING.pdf`):* Farokh Mistry (VP Logistics, ₹2,50,000 monthly salary). Multiple regular high-frequency debits labeled "Dream11 Fantasy Sports", "Betway Online India", "Parimatch Casino", or "RummyCircle Games" accounting for >35% of monthly income (₹3,55,000 total gambling debits).
 
 9. **Edge Case - Institution Delays Verification & SLA Escalation (Divya Iyer):**
-   - **Student Profile:** Divya Iyer | **Co-Applicants:** S. Venkatraman Iyer (Father), Radhika Iyer (Mother) | **Institution:** Amrita Vishwa Vidyapeetham, Coimbatore
-   - **Flow:** AI approves financial profile instantly -> Institution fails to verify enrollment within 7-day SLA window -> Automated escalation alerts and webhook nudges trigger to university admin.
+   - **Student Profile:** Divya Iyer | **Co-Applicants:** S. Venkatraman Iyer (Father), Radhika Iyer (Mother) | **Institution:** Amrita Vishwa Vidyapeetham
+   - **Institution Prerequisite Details:**
+     - *Name:* Amrita Vishwa Vidyapeetham | *Code:* `AMRITA-009` | *Admin Email:* `admin@amrita.edu` | *Password:* `AmritaAdmin2026!`
+     - *Bank:* South Indian Bank | *IFSC:* `SIBL0000255` | *Account:* `025505300001234` | *Address:* Amritanagar, Ettimadai, Coimbatore, Tamil Nadu
+   - **Flow:** Institution registers/logins -> AI approves financial profile instantly -> Institution fails to verify enrollment within 7-day SLA window -> Automated escalation alerts and webhook nudges trigger to university admin.
    - **Mock Documents Required:**
      - *Standard Valid Documents (`divya_fee_structure_happy.pdf`, `divya's_father_bank_statement.pdf`):* Clean, pristine documents ensuring the application clears all AI Risk Engine checks with high Omniscore (950/1000) and rests purely on the Institution's verification queue.
 
 10. **Happy Path - Multi-Semester Fast Track for Returning Users (Abbas Ali):**
     - **Student Profile:** Abbas Ali | **Co-Applicants:** Hyder Ali (Father), Fatima Ali (Mother) | **Institution:** International Institute of Information Technology (IIIT), Hyderabad
-    - **Flow:** Student finishes repaying Semester I cleanly without defaults -> Applies for Semester II -> System bypasses KYC and Bank Statements, reusing verified baseline data -> Approved in <30 seconds upon uploading new Fee Structure.
+    - **Institution Prerequisite Details:**
+      - *Name:* International Institute of Information Technology (IIIT), Hyderabad | *Code:* `IIITH-010` | *Admin Email:* `admin@iiit.ac.in` | *Password:* `IiitAdmin2026!`
+      - *Bank:* State Bank of India | *IFSC:* `SBIN0021098` | *Account:* `30234567890` | *Address:* Professor CR Rao Road, Gachibowli, Hyderabad, Telangana
+    - **Flow:** Institution registers/logins -> Student finishes repaying Semester I cleanly without defaults -> Applies for Semester II -> System bypasses KYC and Bank Statements, reusing verified baseline data -> Approved in <30 seconds upon uploading new Fee Structure.
     - **Mock Documents Required:**
       - *New Fee Structure (`abbas_fee_structure_semester2.pdf`):* Labeled "Semester II Fee Breakdown", ₹3,75,000 Total Payable. (Assumes Semester I repayment history and KYC baseline are already seeded in the database).

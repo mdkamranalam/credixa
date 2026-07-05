@@ -80,7 +80,7 @@ const LandingPage = () => {
             </Link>
           </div>
 
-          <div className="mt-16 flex items-center justify-center gap-8 text-gray-400 text-sm font-medium">
+          <div className="mt-16 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-gray-400 text-sm font-medium">
             <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-green-500" /> Secure Vault</div>
             <div className="flex items-center gap-2"><Zap className="w-5 h-5 text-amber-500" /> Instant Decisions</div>
             <div className="flex items-center gap-2"><TrendingUp className="w-5 h-5 text-indigo-500" /> AI Omniscore</div>
@@ -96,7 +96,7 @@ const LandingPage = () => {
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">We bridge the gap between your ambition and your finances using next-generation AI underwriting.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-[#F0FDF4] rounded-xl flex items-center justify-center mb-6">
                 <Landmark className="w-7 h-7 text-emerald-500" />
@@ -182,7 +182,7 @@ const LandingPage = () => {
                         <span className="text-slate-800 font-bold text-xl">Omniscore: 852 / 900</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="h-16 bg-gray-50 rounded-lg border border-gray-100"></div>
                       <div className="h-16 bg-gray-50 rounded-lg border border-gray-100"></div>
                     </div>

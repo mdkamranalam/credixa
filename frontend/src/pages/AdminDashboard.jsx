@@ -250,7 +250,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 relative pb-10">
       {/* Top Navigation */}
-      <nav className="bg-gray-900 shadow-sm px-8 py-4 flex justify-between items-center text-white">
+      <nav className="bg-gray-900 shadow-sm px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center text-white">
         <div className="flex items-center space-x-2">
           <img src="/credixa-favicon.png" alt="Credixa Logo" className="h-8 w-8 rounded-lg object-contain bg-white p-1" />
           <h1 className="text-xl font-bold">Credixa Admin Console</h1>
@@ -363,7 +363,7 @@ const AdminDashboard = () => {
               Review AI risk scores and manage BNPL disbursements.
             </p>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               placeholder="Search by name or roll..."
@@ -500,7 +500,7 @@ const AdminDashboard = () => {
           
           {/* Loans Pagination */}
           {!isLoading && filteredLoans.length > 0 && (
-            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+            <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row gap-4 items-center justify-between bg-gray-50">
               <span className="text-sm text-gray-700">
                 Showing <span className="font-bold">{((loanPage - 1) * LOANS_PER_PAGE) + 1}</span> to <span className="font-bold">{Math.min(loanPage * LOANS_PER_PAGE, filteredLoans.length)}</span> of <span className="font-bold">{filteredLoans.length}</span> entries
               </span>
@@ -619,7 +619,7 @@ const AdminDashboard = () => {
         
         {/* Transactions Pagination */}
         {filteredTxns.length > 0 && (
-          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+          <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row gap-4 items-center justify-between bg-gray-50">
             <span className="text-sm text-gray-700">
               Showing <span className="font-bold">{((txnPage - 1) * TXNS_PER_PAGE) + 1}</span> to <span className="font-bold">{Math.min(txnPage * TXNS_PER_PAGE, filteredTxns.length)}</span> of <span className="font-bold">{filteredTxns.length}</span> entries
             </span>
@@ -680,7 +680,7 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            <div className="p-8 flex-1 overflow-y-auto bg-gray-50">
+            <div className="p-4 sm:p-8 flex-1 overflow-y-auto bg-gray-50">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* User Info */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
