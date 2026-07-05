@@ -326,7 +326,7 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <p className="text-sm font-bold text-gray-400 uppercase">
               Total Disbursed
@@ -390,11 +390,11 @@ const AdminDashboard = () => {
         {/* Data Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {isLoading ? (
-            <div className="p-10 text-center text-gray-500">
+            <div className="p-6 sm:p-10 text-center text-gray-500">
               Loading applications...
             </div>
           ) : loans.length === 0 ? (
-            <div className="p-10 text-center text-gray-500">
+            <div className="p-6 sm:p-10 text-center text-gray-500">
               No loan applications found yet.
             </div>
           ) : (

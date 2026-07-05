@@ -73,8 +73,8 @@ const LoanChecklist = () => {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-gray-900 flex items-center justify-center gap-3">
-            <FileText className="h-10 w-10 text-emerald-500" />
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-center">
+            <FileText className="h-8 sm:h-10 w-8 sm:w-10 text-emerald-500" />
             Education Loan Document Checklist
           </h1>
           <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
@@ -84,7 +84,7 @@ const LoanChecklist = () => {
 
         {/* Minimum Required Quick Checklist Alert */}
         <div className="bg-emerald-500 rounded-2xl shadow-xl overflow-hidden mb-12 transform transition-all hover:scale-[1.01]">
-          <div className="px-6 py-8 sm:p-10">
+          <div className="p-4 sm:p-10">
             <h3 className="text-2xl font-bold text-white flex items-center gap-2 mb-6">
               <CheckCircle className="h-7 w-7 text-green-300" />
               Quick Checklist (Minimum Required to Start)

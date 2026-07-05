@@ -25,7 +25,7 @@ const LoanStatusCard = ({
   return (
     <div className="bg-white rounded-[20px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
       {activeLoan.status === "CLOSED" ? (
-        <div className="p-10 text-center">
+        <div className="p-5 sm:p-8 md:p-10 text-center">
           <CheckCircle className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
           <h2 className="text-2xl font-black text-emerald-900">Loan Fully Repaid!</h2>
           <p className="text-emerald-700 mb-6">
@@ -39,7 +39,7 @@ const LoanStatusCard = ({
           </button>
         </div>
       ) : ["APPLIED", "UNDER_REVIEW"].includes(activeLoan.status) ? (
-        <div className="p-10 text-center">
+        <div className="p-5 sm:p-8 md:p-10 text-center">
           <div className="inline-block p-4 bg-yellow-50 rounded-full mb-4">
             <Clock className="h-10 w-10 text-yellow-500" />
           </div>
@@ -47,7 +47,7 @@ const LoanStatusCard = ({
           <p className="text-slate-500 mb-8 max-w-md mx-auto">
             Our AI Engine and your Institution Admin are reviewing your profile. You'll be notified shortly.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <div className="bg-slate-50 px-6 py-4 rounded-xl border border-slate-100">
               <p className="text-xs font-bold text-slate-400 uppercase">Requested</p>
               <p className="text-lg font-black text-slate-800">
@@ -63,7 +63,7 @@ const LoanStatusCard = ({
           </div>
         </div>
       ) : activeLoan.status === "REJECTED" ? (
-        <div className="p-10 text-center">
+        <div className="p-5 sm:p-8 md:p-10 text-center">
           <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-black text-slate-900">Application Not Approved</h2>
           <p className="text-slate-500 mb-6">
@@ -79,9 +79,9 @@ const LoanStatusCard = ({
       ) : (
         <>
           <LoanProgress loanData={activeLoan} />
-          <div className="p-8 bg-slate-50 border-t border-slate-100">
+          <div className="p-4 sm:p-6 md:p-8 bg-slate-50 border-t border-slate-100">
             <h3 className="font-bold text-slate-900 mb-4">Active Loan Details</h3>
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <p className="text-xs text-slate-400 font-bold uppercase">Principal</p>
                 <p className="text-lg font-black text-slate-800">

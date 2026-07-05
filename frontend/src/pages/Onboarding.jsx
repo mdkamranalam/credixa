@@ -178,7 +178,7 @@ const Onboarding = () => {
 
         {/* Step 2: KYC */}
         {step === 2 && (
-          <div className="bg-white rounded-xl shadow-sm border p-8">
+          <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
               <ShieldCheck className="h-8 w-8 text-emerald-500 mr-3" />
               <h3 className="text-xl font-bold">Step 2: Identity Verification</h3>
@@ -227,7 +227,7 @@ const Onboarding = () => {
 
         {/* Step 3: Co-Applicant */}
         {step === 3 && (
-          <div className="bg-white rounded-xl shadow-sm border p-8">
+          <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
               <User className="h-8 w-8 text-emerald-500 mr-3" />
               <h3 className="text-xl font-bold">Step 3: Co-Applicant Linking</h3>
@@ -239,7 +239,7 @@ const Onboarding = () => {
 
         {/* Step 4: Academic Details */}
         {step === 4 && (
-          <div className="bg-white rounded-xl shadow-sm border p-8">
+          <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
               <BookOpen className="h-8 w-8 text-emerald-500 mr-3" />
               <h3 className="text-xl font-bold">Step 4: Academic Details</h3>
@@ -365,7 +365,7 @@ const Onboarding = () => {
 
         {/* Step 5: Financial Data */}
         {step === 5 && (
-          <div className="bg-white rounded-xl shadow-sm border p-8">
+          <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
               <UploadCloud className="h-8 w-8 text-emerald-500 mr-3" />
               <h3 className="text-xl font-bold">Step 5: Financial Data Ingestion</h3>
@@ -432,7 +432,7 @@ const Onboarding = () => {
 
         {/* Step 6: Review & Confirmation */}
         {step === 6 && profileData && (
-          <div className="bg-white rounded-xl shadow-sm border p-8">
+          <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
               <ShieldCheck className="h-8 w-8 text-emerald-500 mr-3" />
               <h3 className="text-xl font-bold">Step 6: Final Review & Confirmation</h3>
@@ -535,7 +535,7 @@ const Onboarding = () => {
 
         {/* Step 7: Finished */}
         {step === 7 && (
-          <div className="bg-white rounded-xl shadow-sm border p-12 text-center max-w-2xl mx-auto">
+          <div className="bg-white rounded-xl shadow-sm border p-6 sm:p-8 md:p-12 text-center max-w-2xl mx-auto">
             {isAnalyzing ? (
               <>
                 <div className="animate-spin h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-6"></div>
@@ -548,7 +548,7 @@ const Onboarding = () => {
                    <div className={`w-36 h-36 rounded-full border-8 flex items-center justify-center shadow-xl transition-all duration-700 ease-out transform hover:scale-105 relative ${analysisResult.score >= 70 ? 'border-emerald-400 bg-emerald-50' : analysisResult.score >= 40 ? 'border-amber-400 bg-amber-50' : 'border-rose-400 bg-rose-50'}`}>
                       <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${analysisResult.score >= 70 ? 'bg-emerald-400' : analysisResult.score >= 40 ? 'bg-amber-400' : 'bg-rose-400'}`}></div>
                       <div className="text-center relative z-10">
-                        <span className={`text-4xl font-black block leading-none tracking-tight ${analysisResult.score >= 70 ? 'text-emerald-700' : analysisResult.score >= 40 ? 'text-amber-700' : 'text-rose-700'}`}>{Math.round(analysisResult.score)}</span>
+                        <span className={`text-3xl sm:text-4xl font-black block leading-none tracking-tight ${analysisResult.score >= 70 ? 'text-emerald-700' : analysisResult.score >= 40 ? 'text-amber-700' : 'text-rose-700'}`}>{Math.round(analysisResult.score)}</span>
                         <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-2 block">Pre-Approval</span>
                       </div>
                    </div>

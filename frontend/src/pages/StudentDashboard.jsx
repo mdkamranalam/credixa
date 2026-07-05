@@ -285,7 +285,7 @@ const StudentDashboard = () => {
 
           {/* PROFILE CARD */}
           {profile && (
-            <div className="bg-white rounded-[20px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-6 flex flex-col md:flex-row justify-between items-start md:items-center border border-slate-100">
+            <div className="bg-white rounded-[20px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-4 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center border border-slate-100 gap-4">
               <div className="flex items-center space-x-4">
                 <div className="bg-emerald-100 p-1 rounded-full border-4 border-emerald-50">
                   <div className="bg-emerald-500 h-12 w-12 rounded-full flex items-center justify-center text-white font-bold text-xl">
@@ -303,8 +303,8 @@ const StudentDashboard = () => {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 md:mt-0 flex flex-col items-start md:items-end space-y-2">
-                <div className="flex space-x-2">
+              <div className="mt-4 md:mt-0 flex flex-col items-start md:items-end space-y-2 w-full md:w-auto">
+                <div className="flex flex-wrap gap-2">
                   <span className="bg-slate-100 text-slate-600 text-[10px] font-black px-2 py-1 uppercase rounded-md tracking-wider">
                     ID: {profile.college_roll_number}
                   </span>
@@ -324,12 +324,12 @@ const StudentDashboard = () => {
 
           {/* CREDIT OVERVIEW — shown only when no active loan and not mid-application */}
           {(!activeLoan || ["CLOSED", "REJECTED"].includes(activeLoan.status)) && step === 1 && (
-            <div className="bg-slate-900 rounded-[24px] shadow-xl p-8 relative overflow-hidden text-white">
+            <div className="bg-slate-900 rounded-[24px] shadow-xl p-5 sm:p-8 relative overflow-hidden text-white">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500 rounded-full blur-[80px] opacity-20 -mr-20 -mt-20 pointer-events-none" />
-              <div className="flex justify-between items-start mb-8 relative z-10">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 sm:mb-8 relative z-10">
                 <div>
                   <p className="text-slate-400 font-bold text-sm uppercase tracking-wider mb-1">Approved Credit Limit</p>
-                  <h1 className="text-4xl md:text-5xl font-black">₹{APPROVED_LIMIT.toLocaleString()}</h1>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black">₹{APPROVED_LIMIT.toLocaleString()}</h1>
                 </div>
                 <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-md rounded-2xl p-3 text-center min-w-[100px]">
                   <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Health Score</p>
@@ -338,7 +338,7 @@ const StudentDashboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4 border-t border-slate-800 pt-6 relative z-10">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-slate-800 pt-6 relative z-10">
                 <div>
                   <p className="text-slate-400 text-xs font-bold uppercase mb-1">Available</p>
                   <p className="text-xl font-bold">₹{APPROVED_LIMIT.toLocaleString()}</p>
@@ -368,7 +368,7 @@ const StudentDashboard = () => {
 
           {/* APPLICATION STEPPER — shown only when there's no active loan */}
           {!activeLoan && isProfileComplete && (
-            <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 p-8 relative">
+            <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 p-4 sm:p-6 md:p-8 relative">
 
               {/* Stepper Header */}
               <div className="flex items-center justify-between mb-8 relative">
@@ -380,7 +380,7 @@ const StudentDashboard = () => {
                 {[1, 2, 3, 4, 5].map((s) => (
                   <div
                     key={s}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-sm transition-colors duration-300 ${
+                    className={`w-8 sm:w-10 h-8 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm transition-colors duration-300 ${
                       step > s
                         ? "bg-emerald-500 text-white"
                         : step === s
@@ -406,10 +406,10 @@ const StudentDashboard = () => {
                   <p className="text-slate-500 mb-8">
                     Choose the exact amount you need. You're pre-approved up to ₹{APPROVED_LIMIT.toLocaleString()}.
                   </p>
-                  <div className="bg-slate-50 rounded-2xl p-8 mb-8 border border-slate-100">
+                  <div className="bg-slate-50 rounded-2xl p-4 sm:p-8 mb-8 border border-slate-100">
                     <div className="text-center mb-8">
                       <p className="text-slate-400 font-bold text-sm uppercase tracking-widest mb-2">Requested Amount</p>
-                      <h1 className="text-5xl font-black text-emerald-600">₹{loanAmount.toLocaleString()}</h1>
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-emerald-600">₹{loanAmount.toLocaleString()}</h1>
                     </div>
                     <input
                       type="range" min="5000" max={APPROVED_LIMIT} step="1000"
@@ -497,7 +497,7 @@ const StudentDashboard = () => {
                       <div
                         key={bank.id}
                         onClick={() => setSelectedBank(bank.account)}
-                        className={`cursor-pointer p-5 rounded-2xl border-2 flex items-center justify-between transition-all ${
+                        className={`cursor-pointer p-4 sm:p-5 rounded-2xl border-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all ${
                           selectedBank === bank.account ? "border-emerald-500 bg-emerald-50" : "border-slate-100 bg-white hover:border-slate-300"
                         }`}
                       >
