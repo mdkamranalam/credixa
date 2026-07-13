@@ -47,13 +47,13 @@ export const requireRole = (role) => {
     }
 
     const allowedRoles = Array.isArray(role) ? role : [role];
-    if (!allowedRoles.includes(req.user.role)) {
-      logger.warn(`Role access denied: User ${req.user.user_id} tried to access ${req.path} with role ${req.user.role}`);
-      return res
-        .status(403)
-        .json({ error: "Unauthorized role for this access." });
+    if (req.user.role === "SUPER_ADMIN" || allowedRoles.includes(req.user.role)) {
+      return next();
     }
-    next();
+    logger.warn(`Role access denied: User ${req.user.user_id} tried to access ${req.path} with role ${req.user.role}`);
+    return res
+      .status(403)
+      .json({ error: "Unauthorized role for this access." });
   };
 };
 

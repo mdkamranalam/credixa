@@ -20,7 +20,9 @@ const Login = () => {
     try {
       const loggedInUser = await login(email, password);
 
-      if (loggedInUser.role === "STUDENT") {
+      if (loggedInUser.role === "SUPER_ADMIN") {
+        navigate("/superadmin-dashboard");
+      } else if (loggedInUser.role === "STUDENT") {
         if (loggedInUser.kyc_status === "PENDING") {
           navigate("/onboarding");
         } else {

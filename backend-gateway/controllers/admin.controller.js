@@ -1,3 +1,5 @@
+import pool from "../utils/db.js";
+
 export const approveAndDisburse = async (req, res) => {
   const { loanId, approvedAmount } = req.body;
   const client = await pool.connect();

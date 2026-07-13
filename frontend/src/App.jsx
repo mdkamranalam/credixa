@@ -18,6 +18,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const LoanChecklist = lazy(() => import("./pages/LoanChecklist"));
 const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const SuperAdminDashboard = lazy(() => import("./pages/SuperAdminDashboard"));
 
 function App() {
   return (
@@ -50,6 +51,16 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["INSTITUTION_ADMIN"]}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Protected Superadmin Route */}
+            <Route
+              path="/superadmin-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+                  <SuperAdminDashboard />
                 </ProtectedRoute>
               }
             />

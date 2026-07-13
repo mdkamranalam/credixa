@@ -59,6 +59,7 @@ services:
       - RISK_ENGINE_URL=http://risk-engine:8000/analyze-statement
     volumes:
       - ./backend-gateway:/app
+      - ./database:/database
       - /app/node_modules
 
   # 3. Python Risk Engine
