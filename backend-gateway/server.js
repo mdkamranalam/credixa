@@ -17,6 +17,7 @@ import notificationRoutes from "./routes/notification.routes.js";
 import sseRoutes from "./routes/sse.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
 import supportRoutes from "./routes/support.routes.js";
+import superadminRoutes from "./routes/superadmin.routes.js";
 import { startLoanScheduler } from "./jobs/loan_scheduler.js";
 import { authenticateToken, requireRole } from "./middleware/auth.middleware.js";
 import { initObservability, timingMiddleware } from "./utils/observability.js";
@@ -51,24 +52,76 @@ pool.connect(async (err, client, release) => {
   } else {
     console.log("Successfully connected to PostgreSQL database");
     try {
-      const res = await client.query(`
+      const fs = await import('fs');
+      const path = await import('path');
+      const { fileURLToPath } = await import('url');
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+
+      // Check support_tickets table (002)
+      const res002 = await client.query(`
         SELECT EXISTS (
           SELECT FROM information_schema.tables 
           WHERE  table_schema = 'public'
           AND    table_name   = 'support_tickets'
         );
       `);
-      if (!res.rows[0].exists) {
+      const resolveSqlPath = (filename) => {
+        const candidates = [
+          path.join(__dirname, '../database/migrations', filename),
+          path.join('/database/migrations', filename),
+          path.join(__dirname, 'database/migrations', filename)
+        ];
+        for (const p of candidates) {
+          if (fs.existsSync(p)) return p;
+        }
+        return null;
+      };
+
+      if (!res002.rows[0].exists) {
         console.log("Running 002_support_chat.sql migration...");
-        const fs = await import('fs');
-        const path = await import('path');
-        const { fileURLToPath } = await import('url');
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
-        const sqlPath = path.join(__dirname, '../database/migrations/002_support_chat.sql');
-        const sql = fs.readFileSync(sqlPath, 'utf8');
-        await client.query(sql);
-        console.log("Migration 002_support_chat.sql completed.");
+        const sqlPath002 = resolveSqlPath('002_support_chat.sql');
+        if (sqlPath002) {
+          const sql002 = fs.readFileSync(sqlPath002, 'utf8');
+          await client.query(sql002);
+          console.log("Migration 002_support_chat.sql completed.");
+        } else {
+          console.warn("Migration file 002_support_chat.sql not found in any candidate paths.");
+        }
+      }
+
+      // Check platform_settings table (003)
+      const res003 = await client.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE  table_schema = 'public'
+          AND    table_name   = 'platform_settings'
+        );
+      `);
+      if (!res003.rows[0].exists) {
+        console.log("Running 003_superadmin_setup.sql migration...");
+        const sqlPath003 = resolveSqlPath('003_superadmin_setup.sql');
+        if (sqlPath003) {
+          const sql003 = fs.readFileSync(sqlPath003, 'utf8');
+          await client.query(sql003);
+          console.log("Migration 003_superadmin_setup.sql completed.");
+        } else {
+          console.warn("Migration file 003_superadmin_setup.sql not found in any candidate paths.");
+        }
+      }
+
+      // Check institutions count (004 seed)
+      const instCountRes = await client.query(`SELECT COUNT(*) FROM institutions;`);
+      if (parseInt(instCountRes.rows[0].count, 10) === 0) {
+        console.log("Running 004_seed_partner_institutions.sql migration...");
+        const sqlPath004 = resolveSqlPath('004_seed_partner_institutions.sql');
+        if (sqlPath004) {
+          const sql004 = fs.readFileSync(sqlPath004, 'utf8');
+          await client.query(sql004);
+          console.log("Migration 004_seed_partner_institutions.sql completed.");
+        } else {
+          console.warn("Migration file 004_seed_partner_institutions.sql not found in any candidate paths.");
+        }
       }
     } catch (migErr) {
       console.error("Error running migration:", migErr);
@@ -100,14 +153,16 @@ if (!process.env.RISK_ENGINE_API_KEY) {
 }
 
 // Basic Health Check Route
-app.get("/health", (req, res) => {
+const healthHandler = (req, res) => {
   res.status(200).json({
     status: "API Gateway is online",
     db_connected: true,
     timestamp: new Date().toISOString(),
     service: "backend-gateway"
   });
-});
+};
+app.get("/health", healthHandler);
+app.get("/api/health", healthHandler);
 
 // Database Health Check Route
 app.get("/health/db", async (req, res) => {
@@ -147,6 +202,7 @@ startLoanScheduler();
 app.use("/api/loans", authenticateToken, loanRoutes);
 app.use("/api/transactions", authenticateToken, requireRole("INSTITUTION_ADMIN"), transactionRoutes);
 app.use("/api/support", authenticateToken, supportRoutes);
+app.use("/api/superadmin", authenticateToken, requireRole("SUPER_ADMIN"), superadminRoutes);
 
 app.listen(PORT, () => {
   console.log(`API Gateway is running on http://localhost:${PORT}`);
