@@ -123,6 +123,21 @@ pool.connect(async (err, client, release) => {
           console.warn("Migration file 004_seed_partner_institutions.sql not found in any candidate paths.");
         }
       }
+
+      // Production self-healing: ensure active/closed loans have accurate approved_amount populated from requested_amount if currently 0 or null
+      await client.query(`
+        UPDATE loans 
+        SET approved_amount = requested_amount 
+        WHERE (approved_amount IS NULL OR approved_amount = 0) 
+          AND status IN ('ACTIVE', 'CLOSED', 'DEFAULTED');
+      `);
+
+      // Production self-healing: normalize institution codes to uppercase
+      await client.query(`
+        UPDATE institutions 
+        SET code = UPPER(code) 
+        WHERE code != UPPER(code);
+      `);
     } catch (migErr) {
       console.error("Error running migration:", migErr);
     }

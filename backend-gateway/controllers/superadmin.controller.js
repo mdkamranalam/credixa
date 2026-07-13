@@ -13,8 +13,8 @@ export const getAnalytics = async (req, res) => {
     const kpiQuery = `
       SELECT 
         (SELECT COUNT(*) FROM loans) AS total_loans,
-        (SELECT COALESCE(SUM(approved_amount), 0) FROM loans WHERE status IN ('ACTIVE', 'DEFAULTED', 'CLOSED')) AS total_disbursed,
-        (SELECT COALESCE(SUM(approved_amount), 0) FROM loans WHERE status = 'DEFAULTED') AS defaulted_volume,
+        (SELECT COALESCE(SUM(COALESCE(NULLIF(approved_amount, 0), requested_amount, 0)), 0) FROM loans WHERE status IN ('ACTIVE', 'DEFAULTED', 'CLOSED')) AS total_disbursed,
+        (SELECT COALESCE(SUM(COALESCE(NULLIF(approved_amount, 0), requested_amount, 0)), 0) FROM loans WHERE status = 'DEFAULTED') AS defaulted_volume,
         (SELECT COUNT(*) FROM users WHERE role = 'STUDENT') AS total_students,
         (SELECT COUNT(*) FROM institutions) AS total_institutions;
     `;
@@ -47,8 +47,8 @@ export const getAnalytics = async (req, res) => {
         i.is_active,
         (SELECT COUNT(*) FROM users u WHERE u.institution_id = i.institution_id AND u.role = 'STUDENT') AS student_count,
         (SELECT COUNT(*) FROM loans l WHERE l.institution_id = i.institution_id) AS loan_count,
-        (SELECT COALESCE(SUM(approved_amount), 0) FROM loans l WHERE l.institution_id = i.institution_id AND l.status IN ('ACTIVE', 'CLOSED', 'DEFAULTED')) AS active_volume,
-        (SELECT COALESCE(SUM(approved_amount), 0) FROM loans l WHERE l.institution_id = i.institution_id AND l.status = 'DEFAULTED') AS defaulted_volume
+        (SELECT COALESCE(SUM(COALESCE(NULLIF(approved_amount, 0), requested_amount, 0)), 0) FROM loans l WHERE l.institution_id = i.institution_id AND l.status IN ('ACTIVE', 'CLOSED', 'DEFAULTED')) AS active_volume,
+        (SELECT COALESCE(SUM(COALESCE(NULLIF(approved_amount, 0), requested_amount, 0)), 0) FROM loans l WHERE l.institution_id = i.institution_id AND l.status = 'DEFAULTED') AS defaulted_volume
       FROM institutions i
       ORDER BY active_volume DESC;
     `;
@@ -83,7 +83,7 @@ export const getInstitutions = async (req, res) => {
         i.*,
         (SELECT COUNT(*) FROM users u WHERE u.institution_id = i.institution_id AND u.role = 'STUDENT') AS student_count,
         (SELECT COUNT(*) FROM users a WHERE a.institution_id = i.institution_id AND a.role = 'INSTITUTION_ADMIN') AS admin_count,
-        (SELECT COALESCE(SUM(approved_amount), 0) FROM loans l WHERE l.institution_id = i.institution_id AND l.status IN ('ACTIVE', 'DEFAULTED', 'CLOSED')) AS total_disbursed
+        (SELECT COALESCE(SUM(COALESCE(NULLIF(approved_amount, 0), requested_amount, 0)), 0) FROM loans l WHERE l.institution_id = i.institution_id AND l.status IN ('ACTIVE', 'DEFAULTED', 'CLOSED')) AS total_disbursed
       FROM institutions i
       ORDER BY i.name ASC;
     `;
