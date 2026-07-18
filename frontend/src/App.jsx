@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const Register = lazy(() => import("./pages/Register"));
 const Login = lazy(() => import("./pages/Login"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const LoanChecklist = lazy(() => import("./pages/LoanChecklist"));
 const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
@@ -32,6 +33,7 @@ function App() {
             <Route path="/register/:type" element={<Register />} />
             <Route path="/register" element={<Navigate to="/register/student" replace />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/loan-checklist" element={<LoanChecklist />} />
             <Route path="/onboarding" element={<ProtectedRoute allowedRoles={["STUDENT"]}><Onboarding /></ProtectedRoute>} />
 
