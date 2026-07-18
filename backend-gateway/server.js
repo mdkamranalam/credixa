@@ -140,7 +140,23 @@ pool.connect(async (err, client, release) => {
           await client.query(sql005);
           console.log("Migration 005_password_reset.sql completed.");
         } else {
-          console.warn("Migration file 005_password_reset.sql not found in any candidate paths.");
+          console.warn("Migration file 005_password_reset.sql not found in any candidate paths. Executing inline fallback.");
+          await client.query(`
+            DO $$ BEGIN
+                CREATE TYPE reset_request_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'COMPLETED');
+            EXCEPTION
+                WHEN duplicate_object THEN null;
+            END $$;
+
+            CREATE TABLE IF NOT EXISTS password_reset_requests (
+                request_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+                status reset_request_status_enum DEFAULT 'PENDING',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+          `);
+          console.log("Inline fallback for 005_password_reset completed.");
         }
       }
 
