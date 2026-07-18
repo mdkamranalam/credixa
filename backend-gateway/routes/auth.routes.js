@@ -312,4 +312,87 @@ router.post("/logout", async (req, res) => {
   res.status(200).json({ message: "Logged out successfully." });
 });
 
+// 3. Password Reset (Dummy User Flow - Superadmin Approved)
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email is required." });
+
+  try {
+    const userResult = await pool.query("SELECT user_id FROM users WHERE email = $1", [email]);
+    if (userResult.rows.length === 0) {
+      // For security, we don't usually reveal if an email exists, but here we can return a success message anyway
+      return res.status(200).json({ message: "If that email exists, a password reset request has been submitted for Superadmin approval." });
+    }
+
+    const userId = userResult.rows[0].user_id;
+
+    // Check if there's already a pending request
+    const existingReq = await pool.query(
+      "SELECT request_id FROM password_reset_requests WHERE user_id = $1 AND status = 'PENDING'",
+      [userId]
+    );
+
+    if (existingReq.rows.length > 0) {
+      return res.status(200).json({ message: "A password reset request is already pending approval." });
+    }
+
+    await pool.query(
+      "INSERT INTO password_reset_requests (user_id, status) VALUES ($1, 'PENDING')",
+      [userId]
+    );
+
+    res.status(200).json({ message: "Password reset request submitted for Superadmin approval." });
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    res.status(500).json({ error: "An error occurred while submitting the request." });
+  }
+});
+
+router.post("/reset-password", async (req, res) => {
+  const { email, new_password } = req.body;
+  if (!email || !new_password) return res.status(400).json({ error: "Email and new_password are required." });
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const userResult = await client.query("SELECT user_id FROM users WHERE email = $1", [email]);
+    if (userResult.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "Invalid request." });
+    }
+
+    const userId = userResult.rows[0].user_id;
+
+    // Check for an APPROVED request
+    const requestResult = await client.query(
+      "SELECT request_id FROM password_reset_requests WHERE user_id = $1 AND status = 'APPROVED' ORDER BY updated_at DESC LIMIT 1",
+      [userId]
+    );
+
+    if (requestResult.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(403).json({ error: "Password reset request has not been approved or does not exist." });
+    }
+
+    const requestId = requestResult.rows[0].request_id;
+    const passwordHash = await bcrypt.hash(new_password, 10);
+
+    // Update password
+    await client.query("UPDATE users SET password_hash = $1 WHERE user_id = $2", [passwordHash, userId]);
+
+    // Mark request as COMPLETED
+    await client.query("UPDATE password_reset_requests SET status = 'COMPLETED' WHERE request_id = $1", [requestId]);
+
+    await client.query("COMMIT");
+    res.status(200).json({ message: "Password has been reset successfully. You can now log in." });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Reset Password Error:", error);
+    res.status(500).json({ error: "An error occurred while resetting the password." });
+  } finally {
+    client.release();
+  }
+});
+
 export default router;

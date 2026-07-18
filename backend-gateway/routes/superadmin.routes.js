@@ -9,7 +9,10 @@ import {
   getAuditLogs,
   getPlatformSettings,
   updatePlatformSettings,
-  getUsers
+  getUsers,
+  getPasswordResetRequests,
+  approvePasswordReset,
+  rejectPasswordReset
 } from "../controllers/superadmin.controller.js";
 
 const router = express.Router();
@@ -35,5 +38,10 @@ router.put("/settings", updatePlatformSettings);
 
 // 6. Universal User Directory
 router.get("/users", getUsers);
+
+// 7. Password Reset Management (Dummy Flow)
+router.get("/password-resets", getPasswordResetRequests);
+router.put("/password-resets/:id/approve", approvePasswordReset);
+router.put("/password-resets/:id/reject", rejectPasswordReset);
 
 export default router;

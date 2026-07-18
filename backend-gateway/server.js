@@ -124,6 +124,26 @@ pool.connect(async (err, client, release) => {
         }
       }
 
+      // Check password_reset_requests table (005)
+      const res005 = await client.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE  table_schema = 'public'
+          AND    table_name   = 'password_reset_requests'
+        );
+      `);
+      if (!res005.rows[0].exists) {
+        console.log("Running 005_password_reset.sql migration...");
+        const sqlPath005 = resolveSqlPath('005_password_reset.sql');
+        if (sqlPath005) {
+          const sql005 = fs.readFileSync(sqlPath005, 'utf8');
+          await client.query(sql005);
+          console.log("Migration 005_password_reset.sql completed.");
+        } else {
+          console.warn("Migration file 005_password_reset.sql not found in any candidate paths.");
+        }
+      }
+
       // Production self-healing: ensure active/closed loans have accurate approved_amount populated from requested_amount if currently 0 or null
       await client.query(`
         UPDATE loans 

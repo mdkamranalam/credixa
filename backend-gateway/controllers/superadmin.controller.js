@@ -475,3 +475,64 @@ export const getUsers = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch users directory." });
   }
 };
+
+/**
+ * 7. PASSWORD RESET MANAGEMENT (Dummy Flow)
+ */
+
+export const getPasswordResetRequests = async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        pr.request_id,
+        pr.status,
+        pr.created_at,
+        u.email,
+        u.full_name,
+        u.role
+      FROM password_reset_requests pr
+      JOIN users u ON pr.user_id = u.user_id
+      ORDER BY pr.created_at DESC
+      LIMIT 100;
+    `;
+    const result = await pool.query(query);
+    return res.status(200).json({ requests: result.rows });
+  } catch (error) {
+    logger.error("Error in getPasswordResetRequests:", error);
+    return res.status(500).json({ error: "Failed to fetch password reset requests." });
+  }
+};
+
+export const approvePasswordReset = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      "UPDATE password_reset_requests SET status = 'APPROVED' WHERE request_id = $1 RETURNING request_id",
+      [id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Request not found." });
+    }
+    return res.status(200).json({ message: "Password reset request approved." });
+  } catch (error) {
+    logger.error("Error in approvePasswordReset:", error);
+    return res.status(500).json({ error: "Failed to approve password reset request." });
+  }
+};
+
+export const rejectPasswordReset = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      "UPDATE password_reset_requests SET status = 'REJECTED' WHERE request_id = $1 RETURNING request_id",
+      [id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Request not found." });
+    }
+    return res.status(200).json({ message: "Password reset request rejected." });
+  } catch (error) {
+    logger.error("Error in rejectPasswordReset:", error);
+    return res.status(500).json({ error: "Failed to reject password reset request." });
+  }
+};
