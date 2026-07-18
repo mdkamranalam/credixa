@@ -110,17 +110,32 @@ pool.connect(async (err, client, release) => {
         }
       }
 
-      // Check institutions count (004 seed)
-      const instCountRes = await client.query(`SELECT COUNT(*) FROM institutions;`);
-      if (parseInt(instCountRes.rows[0].count, 10) === 0) {
+      // Check if test admin user exists (004 seed)
+      const adminExistsRes = await client.query(`SELECT COUNT(*) FROM users WHERE email = 'admin@iima.ac.in';`);
+      if (parseInt(adminExistsRes.rows[0].count, 10) === 0) {
         console.log("Running 004_seed_partner_institutions.sql migration...");
         const sqlPath004 = resolveSqlPath('004_seed_partner_institutions.sql');
         if (sqlPath004) {
           const sql004 = fs.readFileSync(sqlPath004, 'utf8');
-          await client.query(sql004);
-          console.log("Migration 004_seed_partner_institutions.sql completed.");
+          try {
+            await client.query(sql004);
+            console.log("Migration 004_seed_partner_institutions.sql completed.");
+          } catch (e) {
+            console.error("Migration 004 failed:", e);
+          }
         } else {
           console.warn("Migration file 004_seed_partner_institutions.sql not found in any candidate paths.");
+        }
+        
+        // Fallback: inject admin@iima.ac.in if 004 failed or was missing
+        const adminRecheck = await client.query(`SELECT COUNT(*) FROM users WHERE email = 'admin@iima.ac.in';`);
+        if (parseInt(adminRecheck.rows[0].count, 10) === 0) {
+           console.log("Injecting fallback admin user...");
+           await client.query(`
+             INSERT INTO users (full_name, email, password_hash, role, kyc_status)
+             VALUES ('IIM Ahmedabad Admin', 'admin@iima.ac.in', '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm', 'INSTITUTION_ADMIN', 'VERIFIED')
+             ON CONFLICT (email) DO NOTHING;
+           `);
         }
       }
 
