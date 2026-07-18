@@ -229,11 +229,15 @@ router.get("/institutions", async (req, res) => {
 
 // 2. User Login
 router.post("/login", loginRateLimiter, async (req, res) => {
-    const {email, password} = req.body;
-
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required." });
+    }
+    const normalizedEmail = email.trim().toLowerCase();
+    
     try {
-        const userQuery = `SELECT * FROM users WHERE email = $1;`;
-        const result = await pool.query(userQuery, [email]);
+        const userQuery = `SELECT * FROM users WHERE LOWER(email) = $1;`;
+        const result = await pool.query(userQuery, [normalizedEmail]);
 
         if (result.rows.length === 0) {
             return res.status(401).json({error: "Invalid email or password."});
@@ -318,7 +322,8 @@ router.post("/forgot-password", async (req, res) => {
   if (!email) return res.status(400).json({ error: "Email is required." });
 
   try {
-    const userResult = await pool.query("SELECT user_id FROM users WHERE email = $1", [email]);
+    const normalizedEmail = email.trim().toLowerCase();
+    const userResult = await pool.query("SELECT user_id FROM users WHERE LOWER(email) = $1", [normalizedEmail]);
     if (userResult.rows.length === 0) {
       // For security, we don't usually reveal if an email exists, but here we can return a success message anyway
       return res.status(200).json({ message: "If that email exists, a password reset request has been submitted for Superadmin approval." });
@@ -356,7 +361,8 @@ router.post("/reset-password", async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    const userResult = await client.query("SELECT user_id FROM users WHERE email = $1", [email]);
+    const normalizedEmail = email.trim().toLowerCase();
+    const userResult = await client.query("SELECT user_id FROM users WHERE LOWER(email) = $1", [normalizedEmail]);
     if (userResult.rows.length === 0) {
       await client.query("ROLLBACK");
       return res.status(400).json({ error: "Invalid request." });
