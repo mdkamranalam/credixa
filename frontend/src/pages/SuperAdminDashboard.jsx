@@ -40,6 +40,7 @@ const SuperAdminDashboard = () => {
   const [auditLogs, setAuditLogs] = useState([]);
   const [settings, setSettings] = useState(null);
   const [userDirectory, setUserDirectory] = useState([]);
+  const [resetRequests, setResetRequests] = useState([]);
 
   // Filters & Search
   const [loanFilter, setLoanFilter] = useState("ALL"); // ALL, HIGH_RISK, FRAUD
@@ -161,6 +162,15 @@ const SuperAdminDashboard = () => {
     }
   };
 
+  const fetchResetRequests = async () => {
+    try {
+      const res = await api.get("/superadmin/password-resets");
+      setResetRequests(res.data.requests || []);
+    } catch (err) {
+      toast.error("Failed to load password reset requests.");
+    }
+  };
+
   const checkAiHealth = async () => {
     try {
       const res = await api.get("/health");
@@ -181,6 +191,7 @@ const SuperAdminDashboard = () => {
     if (activeTab === "AUDIT_LOGS") fetchAuditLogs();
     if (activeTab === "AI_ENGINE") fetchSettings();
     if (activeTab === "USERS") fetchUserDirectory();
+    if (activeTab === "PASSWORD_RESETS") fetchResetRequests();
   }, [activeTab]);
 
   const toggleInstStatus = async (instId, currentStatus) => {
@@ -224,6 +235,26 @@ const SuperAdminDashboard = () => {
       toast.success("Platform settings calibrated successfully!");
     } catch (err) {
       toast.error("Failed to save settings.");
+    }
+  };
+
+  const handleApproveReset = async (id) => {
+    try {
+      await api.put(`/superadmin/password-resets/${id}/approve`);
+      toast.success("Request approved.");
+      fetchResetRequests();
+    } catch (err) {
+      toast.error("Failed to approve request.");
+    }
+  };
+
+  const handleRejectReset = async (id) => {
+    try {
+      await api.put(`/superadmin/password-resets/${id}/reject`);
+      toast.success("Request rejected.");
+      fetchResetRequests();
+    } catch (err) {
+      toast.error("Failed to reject request.");
     }
   };
 
@@ -282,7 +313,8 @@ const SuperAdminDashboard = () => {
           { id: "UNDERWRITING", label: "Central Underwriting & Vault", icon: Sliders },
           { id: "AI_ENGINE", label: "AI Engine & Calibration", icon: Cpu },
           { id: "AUDIT_LOGS", label: "Platform Audit Trail", icon: FileText },
-          { id: "USERS", label: "Universal User Directory", icon: Users }
+          { id: "USERS", label: "Universal User Directory", icon: Users },
+          { id: "PASSWORD_RESETS", label: "Password Resets", icon: Lock }
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -801,6 +833,86 @@ const SuperAdminDashboard = () => {
                           <td className="py-3 px-4 text-slate-400">{new Date(u.created_at).toLocaleDateString()}</td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {/* TAB 7: PASSWORD RESETS */}
+            {activeTab === "PASSWORD_RESETS" && (
+              <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-6 shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className="text-sm font-bold tracking-wider text-slate-200 uppercase flex items-center gap-2">
+                      <Lock className="w-4 h-4 text-emerald-400" />
+                      Password Reset Requests
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-1">Manage dummy user password reset requests.</p>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto rounded-lg border border-slate-800/80">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-slate-900/80 border-b border-slate-800 text-slate-400">
+                        <th className="py-3 px-4">Request ID</th>
+                        <th className="py-3 px-4">User</th>
+                        <th className="py-3 px-4">Role</th>
+                        <th className="py-3 px-4">Status</th>
+                        <th className="py-3 px-4">Date</th>
+                        <th className="py-3 px-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60 text-slate-300 bg-slate-900/40">
+                      {resetRequests.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" className="py-8 text-center text-slate-500">
+                            No password reset requests found.
+                          </td>
+                        </tr>
+                      ) : (
+                        resetRequests.map((r) => (
+                          <tr key={r.request_id} className="hover:bg-slate-800/30 transition">
+                            <td className="py-3 px-4 font-mono text-slate-500">{r.request_id.split("-")[0]}...</td>
+                            <td className="py-3 px-4">
+                              <div className="font-semibold text-slate-200">{r.full_name}</div>
+                              <div className="text-[10px] text-slate-500">{r.email}</div>
+                            </td>
+                            <td className="py-3 px-4 text-slate-400">{r.role}</td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                r.status === "APPROVED" ? "text-emerald-400 bg-emerald-500/10"
+                                : r.status === "REJECTED" ? "text-red-400 bg-red-500/10"
+                                : r.status === "COMPLETED" ? "text-cyan-400 bg-cyan-500/10"
+                                : "text-amber-400 bg-amber-500/10"
+                              }`}>
+                                {r.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-slate-400">{new Date(r.created_at).toLocaleString()}</td>
+                            <td className="py-3 px-4 text-right space-x-2">
+                              {r.status === "PENDING" ? (
+                                <>
+                                  <button
+                                    onClick={() => handleApproveReset(r.request_id)}
+                                    className="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded font-semibold transition"
+                                  >
+                                    Approve
+                                  </button>
+                                  <button
+                                    onClick={() => handleRejectReset(r.request_id)}
+                                    className="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded font-semibold transition"
+                                  >
+                                    Reject
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-slate-500 italic px-2">Processed</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
