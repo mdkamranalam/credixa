@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import crypto from "crypto";
+import { v4 as uuidv4 } from "uuid";
 import redisClient from "../utils/redis.js";
 import pool from "../utils/db.js";
 
@@ -12,7 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.JWT_SECRET + "_refresh"; // Using secret derivation for prototype
 
 const generateTokens = (user) => {
-  const jti = crypto.randomUUID();
+  const jti = uuidv4();
   const payload = {
     id: user.user_id,
     role: user.role,
