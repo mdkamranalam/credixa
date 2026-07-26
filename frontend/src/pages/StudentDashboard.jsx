@@ -17,6 +17,7 @@ import RepaymentSchedule from "../components/dashboard/RepaymentSchedule.jsx";
 import DocumentVault from "../components/dashboard/DocumentVault.jsx";
 import ProfileModal from "../components/dashboard/ProfileModal.jsx";
 import SupportChatWidget from "../components/dashboard/SupportChatWidget.jsx";
+import NotificationBell from "../components/NotificationBell.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure EMI calculator (kept here because loan application steps need it too)
@@ -270,12 +271,15 @@ const StudentDashboard = () => {
           <img src="/credixa-favicon.png" alt="Credixa" className="w-8 h-8" />
           <span className="text-2xl font-black tracking-tight text-slate-900">Credixa</span>
         </div>
-        <button
-          onClick={logout}
-          className="text-slate-400 hover:text-red-500 flex items-center font-bold text-sm transition-colors"
-        >
-          <LogOut className="h-4 w-4 mr-1" /> Logout
-        </button>
+        <div className="flex items-center space-x-6">
+          <NotificationBell />
+          <button
+            onClick={logout}
+            className="text-slate-400 hover:text-red-500 flex items-center font-bold text-sm transition-colors"
+          >
+            <LogOut className="h-4 w-4 mr-1" /> Logout
+          </button>
+        </div>
       </nav>
 
       <div className="max-w-6xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
