@@ -17,6 +17,7 @@ import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
 import ChecklistModal from "../components/dashboard/ChecklistModal.jsx";
 import SupportTab from "../components/dashboard/SupportTab.jsx";
+import NotificationBell from "../components/NotificationBell.jsx";
 
 const AdminDashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -267,6 +268,7 @@ const AdminDashboard = () => {
           <span className="text-gray-300 text-sm border-l border-gray-700 pl-6 hidden md:block">
             Welcome, {user?.full_name}
           </span>
+          <NotificationBell />
           <button
             onClick={logout}
             className="flex items-center text-gray-400 hover:text-red-400 transition-colors"

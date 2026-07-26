@@ -26,6 +26,7 @@ import {
   Plus,
   AlertCircle
 } from "lucide-react";
+import NotificationBell from "../components/NotificationBell.jsx";
 
 const SuperAdminDashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -294,6 +295,8 @@ const SuperAdminDashboard = () => {
             <Cpu className={`w-3.5 h-3.5 ${aiHealth.models_ready ? "text-emerald-400" : "text-amber-400"}`} />
             <span>AI Status: <strong className={aiHealth.models_ready ? "text-emerald-400" : "text-amber-400"}>{aiHealth.status}</strong></span>
           </div>
+
+          <NotificationBell />
 
           <button
             onClick={logout}
