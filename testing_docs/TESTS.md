@@ -201,3 +201,33 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
     - **Flow:** Institution registers/logins -> Student finishes repaying Semester I cleanly without defaults -> Applies for Semester II -> System bypasses KYC and Bank Statements, reusing verified baseline data -> Approved in <30 seconds upon uploading new Fee Structure.
     - **Mock Documents Required:**
       - *New Fee Structure (`abbas_fee_structure_semester2.pdf`):* Labeled "Semester II Fee Breakdown", ₹3,75,000 Total Payable. (Assumes Semester I repayment history and KYC baseline are already seeded in the database).
+
+**Test 01: Unhappy Path - Erratic Freelance Income & Low Income Consistency (Amit Kumar):**
+    - **Student Profile:** Amit Kumar | **Co-Applicants:** Sunita Kumar (Mother, Freelancer) | **Institution:** Dummy College
+    - **Student Prerequisite Details:** *Email:* `amit.kumar@example.com` | *Password:* `Student2026!`
+    - **Institution Prerequisite Details:**
+      - *Name:* Dummy College | *Code:* `DUMMY-011` | *Admin Email:* `admin@dummy.edu` | *Password:* `DummyAdmin2026!`
+      - *Bank:* HDFC Bank | *IFSC:* `HDFC0001111` | *Account:* `1111222233334444` | *Address:* Knowledge Park, Bangalore, Karnataka
+    - **Flow:** Institution registers/logins -> Student completes registration -> Parent uploads Bank Statement showing highly erratic freelance income. The AI Risk Engine detects poor income consistency (e.g. ₹1,00,000 one month, ₹0 for the next three months) and flags the application as MEDIUM_RISK, potentially reducing the approved loan amount.
+    - **Mock Documents Required:**
+      - *Parent Bank Statement (`amit's_mother_bank_statement_ERRATIC.pdf`):* 6 months history. Shows a large incoming transfer of ₹2,50,000 in month 1, followed by near-zero income and steady withdrawals for months 2-5, and a final ₹50,000 deposit in month 6.
+
+**Test 02: Unhappy Path - Institution Manual Rejection (Priya Singh):**
+    - **Student Profile:** Priya Singh | **Co-Applicants:** Vikram Singh (Father) | **Institution:** Dummy College
+    - **Student Prerequisite Details:** *Email:* `priya.singh@example.com` | *Password:* `Student2026!`
+    - **Institution Prerequisite Details:**
+      - *Name:* Dummy College | *Code:* `DUMMY-011` | *Admin Email:* `admin@dummy.edu` | *Password:* `DummyAdmin2026!`
+      - *Bank:* HDFC Bank | *IFSC:* `HDFC0001111` | *Account:* `1111222233334444` | *Address:* Knowledge Park, Bangalore, Karnataka
+    - **Flow:** Institution registers/logins -> Student and Parent submit pristine documents -> AI Risk Engine approves the application instantly with a high Omniscore (e.g., 850) -> Application lands on the Institution Admin Dashboard for final verification -> The Admin manually REJECTS the application due to the student having disciplinary issues or withdrawing admission.
+    - **Mock Documents Required:**
+      - *Standard Valid Documents (`priya_fee_structure.pdf`, `priya's_father_bank_statement.pdf`):* Clean documents to ensure the AI approves it, shifting the test focus solely to the Institution's manual override capabilities.
+
+**Test 03: Edge Case - EMI Default and Late Fee Generation Simulation (Rahul Verma):**
+    - **Student Profile:** Rahul Verma | **Co-Applicants:** Anil Verma (Father) | **Institution:** Dummy College
+    - **Student Prerequisite Details:** *Email:* `rahul.verma@example.com` | *Password:* `Student2026!`
+    - **Institution Prerequisite Details:**
+      - *Name:* Dummy College | *Code:* `DUMMY-011` | *Admin Email:* `admin@dummy.edu` | *Password:* `DummyAdmin2026!`
+      - *Bank:* HDFC Bank | *IFSC:* `HDFC0001111` | *Account:* `1111222233334444` | *Address:* Knowledge Park, Bangalore, Karnataka
+    - **Flow:** The loan is fully approved and disbursed. The tester then simulates time progression (either by manually updating the `due_date` in the `repayment_schedules` table to a past date or running a cron job). The test verifies that the system automatically marks the schedule as `OVERDUE`, applies the flat late fee (e.g., ₹500), and sends a default notification to the user.
+    - **Mock Documents Required:**
+      - *Standard Valid Documents:* Clean documents for immediate disbursement, so the tester can immediately focus on modifying the database schedule dates to test the default logic.
