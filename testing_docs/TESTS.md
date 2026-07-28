@@ -99,6 +99,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 1. **Happy Path - Seamless Approval & Instant Disbursement (Rahul Sharma):** 
    - **Student Profile:** Rahul Sharma | **Co-Applicants:** Rajesh Sharma (Father), Priya Sharma (Mother) | **Institution:** Apex Institute of Technology
+   - **Student Prerequisite Details:** *Email:* `rahul.sharma@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* Apex Institute of Technology | *Code:* `APEX-001` | *Admin Email:* `admin@apex.edu.in` | *Password:* `ApexAdmin2026!`
      - *Bank:* HDFC Bank | *IFSC:* `HDFC0001234` | *Account:* `50100234567890` | *Address:* Knowledge Park III, Greater Noida, UP
@@ -111,6 +112,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 2. **Unhappy Path - High-Risk Co-Applicant Rejection due to High DTI (Kamran Khan):**
    - **Student Profile:** Kamran Khan | **Co-Applicants:** Tariq Khan (Father), Yasmin Khan (Mother) | **Institution:** Manipal Institute of Technology (MIT)
+   - **Student Prerequisite Details:** *Email:* `kamran.khan@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* Manipal Institute of Technology (MIT) | *Code:* `MIT-002` | *Admin Email:* `admin@manipal.edu` | *Password:* `ManipalAdmin2026!`
      - *Bank:* ICICI Bank | *IFSC:* `ICIC0000072` | *Account:* `007205001234` | *Address:* Madhav Nagar, Manipal, Karnataka
@@ -120,6 +122,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 3. **Unhappy Path - Suspected Fraud & Document Tampering (Harpreet Singh):**
    - **Student Profile:** Harpreet Singh | **Co-Applicants:** Daljit Singh (Father), Manpreet Kaur (Mother) | **Institution:** Vellore Institute of Technology (VIT)
+   - **Student Prerequisite Details:** *Email:* `harpreet.singh@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* Vellore Institute of Technology (VIT) | *Code:* `VIT-003` | *Admin Email:* `admin@vit.ac.in` | *Password:* `VitAdmin2026!`
      - *Bank:* Indian Bank | *IFSC:* `IDIB000V086` | *Account:* `601234567890` | *Address:* Katpadi Road, Vellore, Tamil Nadu
@@ -129,6 +132,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 4. **Edge Case - Discrepancy Resolution Loop via Document Re-upload (Rhea D'Souza):**
    - **Student Profile:** Rhea D'Souza | **Co-Applicants:** Maria D'Souza (Mother), Michael D'Souza (Father) | **Institution:** College of Engineering Pune (COEP)
+   - **Student Prerequisite Details:** *Email:* `rhea.dsouza@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* College of Engineering Pune (COEP) | *Code:* `COEP-004` | *Admin Email:* `admin@coep.ac.in` | *Password:* `CoepAdmin2026!`
      - *Bank:* State Bank of India | *IFSC:* `SBIN0001110` | *Account:* `30123456789` | *Address:* Wellesley Road, Shivajinagar, Pune, Maharashtra
@@ -139,6 +143,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 5. **Edge Case - Parent Drops Off & Session Abandonment Recovery (Rohan Mehta):**
    - **Student Profile:** Rohan Mehta | **Co-Applicants:** Suresh Mehta (Father), Bhavna Mehta (Mother) | **Institution:** SRM Institute of Science and Technology
+   - **Student Prerequisite Details:** *Email:* `rohan.mehta@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* SRM Institute of Science and Technology | *Code:* `SRM-005` | *Admin Email:* `admin@srmist.edu.in` | *Password:* `SrmAdmin2026!`
      - *Bank:* City Union Bank | *IFSC:* `CIUB0000117` | *Account:* `500101012345678` | *Address:* Kattankulathur, Chengalpattu, Tamil Nadu
@@ -148,6 +153,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 6. **Unhappy Path - Identity Mismatch & OCR Validation Failure (Pooja Nair):**
    - **Student Profile:** Pooja Nair | **Co-Applicants:** K. R. Nair (Father), Lakshmi Nair (Mother) | **Institution:** National Institute of Technology (NIT), Tiruchirappalli
+   - **Student Prerequisite Details:** *Email:* `pooja.nair@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* National Institute of Technology (NIT), Tiruchirappalli | *Code:* `NITT-006` | *Admin Email:* `admin@nitt.edu` | *Password:* `NittAdmin2026!`
      - *Bank:* State Bank of India | *IFSC:* `SBIN0001617` | *Account:* `10892345678` | *Address:* Tanjore Main Road, National Highway 67, Tiruchirappalli
@@ -158,6 +164,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 7. **Edge Case - Partial Scholarship & Over-Borrowing Adjustment (Arjun Deshmukh):**
    - **Student Profile:** Arjun Deshmukh | **Co-Applicants:** Vandana Deshmukh (Mother), Prakash Deshmukh (Father) | **Institution:** Birla Institute of Technology and Science (BITS), Pilani
+   - **Student Prerequisite Details:** *Email:* `arjun.deshmukh@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* Birla Institute of Technology and Science (BITS), Pilani | *Code:* `BITS-007` | *Admin Email:* `admin@pilani.bits-pilani.ac.in` | *Password:* `BitsAdmin2026!`
      - *Bank:* ICICI Bank | *IFSC:* `ICIC0000318` | *Account:* `031805001234` | *Address:* Vidya Vihar, Pilani, Rajasthan
@@ -167,6 +174,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 8. **Unhappy Path - High-Risk Behaviour Pattern & Gambling Flags (Darius Mistry):**
    - **Student Profile:** Darius Mistry | **Co-Applicants:** Farokh Mistry (Father), Roshan Mistry (Mother) | **Institution:** Thapar Institute of Engineering & Technology
+   - **Student Prerequisite Details:** *Email:* `darius.mistry@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* Thapar Institute of Engineering & Technology | *Code:* `TIET-008` | *Admin Email:* `admin@thapar.edu` | *Password:* `ThaparAdmin2026!`
      - *Bank:* HDFC Bank | *IFSC:* `HDFC0000108` | *Account:* `50100345678901` | *Address:* Bhadson Road, Patiala, Punjab
@@ -176,6 +184,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 9. **Edge Case - Institution Delays Verification & SLA Escalation (Divya Iyer):**
    - **Student Profile:** Divya Iyer | **Co-Applicants:** S. Venkatraman Iyer (Father), Radhika Iyer (Mother) | **Institution:** Amrita Vishwa Vidyapeetham
+   - **Student Prerequisite Details:** *Email:* `divya.iyer@example.com` | *Password:* `Student2026!`
    - **Institution Prerequisite Details:**
      - *Name:* Amrita Vishwa Vidyapeetham | *Code:* `AMRITA-009` | *Admin Email:* `admin@amrita.edu` | *Password:* `AmritaAdmin2026!`
      - *Bank:* South Indian Bank | *IFSC:* `SIBL0000255` | *Account:* `025505300001234` | *Address:* Amritanagar, Ettimadai, Coimbatore, Tamil Nadu
@@ -185,6 +194,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
 
 10. **Happy Path - Multi-Semester Fast Track for Returning Users (Abbas Ali):**
     - **Student Profile:** Abbas Ali | **Co-Applicants:** Hyder Ali (Father), Fatima Ali (Mother) | **Institution:** International Institute of Information Technology (IIIT), Hyderabad
+    - **Student Prerequisite Details:** *Email:* `abbas.ali@example.com` | *Password:* `Student2026!`
     - **Institution Prerequisite Details:**
       - *Name:* International Institute of Information Technology (IIIT), Hyderabad | *Code:* `IIITH-010` | *Admin Email:* `admin@iiit.ac.in` | *Password:* `IiitAdmin2026!`
       - *Bank:* State Bank of India | *IFSC:* `SBIN0021098` | *Account:* `30234567890` | *Address:* Professor CR Rao Road, Gachibowli, Hyderabad, Telangana

@@ -41,4 +41,4 @@ All authenticated routes require a valid JWT token. Role-based access control (R
 - `timingMiddleware`: Used in conjunction with `initObservability` to trace API execution latency.
 
 ## Database Migrations
-On server startup (`server.js`), the gateway connects to PostgreSQL and runs automatic checks against `information_schema.tables` and row counts to ensure `init.sql` and subsequent migrations (`002_support_chat.sql`, `003_superadmin_setup.sql`, `004_seed_partner_institutions.sql`) are applied.
+On server startup (`server.js`), the gateway connects to Supabase PostgreSQL (`credixa-db`) and runs automatic checks against `information_schema.tables` and row counts to ensure `init.sql` and subsequent migrations (`002_support_chat.sql`, `003_superadmin_setup.sql`, `004_seed_partner_institutions.sql`) are applied.

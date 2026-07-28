@@ -16,7 +16,7 @@ graph TD
         
         ECSBackend -->|Internal| ECSRisk
         ECSBackend -->|SQL| PgBouncer[ECS Fargate: PgBouncer Pooler]
-        PgBouncer -->|Port 5432| RDS[(AWS RDS PostgreSQL Multi-AZ)]
+        PgBouncer -->|Port 5432| RDS[(Supabase PostgreSQL)]
         
         ECSBackend -->|Cache / Token BL| Cache[(AWS ElastiCache Redis Cluster)]
         ECSBackend -->|Pre-signed IAM| S3Vault[AWS S3 Document Vault Bucket]
@@ -38,8 +38,8 @@ graph TD
 
 ## 2. Stateful Services (Managed Layer)
 
-### Database: Amazon RDS PostgreSQL 16
-- **Instance**: `db.t4g.medium` or `db.r6g.large` (Multi-AZ deployment enabled).
+### Database: Supabase PostgreSQL 16
+- **Instance**: Hosted managed Supabase instance.
 - **Storage**: gp3 SSD with storage autoscaling.
 - **Backups**: Automated daily snapshots with 14-day retention and Point-in-Time Recovery (PITR) down to the second.
 - **Pooling**: Routed via **PgBouncer** container sidecar or dedicated Fargate task (`POOL_MODE=transaction`) to support up to 2,000 concurrent student connections without Postgres OOM.

@@ -124,7 +124,7 @@ When running the application with Docker, you might want to inspect the database
 ### Method 1: Connecting via psql inside the container
 You can drop into the PostgreSQL interactive terminal directly inside the running container:
 ```bash
-docker exec -it credixa-postgres psql -U credixa_admin -d credixa_db
+docker exec -it credixa-postgres psql -U credixa_admin -d credixa-db
 ```
 *(This uses the default credentials specified in `docker-compose.yml`)*
 
@@ -132,7 +132,7 @@ docker exec -it credixa-postgres psql -U credixa_admin -d credixa_db
 Because the `postgres` container binds to port `5432` on your host machine, you can connect using any desktop SQL client using these settings:
 - **Host:** `localhost`
 - **Port:** `5432`
-- **Database:** `credixa_db`
+- **Database:** `credixa-db`
 - **Username:** `credixa_admin`
 - **Password:** *(the value of `DB_PASSWORD` set in your `.env` file)*
 

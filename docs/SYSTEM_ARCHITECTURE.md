@@ -9,7 +9,7 @@ Credixa operates on a heavily distributed, 5-pillar microservices architecture o
 | **Frontend UI** | React 19, Vite, Tailwind CSS | Serves the student/admin portals, dynamic loan applications. |
 | **API Gateway** | Node.js, Express | Central router, JWT Auth, Business logic, Postgres Interface. |
 | **Risk Engine** | Python, FastAPI | XGBoost prediction, PDF text extraction, OCR, LLM inference. |
-| **Database** | PostgreSQL 16 | Relational data persistence, audit logging, complex transactions. |
+| **Database** | Supabase PostgreSQL 16 | Relational data persistence, audit logging, complex transactions. |
 | **Cache Layer** | Redis 7 | State caching, LLM response caching, rate limiting. |
 
 ## 2. Component Diagram
@@ -17,7 +17,7 @@ Credixa operates on a heavily distributed, 5-pillar microservices architecture o
 ```mermaid
 graph TD
     Client["🖥️ Student / Admin Portal (React)"] -->|HTTPS / REST| Gateway["⚡ API Gateway (Node.js/Express)"]
-    Gateway <-->|SQL Queries (pgbouncer)| DB[("🗄️ PostgreSQL Database")]
+    Gateway <-->|SQL Queries (pgbouncer)| DB[("🗄️ Supabase PostgreSQL")]
     Gateway <-->|Cache / Session| Redis[("🔥 Redis Cache")]
     Gateway <-->|POST /analyze-statement (x-api-key)| AI["🧠 AI Risk Engine (FastAPI)"]
     

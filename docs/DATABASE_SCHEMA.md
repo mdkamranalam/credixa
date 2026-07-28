@@ -1,6 +1,6 @@
 # Database Schema Documentation
 
-Credixa relies on PostgreSQL 16 for a robust, highly-relational data structure. It enforces strict referential integrity between Institutions, Users, Loans, and schedules.
+Credixa relies on Supabase PostgreSQL 16 (credixa-db) for a robust, highly-relational data structure. It enforces strict referential integrity between Institutions, Users, Loans, and schedules.
 
 ## 1. Core Independent Tables
 

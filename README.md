@@ -5,7 +5,7 @@
 [![Live Frontend](https://img.shields.io/badge/Live%20Demo-Credixa%20Portal-00D084?style=for-the-badge&logo=render&logoColor=white)](https://credixa-8wlw.onrender.com/)
 [![Backend API](https://img.shields.io/badge/Gateway%20API-Live%20Node.js-3178C6?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://credixa-backend-7r4k.onrender.com/)
 [![AI Risk Engine](https://img.shields.io/badge/AI%20Engine-XGBoost%20%2B%20FastAPI-FF6F00?style=for-the-badge&logo=fastapi&logoColor=white)](https://credixa-risk-engine.onrender.com/)
-[![Database](https://img.shields.io/badge/Database-PostgreSQL%2016-336791?style=for-the-badge&logo=postgresql&logoColor=white)](#)
+[![Database](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](#)
 [![Cache](https://img.shields.io/badge/Cache-Redis%207-DC382D?style=for-the-badge&logo=redis&logoColor=white)](#)
 
 <p align="center">
@@ -26,7 +26,7 @@ Credixa is deployed globally across a highly scalable 5-pillar cloud microservic
 | **🖥️ React Frontend** | [credixa-8wlw.onrender.com](https://credixa-8wlw.onrender.com/) | React 19, Vite, Tailwind CSS | 🟢 **ONLINE** |
 | **⚡ API Gateway** | [credixa-backend-7r4k.onrender.com](https://credixa-backend-7r4k.onrender.com/) | Node.js, Express, JWT | 🟢 **ONLINE** |
 | **🧠 AI Risk Engine** | [credixa-risk-engine.onrender.com](https://credixa-risk-engine.onrender.com/) | Python, FastAPI, XGBoost, LLM | 🟢 **ONLINE** |
-| **🗄️ Database Vault** | Managed Render DB (`credixa_db`) | PostgreSQL 16 | 🟢 **ONLINE** |
+| **🗄️ Database Vault** | Supabase PostgreSQL (`credixa-db`) | PostgreSQL 16 | 🟢 **ONLINE** |
 | **🔥 Session Cache** | Managed Render Redis | Redis 7 Alpine | 🟢 **ONLINE** |
 
 ---
