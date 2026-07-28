@@ -479,7 +479,7 @@ router.get("/students/:userId", authenticateToken, requireRole(["INSTITUTION_ADM
   try {
     const [userRes, docsRes] = await Promise.all([
       pool.query(
-        "SELECT user_id, full_name, email, mobile_number, pan_number, kyc_status, dob, current_address, college_roll_number, academic_status FROM users WHERE user_id = $1",
+        "SELECT user_id, full_name, email, mobile_number, pan_number, aadhaar_hash, kyc_status, dob, current_address, college_roll_number, academic_status FROM users WHERE user_id = $1",
         [userId]
       ),
       pool.query(

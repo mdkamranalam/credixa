@@ -191,6 +191,13 @@ router.post(
         [loanId, userId]
       );
 
+      // Link previously uploaded (during onboarding) documents to this specific loan
+      // so that they are not orphaned and can be viewed by the admin
+      await client.query(
+        "UPDATE loan_documents SET loan_id = $1 WHERE user_id = $2 AND loan_id IS NULL",
+        [loanId, userId]
+      );
+
       await client.query("COMMIT");
 
       res.status(200).json({
