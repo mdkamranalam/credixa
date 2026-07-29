@@ -38,7 +38,7 @@ services:
           name: credixa-redis
           property: connectionString
       - key: RISK_ENGINE_URL
-        value: http://credixa-risk-engine:8000/analyze-statement
+        value: http://credixa-risk-engine:8000/analyze-statements
       - key: RISK_ENGINE_API_KEY
         value: credixa_internal_engine_key_2026
 
