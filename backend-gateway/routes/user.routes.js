@@ -169,7 +169,10 @@ router.post(
       // Create FormData to send file to risk engine
       const formData = new FormData();
       formData.append("doc_type", doc_type);
-      formData.append("file", createReadStream(req.file.path));
+      formData.append("file", createReadStream(req.file.path), {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+      });
 
       const riskEngineBase = process.env.RISK_ENGINE_BASE_URL || "https://credixa-risk-engine.onrender.com";
       const riskEngineUrl = `${riskEngineBase}/validate-document`;

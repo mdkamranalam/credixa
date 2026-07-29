@@ -104,10 +104,18 @@ router.post(
       formData.append(
         "student_file",
         createReadStream(req.files.student_statement[0].path),
+        {
+          filename: req.files.student_statement[0].originalname,
+          contentType: req.files.student_statement[0].mimetype,
+        }
       );
       formData.append(
         "parent_file",
         createReadStream(req.files.parent_statement[0].path),
+        {
+          filename: req.files.parent_statement[0].originalname,
+          contentType: req.files.parent_statement[0].mimetype,
+        }
       );
 
       // Fetch academic score from user profile
