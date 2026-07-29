@@ -24,12 +24,15 @@ fill_values = {
     "academic_score": df["academic_score"].median() if "academic_score" in df.columns else 0,
     "dti_ratio": df["dti_ratio"].median() if "dti_ratio" in df.columns else 0,
     "savings_rate": df["savings_rate"].median() if "savings_rate" in df.columns else 0,
+    "income_stability": df["income_stability"].median() if "income_stability" in df.columns else 0.5,
     "overdrafts": 0,
     "gambling_flags": 0,
+    "fraud_flag": 0,
+    "name_mismatch_flag": 0,
 }
 df.fillna(fill_values, inplace=True)
 
-X = df[["avg_balance", "overdrafts", "gambling_flags", "academic_score", "dti_ratio", "savings_rate"]]
+X = df[["avg_balance", "overdrafts", "gambling_flags", "academic_score", "dti_ratio", "savings_rate", "income_stability", "fraud_flag", "name_mismatch_flag"]]
 y = df["status"]
 
 print("Preprocessing and splitting data...")

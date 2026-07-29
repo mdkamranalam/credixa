@@ -22,6 +22,9 @@ class FinancialExtraction(BaseModel):
     monthly_income: float = Field(default=0.0)
     monthly_debt_payments: float = Field(default=0.0)
     monthly_savings: float = Field(default=0.0)
+    income_stability: float = Field(default=0.5, description="Score from 0.0 to 1.0 indicating consistency of income.")
+    fraud_flag: int = Field(default=0, description="1 if tampering/forgery detected, else 0")
+    name_mismatch_flag: int = Field(default=0, description="1 if account name doesn't match applicant, else 0")
 
 def fallback_financial_extraction(text: str) -> FinancialExtraction:
     """Robust regex-based fallback if the HF free API is rate-limited."""
@@ -43,13 +46,21 @@ def fallback_financial_extraction(text: str) -> FinancialExtraction:
     gambling_keywords = ["GAMBLING", "CASINO", "BETTING", "POKER", "LOTTERY", "DREAM11", "BET365", "MY11CIRCLE"]
     gambling_flags = sum(text_upper.count(kw) for kw in gambling_keywords)
     
+    fraud_keywords = ["FORGED", "TAMPERED", "ANOMALY", "30-FEB", "31-APR", "BLURRY", "REJECTED"]
+    fraud_flag = 1 if any(kw in text_upper for kw in fraud_keywords) else 0
+    
+    name_mismatch = 1 if "MISMATCH" in text_upper else 0
+    
     return FinancialExtraction(
         average_balance=avg_balance,
         overdraft_count=overdrafts,
         high_risk_transaction_count=gambling_flags,
         monthly_income=income, # Estimate based on found income
         monthly_debt_payments=income * 0.15,
-        monthly_savings=income * 0.20
+        monthly_savings=income * 0.20,
+        income_stability=0.5, # Default fallback
+        fraud_flag=fraud_flag,
+        name_mismatch_flag=name_mismatch
     )
 
 async def extract_financial_data_with_llm(text: str) -> FinancialExtraction:
@@ -64,7 +75,7 @@ async def extract_financial_data_with_llm(text: str) -> FinancialExtraction:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a financial AI. Output ONLY valid JSON containing these exact keys: 'average_balance' (float), 'overdraft_count' (int), 'high_risk_transaction_count' (int), 'monthly_income' (float), 'monthly_debt_payments' (float), 'monthly_savings' (float)."
+                    "content": "You are a financial AI. Output ONLY valid JSON containing these exact keys: 'average_balance' (float), 'overdraft_count' (int), 'high_risk_transaction_count' (int), 'monthly_income' (float), 'monthly_debt_payments' (float), 'monthly_savings' (float), 'income_stability' (float 0.0 to 1.0, 1.0=steady, 0.0=erratic gaps), 'fraud_flag' (int 0 or 1, 1 if tampered/forged), 'name_mismatch_flag' (int 0 or 1, 1 if identity mismatch)."
                 },
                 {
                     "role": "user",
@@ -168,6 +179,9 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
         overdrafts = metrics.get("total_overdrafts", 0)
         gambling = metrics.get("total_gambling_flags", 0)
         balance = metrics.get("combined_average_balance", 0)
+        income_stability = metrics.get("income_stability", 0.5)
+        fraud = metrics.get("fraud_detected", 0)
+        mismatch = metrics.get("identity_mismatch", 0)
         
         pros = []
         cons = []
@@ -189,6 +203,17 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
             
         if gambling > 0:
             cons.append(f"High-risk behavior: {gambling} gambling/betting transaction(s) flagged.")
+            
+        if income_stability < 0.6:
+            cons.append("Erratic or highly unstable income patterns detected.")
+        else:
+            pros.append("Consistent and stable income streams verified.")
+            
+        if fraud > 0:
+            cons.append("CRITICAL: Suspected document tampering or fraudulent anomalies detected.")
+            
+        if mismatch > 0:
+            cons.append("CRITICAL: Identity mismatch between application and supporting documents.")
             
         if not pros:
             pros = ["Applicant identity and academic records verified.", "No major negative bureau flags."]

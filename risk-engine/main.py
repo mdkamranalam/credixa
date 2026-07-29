@@ -162,9 +162,13 @@ async def analyze_statement(
         savings_rate = min(savings_rate, 1.0)
         
         # 5. Format data and SCALE it properly before inference
-        feature_names = ["avg_balance", "overdrafts", "gambling_flags", "academic_score", "dti_ratio", "savings_rate"]
+        income_stability = min(s_data.income_stability, p_data.income_stability)
+        total_fraud = max(s_data.fraud_flag, p_data.fraud_flag)
+        total_mismatch = max(s_data.name_mismatch_flag, p_data.name_mismatch_flag)
+
+        feature_names = ["avg_balance", "overdrafts", "gambling_flags", "academic_score", "dti_ratio", "savings_rate", "income_stability", "fraud_flag", "name_mismatch_flag"]
         features_raw = pd.DataFrame(
-            [[combined_balance, total_overdrafts, total_gambling, academic_score, dti_ratio, savings_rate]], 
+            [[combined_balance, total_overdrafts, total_gambling, academic_score, dti_ratio, savings_rate, income_stability, total_fraud, total_mismatch]], 
             columns=feature_names
         )
         
@@ -188,7 +192,10 @@ async def analyze_statement(
             "savings_rate": round(savings_rate, 2),
             "total_overdrafts": total_overdrafts,
             "total_gambling_flags": total_gambling,
-            "academic_score": academic_score
+            "academic_score": academic_score,
+            "income_stability": round(income_stability, 2),
+            "fraud_detected": total_fraud,
+            "identity_mismatch": total_mismatch
         }
         
         dynamic_reasoning_data = await generate_dynamic_reasoning(omniscore, metrics_for_llm)
