@@ -5,14 +5,14 @@
 - Full Legal Name: Priya Singh
 - Student ID: 2026DUMMY012
 - Phone No: 9111191112
-- PAN Card No: APZPS2112A
-- Aadhaar No: 000011223344
+- PAN Card No: APZPS1201A
+- Aadhaar No: 120000000001
 - Father's Name: Vikram Singh
-- Father's PAN Card No: APZPS5112B
-- Father's Aadhaar No.: 000099001122
+- Father's PAN Card No: APZPS1202B
+- Father's Aadhaar No.: 120000000002
 - Mother's Name: Pooja Singh
-- Mother's PAN Card No: APZPS1112C
-- Mother's Aadhaar No: 000055667788
+- Mother's PAN Card No: APZPS1203C
+- Mother's Aadhaar No: 120000000003
 - Target Institution: Dummy College
 - Target Course: B.Tech Computer Science & Engineering (Semester I)
 
@@ -23,15 +23,15 @@
 - Full Legal Name: Vikram Singh
 - Occupation: Software Engineer
 - Employer Name: Tech Solutions Pvt. Ltd.
-- Unique PAN Card No: APZPS5112B
-- Aadhaar Number Field: 000099001122
+- Unique PAN Card No: APZPS1202B
+- Aadhaar Number Field: 120000000002
 
 #### ii. Mother (Secondary Co-Applicant)
 - Full Legal Name: Pooja Singh
 - Occupation: Homemaker
 - Employment Type: Unemployed
-- Unique PAN Card No: APZPS1112C
-- Aadhaar Number Field: 000055667788
+- Unique PAN Card No: APZPS1203C
+- Aadhaar Number Field: 120000000003
 
 #### Institutional Fee Structure (`priya_fee_structure.pdf`)
 ```bash
@@ -165,7 +165,7 @@ SUMMARY: TOTAL CREDITS: ₹30,000.00 | TOTAL DEBITS: ₹6,950.00 | BOUNCES: 0
 NAME: PRIYA SINGH
 S/O: VIKRAM SINGH
 DOB: 15/08/2005 | GENDER: MALE
-AADHAAR NO: 000011223344
+AADHAAR NO: 120000000001
 ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 ```
@@ -178,7 +178,7 @@ ADDRESS: KNOWLEDGE PARK, BANGALORE
 NAME: POOJA SINGH
 W/O: VIKRAM SINGH
 DOB: 22/11/1981 | GENDER: FEMALE
-AADHAAR NO: 000055667788
+AADHAAR NO: 120000000003
 ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 ```
@@ -190,7 +190,7 @@ ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 NAME: VIKRAM SINGH
 DOB: 05/04/1978 | GENDER: MALE
-AADHAAR NO: 000099001122
+AADHAAR NO: 120000000002
 ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 ```

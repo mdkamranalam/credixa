@@ -5,14 +5,14 @@
 - Full Legal Name: Kamran Khan
 - Student ID: 2026MITDS002
 - Phone No: 9000090002
-- PAN Card No: BQWPV3145T
-- Aadhaar No: 111122334455
+- PAN Card No: APZPS0201A
+- Aadhaar No: 020000000001
 - Father's Name: Tariq Khan
-- Father's PAN Card No: BQWPV6789B
-- Father's Aadhaar No.: 111188990011
+- Father's PAN Card No: APZPS0202B
+- Father's Aadhaar No.: 020000000002
 - Mother's Name: Yasmin Khan
-- Mother's PAN Card No: BQWPV2345K
-- Mother's Aadhaar No: 111144556677
+- Mother's PAN Card No: APZPS0203C
+- Mother's Aadhaar No: 020000000003
 - Target Institution: Manipal Institute of Technology (MIT), Manipal
 - Target Course: B.Tech Data Science & Engineering (Semester I)
 
@@ -23,15 +23,15 @@
 - Full Legal Name: Tariq Khan
 - Occupation: Small Business Owner / Retail Proprietor
 - Employer Name: Khan Electronics & Hardware Store
-- Unique PAN Card No: BQWPV6789B
-- Aadhaar Number Field: 111188990011
+- Unique PAN Card No: APZPS0202B
+- Aadhaar Number Field: 020000000002
 
 #### ii. Mother (Secondary Co-Applicant)
 - Full Legal Name: Yasmin Khan
 - Occupation: Homemaker / Part-time Urdu & Arabic Tutor
 - Employment Type: Self-Employed / Informal Tuition
-- Unique PAN Card No: BQWPV2345K
-- Aadhaar Number Field: 111144556677
+- Unique PAN Card No: APZPS0203C
+- Aadhaar Number Field: 020000000003
 
 ---
 
@@ -176,7 +176,7 @@ SUMMARY: TOTAL CREDITS: ₹15,000.00 | TOTAL DEBITS: ₹4,450.00 | BOUNCES: 0
 
 #### ii. Father's Bank Ledger (Primary Co-Applicant - High DTI / Debt Stress) (kamran's_father_bank_statement.pdf)
 - Full Legal Name: Tariq Khan
-- Unique PAN Card No: BQWPV6789B
+- Unique PAN Card No: APZPS0202B
 - Bank: ICICI Bank Ltd (Frazer Town Branch)
 - Account Number: 004411223344
 ```bash
@@ -229,7 +229,7 @@ RISK ENGINE NOTE: DEBT-TO-INCOME (DTI) RATIO > 91%. SEVERE LACK OF LIQUIDITY.
 
 #### iii. Mother's Bank Ledger (Secondary Co-Applicant Informal Income) (kamran's_mother_bank_statement.pdf)
 - Full Legal Name: Yasmin Khan
-- Unique PAN Card No: BQWPV2345K
+- Unique PAN Card No: APZPS0202B
 - Bank: State Bank of India (Frazer Town Branch)
 - Account Number: 30099887766
 ```bash
@@ -271,7 +271,7 @@ ENROLLMENT NO: 2048/44210/03145
 NAME: KAMRAN KHAN
 S/O: TARIQ KHAN
 DOB: 10/10/2005 | GENDER: MALE
-AADHAAR NO: 111122334455
+AADHAAR NO: 020000000001
 ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 ==================================================================================
 ```
@@ -284,7 +284,7 @@ ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 NAME: TARIQ KHAN
 S/O: RAHIM KHAN
 DOB: 14/06/1975 | GENDER: MALE
-AADHAAR NO: 111188990011
+AADHAAR NO: 020000000002
 ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 ==================================================================================
 ```
@@ -297,7 +297,7 @@ ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 NAME: YASMIN KHAN
 W/O: TARIQ KHAN
 DOB: 19/09/1979 | GENDER: FEMALE
-AADHAAR NO: 111144556677
+AADHAAR NO: 020000000003
 ADDRESS: HOUSE NO. 12, 4TH CROSS, FRAZER TOWN, BENGALURU, KARNATAKA - 560005
 ==================================================================================
 ```

@@ -107,3 +107,4 @@ Credixa_Testing_Procedure.pdf
 generate_procedure_pdf.py
 testing_docs/test_scenarios/generate_pdfs.py
 testing_docs/test_scenarios/append_docs.py
+fix_ids.py

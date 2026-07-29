@@ -5,14 +5,14 @@
 - Full Legal Name: Amit Kumar
 - Student ID: 2026DUMMY011
 - Phone No: 9111191111
-- PAN Card No: APZPS2111A
-- Aadhaar No: 000011223344
+- PAN Card No: APZPS1101A
+- Aadhaar No: 110000000001
 - Father's Name: Rajesh Kumar
-- Father's PAN Card No: APZPS5111B
-- Father's Aadhaar No.: 000099001122
+- Father's PAN Card No: APZPS1102B
+- Father's Aadhaar No.: 110000000002
 - Mother's Name: Sunita Kumar
-- Mother's PAN Card No: APZPS1111C
-- Mother's Aadhaar No: 000055667788
+- Mother's PAN Card No: APZPS1103C
+- Mother's Aadhaar No: 110000000003
 - Target Institution: Dummy College
 - Target Course: B.Tech Computer Science & Engineering (Semester I)
 
@@ -23,15 +23,15 @@
 - Full Legal Name: Sunita Kumar
 - Occupation: Freelance Consultant
 - Employer Name: Self-Employed
-- Unique PAN Card No: APZPS1111C
-- Aadhaar Number Field: 000055667788
+- Unique PAN Card No: APZPS1103C
+- Aadhaar Number Field: 110000000003
 
 #### ii. Father (Secondary Co-Applicant)
 - Full Legal Name: Rajesh Kumar
 - Occupation: Senior Manager
 - Employment Type: Salaried
-- Unique PAN Card No: APZPS5111B
-- Aadhaar Number Field: 000099001122
+- Unique PAN Card No: APZPS1102B
+- Aadhaar Number Field: 110000000002
 
 #### Parent Bank Statement (`amit's_mother_bank_statement_ERRATIC.pdf`)
 ```bash
@@ -150,7 +150,7 @@ SUMMARY: TOTAL CREDITS: ₹30,000.00 | TOTAL DEBITS: ₹6,950.00 | BOUNCES: 0
 NAME: AMIT KUMAR
 S/O: RAJESH KUMAR
 DOB: 15/08/2005 | GENDER: MALE
-AADHAAR NO: 000011223344
+AADHAAR NO: 110000000001
 ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 ```
@@ -163,7 +163,7 @@ ADDRESS: KNOWLEDGE PARK, BANGALORE
 NAME: SUNITA KUMAR
 W/O: RAJESH KUMAR
 DOB: 22/11/1981 | GENDER: FEMALE
-AADHAAR NO: 000055667788
+AADHAAR NO: 110000000003
 ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 ```
@@ -175,7 +175,7 @@ ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 NAME: RAJESH KUMAR
 DOB: 05/04/1978 | GENDER: MALE
-AADHAAR NO: 000099001122
+AADHAAR NO: 110000000002
 ADDRESS: KNOWLEDGE PARK, BANGALORE
 ==================================================================================
 ```

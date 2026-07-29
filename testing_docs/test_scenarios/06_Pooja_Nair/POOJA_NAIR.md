@@ -5,14 +5,14 @@
 - Full Legal Name: Pooja Nair
 - Student ID: 2026NITEE006
 - Phone No: 9000090006
-- PAN Card No: FSYPN7145X
-- Aadhaar No: 555566778899
+- PAN Card No: APZPS0601A
+- Aadhaar No: 060000000001
 - Father's Name: Suresh Nair
-- Father's PAN Card No: FSYPN0123F
-- Father's Aadhaar No.: 555522334455
+- Father's PAN Card No: APZPS0602B
+- Father's Aadhaar No.: 060000000002
 - Mother's Name: Lakshmi Nair
-- Mother's PAN Card No: FSYPN4567P
-- Mother's Aadhaar No: 555588990011
+- Mother's PAN Card No: APZPS0603C
+- Mother's Aadhaar No: 060000000003
 - Target Institution: National Institute of Technology (NIT), Tiruchirappalli (Trichy)
 - Target Course: B.Tech Electrical & Electronics Engineering (Semester I)
 
@@ -23,16 +23,16 @@
 - Full Legal Name: Suresh Nair
 - Occupation: Senior Marketing Manager
 - Employer Name: Global Retail Solutions Ltd.
-- Unique PAN Card No: FSYPN0123F
-- Aadhaar Number Field: 555522334455
+- Unique PAN Card No: APZPS0602B
+- Aadhaar Number Field: 060000000002
 - Discrepancy Note: Uploaded KYC reads "Suresh Nair". However, the uploaded bank statement belongs to a joint/business firm titled "Suresh Kumar Nair & Bros Enterprises" (or brother Ramesh Nair), causing an automated OCR Identity Mismatch error in the gateway!
 
 #### ii. Mother (Secondary Co-Applicant)
 - Full Legal Name: Lakshmi Nair
 - Occupation: Government School Teacher
 - Employer Name: Kendriya Vidyalaya, Trichy
-- Unique PAN Card No: FSYPN4567P
-- Aadhaar Number Field: 555588990011
+- Unique PAN Card No: APZPS0603C
+- Aadhaar Number Field: 060000000003
 
 ---
 
@@ -215,7 +215,7 @@ ACTION: APPLICATION BLOCKED. AWAITING RE-UPLOAD OF INDIVIDUAL PERSONAL SAVINGS L
 
 #### iii. Mother's Bank Ledger (Secondary Co-Applicant - Teaching Salary) (pooja's_mother_bank_statement.pdf)
 - Full Legal Name: Lakshmi Nair
-- Unique PAN Card No: FSYPN4567P
+- Unique PAN Card No: APZPS0602B
 - Bank: State Bank of India (Thillai Nagar Branch)
 - Account Number: 30011228877
 ```bash
@@ -252,7 +252,7 @@ ENROLLMENT NO: 6144/55209/07145
 NAME: POOJA NAIR
 D/O: SURESH NAIR
 DOB: 22/09/2005 | GENDER: FEMALE
-AADHAAR NO: 555566778899
+AADHAAR NO: 060000000001
 ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 ==================================================================================
 ```
@@ -265,7 +265,7 @@ ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 NAME: SURESH NAIR
 S/O: BHASKARAN NAIR
 DOB: 15/05/1973 | GENDER: MALE
-AADHAAR NO: 555522334455
+AADHAAR NO: 060000000002
 ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 ==================================================================================
 ```
@@ -278,7 +278,7 @@ ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 NAME: LAKSHMI NAIR
 W/O: SURESH NAIR
 DOB: 10/11/1977 | GENDER: FEMALE
-AADHAAR NO: 555588990011
+AADHAAR NO: 060000000003
 ADDRESS: PLOT 22, THILLAI NAGAR, TIRUCHIRAPPALLI (TRICHY), TAMIL NADU - 620018
 ==================================================================================
 ```

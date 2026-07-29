@@ -5,14 +5,14 @@
 - Full Legal Name: Darius Mistry
 - Student ID: 2026TIETCE008
 - Phone No: 9000090008
-- PAN Card No: HUYPK9123Z
-- Aadhaar No: 777788990011
+- PAN Card No: APZPS0801A
+- Aadhaar No: 080000000001
 - Father's Name: Farokh Mistry
-- Father's PAN Card No: HUYPK3456H
-- Father's Aadhaar No.: 777744556677
+- Father's PAN Card No: APZPS0802B
+- Father's Aadhaar No.: 080000000002
 - Mother's Name: Roshan Mistry
-- Mother's PAN Card No: HUYPK7890R
-- Mother's Aadhaar No: 777700112233
+- Mother's PAN Card No: APZPS0803C
+- Mother's Aadhaar No: 080000000003
 - Target Institution: Thapar Institute of Engineering & Technology, Patiala
 - Target Course: B.E. Computer Engineering (Semester I)
 
@@ -23,16 +23,16 @@
 - Full Legal Name: Farokh Mistry
 - Occupation: Vice President - Sales
 - Employer Name: North India Logistics & Supply Chain Ltd.
-- Unique PAN Card No: HUYPK3456H
-- Aadhaar Number Field: 777744556677
+- Unique PAN Card No: APZPS0802B
+- Aadhaar Number Field: 080000000002
 - Risk Engine Notes: Earns a robust corporate salary of ₹2,50,000/month. However, transaction analysis reveals high-frequency debits to online betting, fantasy gaming, and casino platforms accounting for over 35% of monthly net income. XGBoost Classifier flags high probability of default -> Rejection.
 
 #### ii. Mother (Secondary Co-Applicant)
 - Full Legal Name: Roshan Mistry
 - Occupation: Boutique Owner / Fashion Designer
 - Employer Name: Roshan's Ethnic Couture, Chandigarh
-- Unique PAN Card No: HUYPK7890R
-- Aadhaar Number Field: 777700112233
+- Unique PAN Card No: APZPS0803C
+- Aadhaar Number Field: 080000000003
 
 ---
 
@@ -177,7 +177,7 @@ SUMMARY: TOTAL CREDITS: ₹22,500.00 | TOTAL DEBITS: ₹5,000.00 | BOUNCES: 0
 
 #### ii. Father's Bank Ledger (Primary Co-Applicant - HEAVY GAMBLING / FANTASY BETTING DEBITS!) (darius's_father_bank_statement_GAMBLING.pdf)
 - Full Legal Name: Farokh Mistry
-- Unique PAN Card No: HUYPK3456H
+- Unique PAN Card No: APZPS0802B
 - Bank: HDFC Bank Ltd (Sector 17 Chandigarh Branch)
 - Account Number: 50100445566778
 ```bash
@@ -218,7 +218,7 @@ HIGH-RISK BETTING/GAMBLING MERCHANTS (DREAM11, BETWAY, PARIMATCH, RUMMYCIRCLE).
 
 #### iii. Mother's Bank Ledger (Secondary Co-Applicant - Boutique Income) (darius's_mother_bank_statement.pdf)
 - Full Legal Name: Roshan Mistry
-- Unique PAN Card No: HUYPK7890R
+- Unique PAN Card No: APZPS0802B
 - Bank: State Bank of India (Sector 17 Branch)
 - Account Number: 30011227766
 ```bash
@@ -255,7 +255,7 @@ ENROLLMENT NO: 8192/22109/09123
 NAME: DARIUS MISTRY
 S/O: FAROKH MISTRY
 DOB: 09/09/2005 | GENDER: MALE
-AADHAAR NO: 777788990011
+AADHAAR NO: 080000000001
 ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 ==================================================================================
 ```
@@ -268,7 +268,7 @@ ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 NAME: FAROKH MISTRY
 S/O: RUSTOM MISTRY
 DOB: 24/04/1975 | GENDER: MALE
-AADHAAR NO: 777744556677
+AADHAAR NO: 080000000002
 ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 ==================================================================================
 ```
@@ -281,7 +281,7 @@ ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 NAME: ROSHAN MISTRY
 W/O: FAROKH MISTRY
 DOB: 12/12/1979 | GENDER: FEMALE
-AADHAAR NO: 777700112233
+AADHAAR NO: 080000000003
 ADDRESS: HOUSE NO. 445, SECTOR 16-D, CHANDIGARH - 160015
 ==================================================================================
 ```
