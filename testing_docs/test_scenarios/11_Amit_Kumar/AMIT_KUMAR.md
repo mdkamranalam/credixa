@@ -33,6 +33,21 @@
 - Unique PAN Card No: APZPS1102B
 - Aadhaar Number Field: 110000000002
 
+#### Institutional Fee Structure (`amit_fee_structure.pdf`)
+```bash
+=========================================================
+                    DUMMY COLLEGE
+=========================================================
+STUDENT NAME: AMIT KUMAR
+FEE STRUCTURE FOR SEMESTER I
+---------------------------------------------------------
+TUITION FEE: ₹ 1,50,000
+LIBRARY FEE: ₹ 10,000
+HOSTEL FEE: ₹ 40,000
+---------------------------------------------------------
+TOTAL PAYABLE: ₹ 2,00,000
+=========================================================
+```
 #### Parent Bank Statement (`amit's_mother_bank_statement_ERRATIC.pdf`)
 ```bash
 =========================================================
