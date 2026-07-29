@@ -1,5 +1,38 @@
 # Test 03 - EMI Default Simulation
 
+### 1. STUDENT IDENTIFICATION PROFILE (RAHUL VERMA)
+
+- Full Legal Name: Rahul Verma
+- Student ID: 2026DUMMY013
+- Phone No: 9111191113
+- PAN Card No: APZPS2113A
+- Aadhaar No: 000011223344
+- Father's Name: Anil Verma
+- Father's PAN Card No: APZPS5113B
+- Father's Aadhaar No.: 000099001122
+- Mother's Name: Ritu Verma
+- Mother's PAN Card No: APZPS1113C
+- Mother's Aadhaar No: 000055667788
+- Target Institution: Dummy College
+- Target Course: B.Tech Computer Science & Engineering (Semester I)
+
+---
+
+### 2. CO-APPLICANT METADATA & OCCUPATIONS
+#### i. Father (Primary Co-Applicant)
+- Full Legal Name: Anil Verma
+- Occupation: Assistant Manager
+- Employer Name: Global Corp Pvt. Ltd.
+- Unique PAN Card No: APZPS5113B
+- Aadhaar Number Field: 000099001122
+
+#### ii. Mother (Secondary Co-Applicant)
+- Full Legal Name: Ritu Verma
+- Occupation: Homemaker
+- Employment Type: Unemployed
+- Unique PAN Card No: APZPS1113C
+- Aadhaar Number Field: 000055667788
+
 #### Institutional Fee Structure (`rahul_fee_structure.pdf`)
 ```bash
 =========================================================

@@ -1,5 +1,38 @@
 # Test 01 - Erratic Freelance Income
 
+### 1. STUDENT IDENTIFICATION PROFILE (AMIT KUMAR)
+
+- Full Legal Name: Amit Kumar
+- Student ID: 2026DUMMY011
+- Phone No: 9111191111
+- PAN Card No: APZPS2111A
+- Aadhaar No: 000011223344
+- Father's Name: Rajesh Kumar
+- Father's PAN Card No: APZPS5111B
+- Father's Aadhaar No.: 000099001122
+- Mother's Name: Sunita Kumar
+- Mother's PAN Card No: APZPS1111C
+- Mother's Aadhaar No: 000055667788
+- Target Institution: Dummy College
+- Target Course: B.Tech Computer Science & Engineering (Semester I)
+
+---
+
+### 2. CO-APPLICANT METADATA & OCCUPATIONS
+#### i. Mother (Primary Co-Applicant)
+- Full Legal Name: Sunita Kumar
+- Occupation: Freelance Consultant
+- Employer Name: Self-Employed
+- Unique PAN Card No: APZPS1111C
+- Aadhaar Number Field: 000055667788
+
+#### ii. Father (Secondary Co-Applicant)
+- Full Legal Name: Rajesh Kumar
+- Occupation: Senior Manager
+- Employment Type: Salaried
+- Unique PAN Card No: APZPS5111B
+- Aadhaar Number Field: 000099001122
+
 #### Parent Bank Statement (`amit's_mother_bank_statement_ERRATIC.pdf`)
 ```bash
 =========================================================

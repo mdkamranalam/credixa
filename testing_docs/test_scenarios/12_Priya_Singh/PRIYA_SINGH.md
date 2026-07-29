@@ -1,5 +1,38 @@
 # Test 02 - Institution Manual Rejection
 
+### 1. STUDENT IDENTIFICATION PROFILE (PRIYA SINGH)
+
+- Full Legal Name: Priya Singh
+- Student ID: 2026DUMMY012
+- Phone No: 9111191112
+- PAN Card No: APZPS2112A
+- Aadhaar No: 000011223344
+- Father's Name: Vikram Singh
+- Father's PAN Card No: APZPS5112B
+- Father's Aadhaar No.: 000099001122
+- Mother's Name: Pooja Singh
+- Mother's PAN Card No: APZPS1112C
+- Mother's Aadhaar No: 000055667788
+- Target Institution: Dummy College
+- Target Course: B.Tech Computer Science & Engineering (Semester I)
+
+---
+
+### 2. CO-APPLICANT METADATA & OCCUPATIONS
+#### i. Father (Primary Co-Applicant)
+- Full Legal Name: Vikram Singh
+- Occupation: Software Engineer
+- Employer Name: Tech Solutions Pvt. Ltd.
+- Unique PAN Card No: APZPS5112B
+- Aadhaar Number Field: 000099001122
+
+#### ii. Mother (Secondary Co-Applicant)
+- Full Legal Name: Pooja Singh
+- Occupation: Homemaker
+- Employment Type: Unemployed
+- Unique PAN Card No: APZPS1112C
+- Aadhaar Number Field: 000055667788
+
 #### Institutional Fee Structure (`priya_fee_structure.pdf`)
 ```bash
 =========================================================
