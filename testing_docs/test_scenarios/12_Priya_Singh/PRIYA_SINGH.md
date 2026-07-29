@@ -1,4 +1,4 @@
-# Test 02 - Institution Manual Rejection
+# Test 12 - Institution Manual Rejection
 
 ### 1. STUDENT IDENTIFICATION PROFILE (PRIYA SINGH)
 
