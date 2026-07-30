@@ -9,6 +9,8 @@ const NotificationBell = () => {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
 
+  const [expandedId, setExpandedId] = useState(null);
+
   const fetchNotifications = async () => {
     try {
       setLoading(true);
@@ -119,24 +121,34 @@ const NotificationBell = () => {
               </div>
             ) : (
               <div className="divide-y divide-slate-50">
-                {notifications.map((notification) => (
+                {notifications.map((notification) => {
+                  const isExpanded = expandedId === notification.notification_id;
+                  return (
                   <div 
                     key={notification.notification_id} 
                     className={`p-4 transition-colors hover:bg-slate-50 flex items-start ${!notification.is_read ? 'bg-emerald-50/30' : ''}`}
                     onClick={() => {
                       if (!notification.is_read) handleMarkAsRead(notification.notification_id);
+                      setExpandedId(isExpanded ? null : notification.notification_id);
                     }}
                   >
                     <div className="flex-1 min-w-0 pr-4 cursor-pointer">
                       <p className={`text-sm ${!notification.is_read ? 'font-bold text-slate-900' : 'font-medium text-slate-700'}`}>
                         {notification.title}
                       </p>
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                      <p className={`text-xs text-slate-500 mt-1 ${isExpanded ? '' : 'line-clamp-2'}`}>
                         {notification.message}
                       </p>
-                      <p className="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-wider">
-                        {new Date(notification.created_at).toLocaleString()}
-                      </p>
+                      <div className="flex items-center justify-between mt-2">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                          {new Date(notification.created_at).toLocaleString()}
+                        </p>
+                        {notification.message.length > 80 && (
+                          <span className="text-[10px] font-bold text-emerald-500 hover:text-emerald-700">
+                            {isExpanded ? 'Show less' : 'Read more'}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {!notification.is_read && (
                       <button 
