@@ -189,45 +189,7 @@ router.get("/loans", authenticateToken, requireRole("INSTITUTION_ADMIN"), async 
 
     const result = await pool.query(query, params);
 
-    const processedRows = result.rows.map(row => {
-      let reasoning = row.analysis_reasoning;
-      let highlights = row.analysis_highlights;
-
-      if (row.college_roll_number === '2026VITEC003' || (row.full_name && row.full_name.toLowerCase().includes('harpreet'))) {
-        row.risk_tier = "HIGH_RISK";
-        row.omniscore = 12;
-        reasoning = "CRITICAL ALERT: Application REJECTED and locked due to suspected document tampering and financial fraud. Detected illegal/forged calendar dates (e.g. Feb 30th, April 31st) and severe ledger continuity breaks or mathematical anomalies in the submitted bank statements.";
-        highlights = JSON.stringify({
-          pros: ["Applicant identity records digitized."],
-          cons: [
-            "CRITICAL FRAUD FLAG: Forged/illegal calendar dates detected (30-Feb, 31-Apr).",
-            "CRITICAL FRAUD FLAG: Ledger continuity break and mathematical anomalies.",
-            "Instant fraud lock triggered by AI Underwriting Engine."
-          ]
-        });
-      } else if (!reasoning || reasoning.includes("Profile Readiness") || reasoning.includes("documents have been successfully parsed")) {
-        if (row.risk_tier === "HIGH_RISK") {
-          reasoning = "Application flagged as HIGH RISK due to elevated debt-to-income ratio (>91%), cheque bounces, and severe liquidity constraints.";
-          highlights = JSON.stringify({
-            pros: ["Applicant identity and academic records verified."],
-            cons: ["High Debt-to-Income (DTI) ratio exceeding threshold.", "Detected cheque bounce(s) or overdraft events.", "Severe lack of financial liquidity."]
-          });
-        } else if (row.risk_tier === "MEDIUM_RISK") {
-          reasoning = "Application assessed as MEDIUM RISK due to moderate debt load or variable income patterns.";
-          highlights = JSON.stringify({
-            pros: ["Applicant identity verified.", "No default history detected."],
-            cons: ["Moderate debt-to-income ratio requires monitoring.", "Variable average balance."]
-          });
-        } else if (row.risk_tier === "LOW_RISK") {
-          reasoning = "Application assessed as LOW RISK. Strong financial standing with low debt burden and consistent liquidity.";
-          highlights = JSON.stringify({
-            pros: ["Strong liquidity and healthy average balance.", "No cheque bounces or defaults detected.", "Manageable debt-to-income ratio."],
-            cons: ["No critical underwriting risk flags identified."]
-          });
-        }
-      }
-      return { ...row, analysis_reasoning: reasoning, analysis_highlights: highlights };
-    });
+    const processedRows = result.rows;
 
     if (page) {
       const countRes = await pool.query("SELECT COUNT(*) FROM loans WHERE institution_id = $1", [req.user.institution_id]);
