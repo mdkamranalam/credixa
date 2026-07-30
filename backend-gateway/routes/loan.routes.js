@@ -99,25 +99,6 @@ router.post(
         await client.query(insertDoc, [loanId, userId, "STUDENT", "ACADEMIC", "LATEST_MARKSHEET", req.files.latest_marksheet[0].path]);
       }
 
-      // 4. Prepare FormData for Axios Risk Engine
-      const formData = new FormData();
-      formData.append(
-        "student_file",
-        createReadStream(req.files.student_statement[0].path),
-        {
-          filename: req.files.student_statement[0].originalname,
-          contentType: req.files.student_statement[0].mimetype,
-        }
-      );
-      formData.append(
-        "parent_file",
-        createReadStream(req.files.parent_statement[0].path),
-        {
-          filename: req.files.parent_statement[0].originalname,
-          contentType: req.files.parent_statement[0].mimetype,
-        }
-      );
-
       // Fetch academic score from user profile
       const userRes = await client.query("SELECT current_semester_marks FROM users WHERE user_id = $1", [userId]);
       const marks = userRes.rows[0]?.current_semester_marks;
@@ -130,22 +111,54 @@ router.post(
         }
       }
 
-      formData.append("academic_score", academicScore.toString());
+      let aiResult = null;
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          // 4. Prepare FormData for Axios Risk Engine
+          const formData = new FormData();
+          formData.append(
+            "student_file",
+            createReadStream(req.files.student_statement[0].path),
+            {
+              filename: req.files.student_statement[0].originalname,
+              contentType: req.files.student_statement[0].mimetype,
+            }
+          );
+          formData.append(
+            "parent_file",
+            createReadStream(req.files.parent_statement[0].path),
+            {
+              filename: req.files.parent_statement[0].originalname,
+              contentType: req.files.parent_statement[0].mimetype,
+            }
+          );
 
-      // 4. Send to Python ML Engine using AXIOS
-      const pythonResponse = await axios.post(
-        RISK_ENGINE_URL,
-        formData,
-        {
-          headers: {
-            ...formData.getHeaders(),
-            "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026",
-          },
-        },
-      );
+          formData.append("academic_score", academicScore.toString());
 
-      // Axios automatically parses the JSON, so we just grab .data
-      const aiResult = pythonResponse.data;
+          // 4. Send to Python ML Engine using AXIOS
+          const pythonResponse = await axios.post(
+            RISK_ENGINE_URL,
+            formData,
+            {
+              headers: {
+                ...formData.getHeaders(),
+                "x-api-key": process.env.RISK_ENGINE_API_KEY || "credixa_internal_engine_key_2026",
+              },
+              timeout: 60000 // 60s timeout for cold start
+            },
+          );
+
+          aiResult = pythonResponse.data;
+          break; // success
+        } catch (err) {
+          retries--;
+          console.error(`Risk engine request failed. Retries left: ${retries}`);
+          if (retries === 0) throw err;
+          // Wait 15 seconds before retrying
+          await new Promise(resolve => setTimeout(resolve, 15000));
+        }
+      }
 
       // 5. Schema Math: Convert AI % to CIBIL integer scale (0-900)
       const cibilScore = Math.round((aiResult.omniscore / 100) * 900);
