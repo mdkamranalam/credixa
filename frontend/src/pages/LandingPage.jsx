@@ -24,18 +24,19 @@ const LandingPage = () => {
                 Credixa
               </span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 to="/login"
-                className="text-gray-600 hover:text-emerald-500 font-medium transition-colors"
+                className="text-gray-600 hover:text-emerald-500 font-medium transition-colors text-sm sm:text-base"
               >
                 Log In
               </Link>
               <Link
                 to="/register/student"
-                className="bg-emerald-500 hover:opacity-90 text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                className="bg-emerald-500 hover:opacity-90 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
               >
-                Get Started <ArrowRight className="w-4 h-4" />
+                <span className="hidden sm:inline">Get Started</span>
+                <span className="sm:hidden">Start</span> <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -56,25 +57,25 @@ const LandingPage = () => {
             <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
             AI-Driven Education Funding
           </div>
-          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-8">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-6 sm:mb-8">
             Fund your education with <br className="hidden lg:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-indigo-600 block sm:inline mt-2 sm:mt-0">
               Buy Now, Pay Later.
             </span>
           </h1>
           <p className="mt-4 max-w-2xl text-xl text-gray-600 mx-auto mb-10 leading-relaxed">
             Credixa is a comprehensive BNPL platform empowering students with flexible financing. Let our AI risk engine tailor the perfect approval for your future.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 px-4 sm:px-0">
             <Link
               to="/register/student"
-              className="px-8 py-4 text-lg font-semibold rounded-full text-white bg-emerald-500 hover:opacity-90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+              className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full text-white bg-emerald-500 hover:opacity-90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 w-full sm:w-auto"
             >
               Apply as Student
             </Link>
             <Link
               to="/register/institution"
-              className="px-8 py-4 text-lg font-semibold rounded-full text-gray-700 bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm transition-all"
+              className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full text-gray-700 bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm transition-all w-full sm:w-auto"
             >
               Partner Institution
             </Link>

@@ -282,15 +282,15 @@ const StudentDashboard = () => {
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-6xl mx-auto mt-6 sm:mt-8 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
 
         {/* ── LEFT COLUMN ── */}
         <div className="lg:col-span-8 space-y-8">
 
           {/* PROFILE CARD */}
           {profile && (
-            <div className="bg-white rounded-[20px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-4 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center border border-slate-100 gap-4">
-              <div className="flex items-center space-x-4">
+            <div className="bg-white rounded-[20px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center border border-slate-100 gap-4">
+              <div className="flex items-center space-x-3 sm:space-x-4">
                 <div className="bg-emerald-100 p-1 rounded-full border-4 border-emerald-50">
                   <div className="bg-emerald-500 h-12 w-12 rounded-full flex items-center justify-center text-white font-bold text-xl">
                     {profile.full_name.charAt(0)}
@@ -330,30 +330,30 @@ const StudentDashboard = () => {
           {(!activeLoan || ["CLOSED", "REJECTED"].includes(activeLoan.status)) && step === 1 && (
             <div className="bg-slate-900 rounded-[24px] shadow-xl p-5 sm:p-8 relative overflow-hidden text-white">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500 rounded-full blur-[80px] opacity-20 -mr-20 -mt-20 pointer-events-none" />
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 sm:mb-8 relative z-10">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8 relative z-10">
                 <div>
-                  <p className="text-slate-400 font-bold text-sm uppercase tracking-wider mb-1">Approved Credit Limit</p>
+                  <p className="text-slate-400 font-bold text-xs sm:text-sm uppercase tracking-wider mb-1">Approved Credit Limit</p>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black">₹{APPROVED_LIMIT.toLocaleString()}</h1>
                 </div>
-                <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-md rounded-2xl p-3 text-center min-w-[100px]">
+                <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-md rounded-2xl p-3 text-center min-w-[100px] w-full sm:w-auto">
                   <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Health Score</p>
                   <div className="flex items-center justify-center text-emerald-400 font-black text-2xl">
                     <TrendingUp className="h-5 w-5 mr-1" /> {HEALTH_SCORE}
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-slate-800 pt-6 relative z-10">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 border-t border-slate-800 pt-6 relative z-10">
                 <div>
-                  <p className="text-slate-400 text-xs font-bold uppercase mb-1">Available</p>
-                  <p className="text-xl font-bold">₹{APPROVED_LIMIT.toLocaleString()}</p>
+                  <p className="text-slate-400 text-[10px] sm:text-xs font-bold uppercase mb-1">Available</p>
+                  <p className="text-lg sm:text-xl font-bold">₹{APPROVED_LIMIT.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-slate-400 text-xs font-bold uppercase mb-1">Active Loans</p>
-                  <p className="text-xl font-bold">0</p>
+                  <p className="text-slate-400 text-[10px] sm:text-xs font-bold uppercase mb-1">Active Loans</p>
+                  <p className="text-lg sm:text-xl font-bold">0</p>
                 </div>
-                <div>
-                  <p className="text-slate-400 text-xs font-bold uppercase mb-1">Due This Month</p>
-                  <p className="text-xl font-bold">₹0</p>
+                <div className="col-span-2 sm:col-span-1">
+                  <p className="text-slate-400 text-[10px] sm:text-xs font-bold uppercase mb-1">Due This Month</p>
+                  <p className="text-lg sm:text-xl font-bold">₹0</p>
                 </div>
               </div>
             </div>
@@ -384,7 +384,7 @@ const StudentDashboard = () => {
                 {[1, 2, 3, 4, 5].map((s) => (
                   <div
                     key={s}
-                    className={`w-8 sm:w-10 h-8 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm transition-colors duration-300 ${
+                    className={`w-7 sm:w-10 h-7 sm:h-10 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-sm shadow-sm transition-colors duration-300 ${
                       step > s
                         ? "bg-emerald-500 text-white"
                         : step === s
@@ -426,10 +426,10 @@ const StudentDashboard = () => {
                     </div>
                   </div>
                   <div className="mb-8">
-                    <h3 className="font-bold text-slate-900 mb-4 flex items-center">
+                    <h3 className="font-bold text-slate-900 mb-4 flex items-center text-sm sm:text-base">
                       <Zap className="w-4 h-4 mr-2 text-yellow-500" /> AI Recommended Plans
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                       {RECOMMENDED_PLANS.map((plan, idx) => (
                         <div
                           key={idx}
@@ -602,25 +602,24 @@ const StudentDashboard = () => {
                 </div>
               )}
 
-              {/* Stepper Navigation */}
-              <div className="mt-10 pt-6 border-t border-slate-100 flex flex-wrap gap-3 justify-between items-center">
+              <div className="mt-8 sm:mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row gap-3 justify-between items-center">
                 {step > 1 ? (
-                  <button onClick={() => setStepSync(step - 1)} disabled={isApplying} className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">
+                  <button onClick={() => setStepSync(step - 1)} disabled={isApplying} className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">
                     Back
                   </button>
-                ) : <div />}
+                ) : <div className="hidden sm:block" />}
                 {step < 4 && (
-                  <button onClick={handleInitializeLoan} className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center">
+                  <button onClick={handleInitializeLoan} className="w-full sm:w-auto bg-slate-900 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center">
                     Continue <ChevronRight className="w-5 h-5 ml-1" />
                   </button>
                 )}
                 {step === 4 && (
-                  <button onClick={() => setStepSync(5)} className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center">
+                  <button onClick={() => setStepSync(5)} className="w-full sm:w-auto bg-slate-900 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center">
                     Generate Agreement
                   </button>
                 )}
                 {step === 5 && (
-                  <button onClick={handleFinalSubmit} disabled={isApplying} className="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-emerald-700 transition-all flex items-center">
+                  <button onClick={handleFinalSubmit} disabled={isApplying} className="w-full sm:w-auto bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-emerald-700 transition-all flex items-center justify-center">
                     {isApplying ? "Running AI Engine..." : "Agree & Submit"}
                   </button>
                 )}
