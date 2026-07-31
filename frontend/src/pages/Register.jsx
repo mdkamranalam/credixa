@@ -145,10 +145,10 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img src="/credixa-favicon.png" alt="Credixa Logo" className="mx-auto h-12 w-12 rounded-xl object-contain shadow-sm mb-4" />
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-2xl sm:text-3xl font-extrabold text-gray-900">
           {activeTab === "STUDENT" ? "Step 1: Account Setup" : (
             <>Join <span className="text-emerald-500">Credixa</span></>
           )}
@@ -163,8 +163,8 @@ const Register = () => {
               <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-emerald-500 -z-10 transition-all duration-500`} style={{ width: `0%` }}></div>
               
               {[1, 2, 3, 4, 5].map((s) => (
-                <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 ${1 >= s ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
-                  {1 > s ? <CircleCheck className="w-5 h-5" /> : s}
+                <div key={s} className={`w-6 h-6 sm:w-8 sm:h-8 text-xs sm:text-base rounded-full flex items-center justify-center font-bold border-2 ${1 >= s ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
+                  {1 > s ? <CircleCheck className="w-3 h-3 sm:w-5 sm:h-5" /> : s}
                 </div>
               ))}
             </div>
@@ -180,7 +180,7 @@ const Register = () => {
           </div>
         )}
 
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-100">
+        <div className="bg-white py-8 px-5 shadow sm:rounded-lg sm:px-10 border border-gray-100">
           {/* Messages */}
           {error && (
             <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4 flex items-center">
@@ -571,7 +571,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-6 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:bg-emerald-500 transition-colors"
+              className="w-full mt-6 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:bg-emerald-500 active:scale-[0.98] transition-all"
             >
               {isLoading
                 ? "Processing..."

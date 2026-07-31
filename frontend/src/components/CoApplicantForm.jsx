@@ -143,7 +143,7 @@ const CoApplicantForm = ({ loanId, onSuccess }) => {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50"
+                    className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg active:scale-[0.98] transition-all disabled:opacity-50"
                 >
                     {isSubmitting ? 'Saving...' : 'Save Co-Applicant Details'}
                 </button>

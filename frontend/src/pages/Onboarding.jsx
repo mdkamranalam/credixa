@@ -143,11 +143,11 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">
           <img src="/credixa-favicon.png" alt="Credixa" className="mx-auto h-12 w-12 rounded-xl mb-4" />
-          <h2 className="text-3xl font-extrabold text-gray-900">Account Setup</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Account Setup</h2>
           <p className="mt-2 text-gray-600">Complete your profile to unlock the AI Risk Engine.</p>
         </div>
 
@@ -158,8 +158,8 @@ const Onboarding = () => {
             <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-emerald-500 -z-10 transition-all duration-500`} style={{ width: `${((step - 1) / 5) * 100}%` }}></div>
             
             {[1, 2, 3, 4, 5, 6].map((s) => (
-              <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 ${step >= s ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
-                {step > s ? <CheckCircle className="w-5 h-5" /> : s}
+              <div key={s} className={`w-6 h-6 sm:w-8 sm:h-8 text-xs sm:text-base rounded-full flex items-center justify-center font-bold border-2 ${step >= s ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white border-gray-300 text-gray-400'}`}>
+                {step > s ? <CheckCircle className="w-3 h-3 sm:w-5 sm:h-5" /> : s}
               </div>
             ))}
           </div>
@@ -180,8 +180,8 @@ const Onboarding = () => {
         {step === 2 && (
           <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
-              <ShieldCheck className="h-8 w-8 text-emerald-500 mr-3" />
-              <h3 className="text-xl font-bold">Step 2: Identity Verification</h3>
+              <ShieldCheck className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500 mr-3" />
+              <h3 className="text-lg sm:text-xl font-bold">Step 2: Identity Verification</h3>
             </div>
             <p className="text-gray-600 mb-6">We use IndiaStack to securely verify your identity. Your Aadhaar is encrypted and masked.</p>
             
@@ -217,7 +217,7 @@ const Onboarding = () => {
               <button
                 type="submit"
                 disabled={kycLoading}
-                className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-4 disabled:opacity-50"
+                className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-4 disabled:opacity-50 active:scale-[0.98] transition-transform"
               >
                 {kycLoading ? "Verifying with IndiaStack..." : "Verify Identity"}
               </button>
@@ -229,8 +229,8 @@ const Onboarding = () => {
         {step === 3 && (
           <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
-              <User className="h-8 w-8 text-emerald-500 mr-3" />
-              <h3 className="text-xl font-bold">Step 3: Co-Applicant Linking</h3>
+              <User className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500 mr-3" />
+              <h3 className="text-lg sm:text-xl font-bold">Step 3: Co-Applicant Linking</h3>
             </div>
             <p className="text-gray-600 mb-6">Because students often have thin credit files, a guarantor (like a parent) is required.</p>
             <CoApplicantForm onSuccess={() => setStep(4)} />
@@ -241,8 +241,8 @@ const Onboarding = () => {
         {step === 4 && (
           <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
-              <BookOpen className="h-8 w-8 text-emerald-500 mr-3" />
-              <h3 className="text-xl font-bold">Step 4: Academic Details</h3>
+              <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500 mr-3" />
+              <h3 className="text-lg sm:text-xl font-bold">Step 4: Academic Details</h3>
             </div>
             <p className="text-gray-600 mb-6">Upload your academic documents to strengthen your profile.</p>
             
@@ -355,7 +355,7 @@ const Onboarding = () => {
               <button
                 type="submit"
                 disabled={academicLoading}
-                className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center disabled:opacity-50"
+                className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center disabled:opacity-50 active:scale-[0.98] transition-transform"
               >
                 {academicLoading ? "Saving..." : "Continue to Financials"} <ArrowRight className="ml-2 w-5 h-5" />
               </button>
@@ -367,8 +367,8 @@ const Onboarding = () => {
         {step === 5 && (
           <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
-              <UploadCloud className="h-8 w-8 text-emerald-500 mr-3" />
-              <h3 className="text-xl font-bold">Step 5: Financial Data Ingestion</h3>
+              <UploadCloud className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500 mr-3" />
+              <h3 className="text-lg sm:text-xl font-bold">Step 5: Financial Data Ingestion</h3>
             </div>
             <p className="text-gray-600 mb-6">To accurately calculate your AI Omniscore, we need historical cash-flow data.</p>
             
@@ -423,7 +423,7 @@ const Onboarding = () => {
             
             <button
               onClick={finishOnboarding}
-              className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center"
+              className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center active:scale-[0.98] transition-transform"
             >
               Complete Onboarding <ArrowRight className="ml-2 w-5 h-5" />
             </button>
@@ -434,8 +434,8 @@ const Onboarding = () => {
         {step === 6 && profileData && (
           <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 md:p-8">
             <div className="flex items-center mb-6">
-              <ShieldCheck className="h-8 w-8 text-emerald-500 mr-3" />
-              <h3 className="text-xl font-bold">Step 6: Final Review & Confirmation</h3>
+              <ShieldCheck className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500 mr-3" />
+              <h3 className="text-lg sm:text-xl font-bold">Step 6: Final Review & Confirmation</h3>
             </div>
             
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
@@ -526,7 +526,7 @@ const Onboarding = () => {
             <button
               onClick={confirmAndProceed}
               disabled={!fraudConsent}
-              className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl mt-6 flex items-center justify-center disabled:opacity-50 hover:bg-slate-800 transition-colors shadow-lg"
+              className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl mt-6 flex items-center justify-center disabled:opacity-50 hover:bg-slate-800 active:scale-[0.98] transition-all shadow-lg"
             >
               Confirm Accuracy & Access Dashboard <ArrowRight className="ml-2 w-5 h-5" />
             </button>
@@ -545,7 +545,7 @@ const Onboarding = () => {
             ) : analysisResult ? (
               <div className="text-left">
                 <div className="flex items-center justify-center mb-8">
-                   <div className={`w-36 h-36 rounded-full border-8 flex items-center justify-center shadow-xl transition-all duration-700 ease-out transform hover:scale-105 relative ${analysisResult.score >= 70 ? 'border-emerald-400 bg-emerald-50' : analysisResult.score >= 40 ? 'border-amber-400 bg-amber-50' : 'border-rose-400 bg-rose-50'}`}>
+                   <div className={`w-28 h-28 sm:w-36 sm:h-36 rounded-full border-8 flex items-center justify-center shadow-xl transition-all duration-700 ease-out transform hover:scale-105 relative ${analysisResult.score >= 70 ? 'border-emerald-400 bg-emerald-50' : analysisResult.score >= 40 ? 'border-amber-400 bg-amber-50' : 'border-rose-400 bg-rose-50'}`}>
                       <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${analysisResult.score >= 70 ? 'bg-emerald-400' : analysisResult.score >= 40 ? 'bg-amber-400' : 'bg-rose-400'}`}></div>
                       <div className="text-center relative z-10">
                         <span className={`text-3xl sm:text-4xl font-black block leading-none tracking-tight ${analysisResult.score >= 70 ? 'text-emerald-700' : analysisResult.score >= 40 ? 'text-amber-700' : 'text-rose-700'}`}>{Math.round(analysisResult.score)}</span>
@@ -594,7 +594,7 @@ const Onboarding = () => {
 
                 <button
                   onClick={() => navigate("/student-dashboard")}
-                  className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl flex items-center justify-center hover:bg-slate-800 transition-colors shadow-lg"
+                  className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl flex items-center justify-center hover:bg-slate-800 active:scale-[0.98] transition-all shadow-lg"
                 >
                   Access My Dashboard <ArrowRight className="ml-2 w-5 h-5" />
                 </button>
@@ -604,7 +604,7 @@ const Onboarding = () => {
                 <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-red-900 mb-2">Analysis Failed</h3>
                 <p className="text-red-700 mb-6">We couldn't generate your risk score at this time. Our engine might be under high load.</p>
-                <button onClick={() => navigate("/student-dashboard")} className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold">Continue to Dashboard</button>
+                <button onClick={() => navigate("/student-dashboard")} className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 active:scale-[0.98] transition-all">Continue to Dashboard</button>
                </>
             )}
           </div>

@@ -83,14 +83,14 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                         <div className="flex items-center justify-between p-3 bg-[#F0FDF4] border border-[#A7F3D0] rounded-lg">
                             <div className="flex items-center">
                                 <FileText className="w-5 h-5 text-emerald-500 mr-2" />
-                                <span className="text-sm font-medium text-gray-700 truncate max-w-[150px] sm:max-w-[200px]">
+                                <span className="text-sm font-medium text-gray-700 truncate max-w-[120px] sm:max-w-[200px]">
                                     {file.name}
                                 </span>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <button
                                     onClick={() => setFile(null)}
-                                    className="p-1 hover:bg-[#D1FAE5] rounded-full text-gray-500"
+                                    className="p-1 hover:bg-[#D1FAE5] rounded-full text-gray-500 active:scale-[0.95] transition-transform"
                                     disabled={isUploading}
                                 >
                                     <X className="w-4 h-4" />
@@ -98,7 +98,7 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                                 <button
                                     onClick={handleUpload}
                                     disabled={isUploading}
-                                    className="bg-emerald-500 hover:bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm disabled:opacity-50"
+                                    className="bg-emerald-500 hover:bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm disabled:opacity-50 active:scale-[0.98] transition-all"
                                 >
                                     {isUploading ? 'Uploading...' : 'Upload'}
                                 </button>
