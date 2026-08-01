@@ -110,3 +110,6 @@ testing_docs/test_scenarios/append_docs.py
 fix_ids.py
 VIVA.md
 PPT.md
+generate_analysis_pdf.py
+Credixa_Project_Analysis.pdf
+
