@@ -82,17 +82,6 @@ docker-compose up --build
 
 ---
 
-## ☁️ One-Click Cloud Deployment (Render)
-
-Credixa supports automated Infrastructure-as-Code (IaC) deployment via Render Blueprints.
-
-1. Fork this repository to your GitHub account.
-2. Log into [Render Dashboard](https://dashboard.render.com/).
-3. Click **New +** ➔ **Blueprint**.
-4. Connect your GitHub repository. Render will automatically detect [`render.yaml`](file:///render.yaml) and provision all 5 cloud pillars with zero manual configuration.
-
----
-
 ## 🔒 Security & Compliance Protocols
 
 * **🔐 API Key Mandate:** Inter-service ML requests between Gateway and Risk Engine are strictly authenticated via `x-api-key` headers.
