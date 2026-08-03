@@ -33,15 +33,7 @@ Credixa is deployed globally across a highly scalable 5-pillar cloud microservic
 
 ## 🏛️ System Architecture
 
-```mermaid
-graph TD
-    Client["🖥️ Student / Admin Browser"] -->|HTTPS / REST| Gateway["⚡ API Gateway (Node.js/Express)"]
-    Gateway <-->|SQL Queries| DB[("🗄️ PostgreSQL Database")]
-    Gateway <-->|Session / Rate Limit| Redis[("🔥 Redis Cache")]
-    Gateway <-->|Async Stream / API Key| AI["🧠 AI Risk Engine (FastAPI)"]
-    AI -->|Feature Scaling| ML["📈 XGBoost Classifier"]
-    AI -->|OCR Digitation| HuggingFace["🤖 HuggingFace LLM Extractor"]
-```
+![credixa hld](docs/Credixa_HLD.png)
 
 ---
 
