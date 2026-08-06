@@ -4,6 +4,33 @@ This document outlines 10 core test scenarios for each primary user persona with
 
 ---
 
+## 0. General Instructions for UAT Testers
+
+To ensure a smooth testing experience and protect your data, all User Acceptance Testing (UAT) must follow these strict guidelines. This guide is designed for both technical and non-technical testers.
+
+⚠️ **CRITICAL PRIVACY RULE:** **DO NOT** use your real personal details, real bank statements, or real government IDs. Only use the dummy profiles, mock PDFs, and dummy credentials provided in the `testing_docs/test_scenarios` folders.
+
+### The "Two-Browser" Testing Method
+Credixa is a multi-sided platform involving Students, Parents, and University Admins. To test how these users interact, you should simulate multiple users simultaneously.
+
+**STEP 1: Register as a Student (Browser 1)**
+1. Open your normal web browser (e.g., Chrome, Safari) and navigate to the Credixa platform.
+2. Click **Sign Up / Register** to create a *new* student account.
+3. Use fake details (e.g., Name: Rahul Sharma, Email: rahul.sharma.test@example.com). If an email is taken, simply add random numbers. Create a password you will remember.
+4. Follow the onboarding flow. When asked to select a university, choose one of the test universities (like *Apex Institute of Technology*).
+5. When prompted for documents, upload the mock PDFs provided for your assigned test scenario.
+
+**STEP 2: Approve as the University Admin (Browser 2)**
+1. Open a **Private / Incognito Window** (this prevents your browser from logging you out of the student account).
+2. Go to the Credixa platform and **Log In** as the University Admin. Use the pre-existing admin credentials provided in your test scenario (e.g., `admin@apex.edu.in`).
+3. On the Admin Dashboard, find your dummy student in the queue, review the AI-analyzed application, and click **Approve** or **Reject**.
+
+**STEP 3: Verify the Result**
+1. Return to Browser 1 (where you are logged in as the Student) and refresh the page.
+2. You will see your status updated in real-time, and if approved, your zero-interest repayment schedule will be generated.
+
+---
+
 ## 1. Student Scenarios
 
 1. **Onboarding Workflow Execution:** Verify that a student can successfully complete the 5-step onboarding process, including selecting their educational institution, specifying the financing semester, and inputting basic details.
@@ -202,7 +229,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
     - **Mock Documents Required:**
       - *New Fee Structure (`abbas_fee_structure_semester2.pdf`):* Labeled "Semester II Fee Breakdown", ₹3,75,000 Total Payable. (Assumes Semester I repayment history and KYC baseline are already seeded in the database).
 
-**Test 01: Unhappy Path - Erratic Freelance Income & Low Income Consistency (Amit Kumar):**
+11. **Unhappy Path - Erratic Freelance Income & Low Income Consistency (Amit Kumar):**
     - **Student Profile:** Amit Kumar | **Co-Applicants:** Sunita Kumar (Mother, Freelancer) | **Institution:** Dummy College
     - **Student Prerequisite Details:** *Email:* `amit.kumar@example.com` | *Password:* `Student2026!`
     - **Institution Prerequisite Details:**
@@ -212,7 +239,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
     - **Mock Documents Required:**
       - *Parent Bank Statement (`amit's_mother_bank_statement_ERRATIC.pdf`):* 6 months history. Shows a large incoming transfer of ₹2,50,000 in month 1, followed by near-zero income and steady withdrawals for months 2-5, and a final ₹50,000 deposit in month 6.
 
-**Test 02: Unhappy Path - Institution Manual Rejection (Priya Singh):**
+12. **Unhappy Path - Institution Manual Rejection (Priya Singh):**
     - **Student Profile:** Priya Singh | **Co-Applicants:** Vikram Singh (Father) | **Institution:** Dummy College
     - **Student Prerequisite Details:** *Email:* `priya.singh@example.com` | *Password:* `Student2026!`
     - **Institution Prerequisite Details:**
@@ -222,7 +249,7 @@ To properly test the OCR Digitization (HuggingFace LLM) and the AI Risk Engine (
     - **Mock Documents Required:**
       - *Standard Valid Documents (`priya_fee_structure.pdf`, `priya's_father_bank_statement.pdf`):* Clean documents to ensure the AI approves it, shifting the test focus solely to the Institution's manual override capabilities.
 
-**Test 03: Edge Case - EMI Default and Late Fee Generation Simulation (Rahul Verma):**
+13. **Edge Case - EMI Default and Late Fee Generation Simulation (Rahul Verma):**
     - **Student Profile:** Rahul Verma | **Co-Applicants:** Anil Verma (Father) | **Institution:** Dummy College
     - **Student Prerequisite Details:** *Email:* `rahul.verma@example.com` | *Password:* `Student2026!`
     - **Institution Prerequisite Details:**
