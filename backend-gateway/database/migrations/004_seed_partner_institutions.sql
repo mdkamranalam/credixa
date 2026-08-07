@@ -90,7 +90,16 @@ VALUES
     'ICICI Bank',
     TRUE
 )
-ON CONFLICT (code) DO NOTHING;
+ON CONFLICT (institution_id) DO UPDATE SET 
+    name = EXCLUDED.name,
+    code = EXCLUDED.code,
+    password_hash = EXCLUDED.password_hash,
+    address = EXCLUDED.address,
+    contact_email = EXCLUDED.contact_email,
+    bank_account_number = EXCLUDED.bank_account_number,
+    ifsc_code = EXCLUDED.ifsc_code,
+    bank_name = EXCLUDED.bank_name,
+    is_active = EXCLUDED.is_active;
 
 -- 2. Insert Institution Admin Users for each college
 INSERT INTO users (user_id, institution_id, full_name, email, mobile_number, password_hash, role, college_roll_number, kyc_status)
@@ -172,7 +181,15 @@ VALUES
     'ADMIN_BITS_PILANI',
     'VERIFIED'
 )
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (user_id) DO UPDATE SET 
+    institution_id = EXCLUDED.institution_id,
+    full_name = EXCLUDED.full_name,
+    email = EXCLUDED.email,
+    mobile_number = EXCLUDED.mobile_number,
+    password_hash = EXCLUDED.password_hash,
+    role = EXCLUDED.role,
+    college_roll_number = EXCLUDED.college_roll_number,
+    kyc_status = EXCLUDED.kyc_status;
 
 -- 3. Insert Sample Student Users across colleges
 INSERT INTO users (user_id, institution_id, full_name, email, mobile_number, password_hash, role, college_roll_number, kyc_status)
@@ -210,7 +227,15 @@ VALUES
     'PGP2025044',
     'VERIFIED'
 )
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (user_id) DO UPDATE SET 
+    institution_id = EXCLUDED.institution_id,
+    full_name = EXCLUDED.full_name,
+    email = EXCLUDED.email,
+    mobile_number = EXCLUDED.mobile_number,
+    password_hash = EXCLUDED.password_hash,
+    role = EXCLUDED.role,
+    college_roll_number = EXCLUDED.college_roll_number,
+    kyc_status = EXCLUDED.kyc_status;
 
 -- 4. Insert Sample Loans
 INSERT INTO loans (loan_id, user_id, institution_id, student_account_number, student_ifsc_code, requested_amount, approved_amount, interest_rate, tenure_months, course_name, total_fees, status)
@@ -257,4 +282,15 @@ VALUES
     800000.00,
     'UNDER_REVIEW'
 )
-ON CONFLICT (loan_id) DO NOTHING;
+ON CONFLICT (loan_id) DO UPDATE SET 
+    user_id = EXCLUDED.user_id,
+    institution_id = EXCLUDED.institution_id,
+    student_account_number = EXCLUDED.student_account_number,
+    student_ifsc_code = EXCLUDED.student_ifsc_code,
+    requested_amount = EXCLUDED.requested_amount,
+    approved_amount = EXCLUDED.approved_amount,
+    interest_rate = EXCLUDED.interest_rate,
+    tenure_months = EXCLUDED.tenure_months,
+    course_name = EXCLUDED.course_name,
+    total_fees = EXCLUDED.total_fees,
+    status = EXCLUDED.status;
