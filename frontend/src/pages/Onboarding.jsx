@@ -232,7 +232,12 @@ const Onboarding = () => {
               <User className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500 mr-3" />
               <h3 className="text-lg sm:text-xl font-bold">Step 3: Co-Applicant Linking</h3>
             </div>
-            <p className="text-gray-600 mb-6">Because students often have thin credit files, a guarantor (like a parent) is required.</p>
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
+              <h4 className="text-sm font-bold text-blue-900 mb-1">Why do we need a Co-Applicant?</h4>
+              <p className="text-sm text-blue-800">
+                Since students typically do not have an established credit history or a steady income, we require a financial guarantor (such as a parent or guardian). Linking their profile securely helps our AI Risk Engine evaluate the household's financial stability and significantly increases your chances of zero-interest loan approval.
+              </p>
+            </div>
             <CoApplicantForm onSuccess={() => setStep(4)} />
           </div>
         )}

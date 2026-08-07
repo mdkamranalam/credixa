@@ -156,7 +156,7 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
                 },
                 {
                     "role": "user",
-                    "content": f"The AI Underwriting Model assigned this applicant an approval readiness score of {omniscore:.1f} out of 100 (where >70 is Approved / Low Risk, 50-70 is Medium Risk, and <50 is Rejected / High Risk). Note: A high score means low risk! Based on these metrics: {json.dumps(metrics)}, write a short professional paragraph explaining the underwriting decision. Then list exactly 2 pros and 2 cons."
+                    "content": f"The AI Underwriting Model assigned this applicant an approval readiness score of {omniscore:.1f} out of 100 (where >70 is Approved, 50-70 is Medium Risk, and <50 is Rejected). Based on these metrics: {json.dumps(metrics)}, write a short, highly understandable, and transparent professional paragraph explaining EXACTLY why this decision (approval or disapproval) was made. Avoid overly complex jargon. Be extremely clear about the main reasons. Then list exactly 2 pros and 2 cons."
                 }
             ],
             max_tokens=300,
@@ -222,15 +222,15 @@ async def generate_dynamic_reasoning(omniscore: float, metrics: dict) -> dict:
             
         tier_str = "LOW_RISK" if omniscore >= 70 else "MEDIUM_RISK" if omniscore >= 50 else "HIGH_RISK"
         if tier_str == "HIGH_RISK":
-            reasoning = f"Application flagged as HIGH RISK due to elevated debt burden (DTI: {dti:.1f}%) and liquidity constraints."
+            reasoning = f"Your application was flagged as HIGH RISK and is unlikely to be approved. This is primarily due to a high debt burden (Debt-to-Income ratio: {dti:.1f}%), meaning a large portion of income already goes to paying off existing debts."
             if overdrafts > 0:
-                reasoning += f" Furthermore, {overdrafts} cheque bounce/overdraft incident(s) were recorded."
+                reasoning += f" We also noticed {overdrafts} cheque bounce or overdraft incident(s) which negatively impacts your score."
             if gambling > 0:
-                reasoning += f" Critical risk: {gambling} gambling/betting transaction(s) detected."
+                reasoning += f" Finally, we detected {gambling} high-risk transaction(s) such as gambling or betting."
         elif tier_str == "MEDIUM_RISK":
-            reasoning = f"Application assessed as MEDIUM RISK. Moderate liquidity or debt ratio (DTI: {dti:.1f}%) requires monitoring."
+            reasoning = f"Your application is assessed as MEDIUM RISK. You have a moderate debt ratio (DTI: {dti:.1f}%) which means approval is borderline and requires further manual review."
         else:
-            reasoning = f"Application assessed as LOW RISK. Strong financial standing with low debt burden (DTI: {dti:.1f}%) and consistent liquidity."
+            reasoning = f"Your application is assessed as LOW RISK and is pre-approved! You have a strong financial standing with a low, manageable debt burden (Debt-to-Income ratio: {dti:.1f}%) and consistent account balances."
             
         return {
             "reasoning": reasoning,

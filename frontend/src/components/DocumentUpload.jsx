@@ -89,6 +89,7 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                             </div>
                             <div className="flex items-center space-x-2">
                                 <button
+                                    type="button"
                                     onClick={() => setFile(null)}
                                     className="p-1 hover:bg-[#D1FAE5] rounded-full text-gray-500 active:scale-[0.95] transition-transform"
                                     disabled={isUploading}
@@ -96,6 +97,7 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                                     <X className="w-4 h-4" />
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={handleUpload}
                                     disabled={isUploading}
                                     className="bg-emerald-500 hover:bg-slate-800 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm disabled:opacity-50 active:scale-[0.98] transition-all"
