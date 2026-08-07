@@ -31,6 +31,25 @@ Credixa is a multi-sided platform involving Students, Parents, and University Ad
 
 ---
 
+## Test Institution Credentials
+
+For UAT testing involving the "University Admin" persona, please use the following seeded institution credentials. All passwords are case-sensitive.
+
+| Institution Name | Institution Code | Admin Login Email | Password |
+| :--- | :--- | :--- | :--- |
+| Apex Institute of Technology | `APEX-001` | `admin@apex.edu.in` | `ApexAdmin2026!` |
+| Manipal Institute of Technology (MIT) | `MIT-002` | `admin@manipal.edu` | `ManipalAdmin2026!` |
+| Vellore Institute of Technology (VIT) | `VIT-003` (or `VIT_VELLORE`) | `admin@vit.ac.in` | `VitAdmin2026!` |
+| College of Engineering Pune (COEP) | `COEP-004` | `admin@coep.ac.in` | `CoepAdmin2026!` |
+| SRM Institute of Science and Technology | `SRM-005` | `admin@srmist.edu.in` | `SrmAdmin2026!` |
+| NIT, Tiruchirappalli | `NITT-006` | `admin@nitt.edu` | `NittAdmin2026!` |
+| BITS, Pilani | `BITS-007` (or `BITS_PILANI`) | `admin@bits-pilani.ac.in` (or `admin@pilani.bits-pilani.ac.in`) | `BitsAdmin2026!` |
+| IIT Delhi | `IIT_DELHI` | `admin@iitd.ac.in` | `IitAdmin2026!` |
+| IIM Ahmedabad | `IIM_AHMEDABAD` | `admin@iima.ac.in` | `IimAdmin2026!` |
+| Dummy College | `DUMMY-011` | `admin@dummy.edu` | `DummyAdmin2026!` |
+
+---
+
 ## 1. Student Scenarios
 
 1. **Onboarding Workflow Execution:** Verify that a student can successfully complete the 5-step onboarding process, including selecting their educational institution, specifying the financing semester, and inputting basic details.
