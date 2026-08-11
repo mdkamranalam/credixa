@@ -17,7 +17,7 @@ import RepaymentSchedule from "../components/dashboard/RepaymentSchedule.jsx";
 import DocumentVault from "../components/dashboard/DocumentVault.jsx";
 import ProfileModal from "../components/dashboard/ProfileModal.jsx";
 import SupportChatWidget from "../components/dashboard/SupportChatWidget.jsx";
-import NotificationBell from "../components/NotificationBell.jsx";
+import GlobalNav from "../components/GlobalNav.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure EMI calculator (kept here because loan application steps need it too)
@@ -266,21 +266,7 @@ const StudentDashboard = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans text-slate-800">
       {/* HEADER */}
-      <nav className="bg-white px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
-        <div className="flex items-center gap-2">
-          <img src="/credixa-favicon.png" alt="Credixa" className="w-8 h-8" />
-          <span className="text-2xl font-black tracking-tight text-slate-900">Credixa</span>
-        </div>
-        <div className="flex items-center space-x-6">
-          <NotificationBell />
-          <button
-            onClick={logout}
-            className="text-slate-400 hover:text-red-500 flex items-center font-bold text-sm transition-colors"
-          >
-            <LogOut className="h-4 w-4 mr-1" /> Logout
-          </button>
-        </div>
-      </nav>
+      <GlobalNav />
 
       <div className="max-w-6xl mx-auto mt-6 sm:mt-8 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
 
@@ -532,9 +518,14 @@ const StudentDashboard = () => {
               {step === 4 && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                   <h2 className="text-2xl font-black text-slate-900 mb-2">Final Step: AI Verification</h2>
-                  <p className="text-slate-500 mb-6">
-                    Upload verifiable 6-month statements to trigger our instant AI Risk Assessment engine.
-                  </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                    <p className="text-slate-500">
+                      Upload verifiable 6-month statements to trigger our instant AI Risk Assessment engine.
+                    </p>
+                    <div className="flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
+                      <ShieldCheck className="w-4 h-4 mr-1" /> AES-256 Bank Grade Encryption
+                    </div>
+                  </div>
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6">
                     <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-200">
                       <label className="text-sm font-bold text-slate-900">Latest Semester Marksheet</label>
