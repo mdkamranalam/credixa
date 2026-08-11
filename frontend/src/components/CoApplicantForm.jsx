@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import React, { useState } from 'react';
+
 import { User, AlertCircle, Mail, Link as LinkIcon, CheckCircle, Copy } from 'lucide-react';
 import api from '../services/api';
 
