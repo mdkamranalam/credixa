@@ -47,6 +47,12 @@ For UAT testing involving the "University Admin" persona, please use the followi
 | IIT Delhi | `IIT_DELHI` | `admin@iitd.ac.in` | `IitAdmin2026!` |
 | IIM Ahmedabad | `IIM_AHMEDABAD` | `admin@iima.ac.in` | `IimAdmin2026!` |
 | Dummy College | `DUMMY-011` | `admin@dummy.edu` | `DummyAdmin2026!` |
+| IIT Bombay | `IIT_BOMBAY` | `admin@iitb.ac.in` | `SuperAdmin@2026!` |
+| IIT Madras | `IIT_MADRAS` | `admin@iitm.ac.in` | `SuperAdmin@2026!` |
+| IIM Bangalore | `IIM_BANGALORE` | `admin@iimb.ac.in` | `SuperAdmin@2026!` |
+| IIT Patna | `IIT_PATNA` | `admin@iitp.ac.in` | `SuperAdmin@2026!` |
+| NIT Patna | `NIT_PATNA` | `admin@nitp.ac.in` | `SuperAdmin@2026!` |
+| IIT Hyderabad | `IIT_HYDERABAD` | `admin@iith.ac.in` | `SuperAdmin@2026!` |
 
 ---
 

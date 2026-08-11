@@ -53,6 +53,78 @@ VALUES
     'IDIB000V086',
     'Indian Bank',
     TRUE
+),
+(
+    'a5555555-5555-4555-a555-555555555555',
+    'IIT Bombay',
+    'IIT_BOMBAY',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'Powai, Mumbai, Maharashtra 400076',
+    'accounts@iitb.ac.in',
+    '50000000001',
+    'SBIN0001111',
+    'State Bank of India',
+    TRUE
+),
+(
+    'a6666666-6666-4666-a666-666666666666',
+    'IIT Madras',
+    'IIT_MADRAS',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'Chennai, Tamil Nadu 600036',
+    'accounts@iitm.ac.in',
+    '60000000002',
+    'SBIN0002222',
+    'State Bank of India',
+    TRUE
+),
+(
+    'a7777777-7777-4777-a777-777777777777',
+    'IIM Bangalore',
+    'IIM_BANGALORE',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'Bannerghatta Road, Bengaluru, Karnataka 560076',
+    'accounts@iimb.ac.in',
+    '70000000003',
+    'HDFC0003333',
+    'HDFC Bank',
+    TRUE
+),
+(
+    'a8888888-8888-4888-a888-888888888888',
+    'IIT Patna',
+    'IIT_PATNA',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'Bihta, Patna, Bihar 801106',
+    'accounts@iitp.ac.in',
+    '80000000004',
+    'SBIN0004444',
+    'State Bank of India',
+    TRUE
+),
+(
+    'a9999999-9999-4999-a999-999999999999',
+    'NIT Patna',
+    'NIT_PATNA',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'Ashok Rajpath, Patna, Bihar 800005',
+    'accounts@nitp.ac.in',
+    '90000000005',
+    'SBIN0005555',
+    'State Bank of India',
+    TRUE
+),
+(
+    'a0000000-0000-4000-a000-000000000000',
+    'IIT Hyderabad',
+    'IIT_HYDERABAD',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'Kandi, Sangareddy, Telangana 502285',
+    'accounts@iith.ac.in',
+    '10000000006',
+    'SBIN0006666',
+    'State Bank of India',
+    TRUE
 )
 ON CONFLICT (code) DO NOTHING;
 
@@ -101,6 +173,72 @@ VALUES
     '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
     'INSTITUTION_ADMIN',
     'ADMIN_VIT',
+    'VERIFIED'
+),
+(
+    'b5555555-5555-4555-b555-555555555555',
+    'a5555555-5555-4555-a555-555555555555',
+    'IIT Bombay Admin',
+    'admin@iitb.ac.in',
+    '9855555555',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'INSTITUTION_ADMIN',
+    'ADMIN_IITB',
+    'VERIFIED'
+),
+(
+    'b6666666-6666-4666-b666-666666666666',
+    'a6666666-6666-4666-a666-666666666666',
+    'IIT Madras Admin',
+    'admin@iitm.ac.in',
+    '9866666666',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'INSTITUTION_ADMIN',
+    'ADMIN_IITM',
+    'VERIFIED'
+),
+(
+    'b7777777-7777-4777-b777-777777777777',
+    'a7777777-7777-4777-a777-777777777777',
+    'IIM Bangalore Admin',
+    'admin@iimb.ac.in',
+    '9877777777',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'INSTITUTION_ADMIN',
+    'ADMIN_IIMB',
+    'VERIFIED'
+),
+(
+    'b8888888-8888-4888-b888-888888888888',
+    'a8888888-8888-4888-a888-888888888888',
+    'IIT Patna Admin',
+    'admin@iitp.ac.in',
+    '9888888888',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'INSTITUTION_ADMIN',
+    'ADMIN_IITP',
+    'VERIFIED'
+),
+(
+    'b9999999-9999-4999-b999-999999999999',
+    'a9999999-9999-4999-a999-999999999999',
+    'NIT Patna Admin',
+    'admin@nitp.ac.in',
+    '9899999999',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'INSTITUTION_ADMIN',
+    'ADMIN_NITP',
+    'VERIFIED'
+),
+(
+    'b0000000-0000-4000-b000-000000000000',
+    'a0000000-0000-4000-a000-000000000000',
+    'IIT Hyderabad Admin',
+    'admin@iith.ac.in',
+    '9800000000',
+    '$2b$10$wCd8UgWqCX/qIMblfPILted54f7bI2JLdTbsv6DooxfcktxNIGiVm',
+    'INSTITUTION_ADMIN',
+    'ADMIN_IITH',
     'VERIFIED'
 )
 ON CONFLICT (email) DO NOTHING;
