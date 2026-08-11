@@ -53,6 +53,9 @@ For UAT testing involving the "University Admin" persona, please use the followi
 | IIT Patna | `IIT_PATNA` | `admin@iitp.ac.in` | `SuperAdmin@2026!` |
 | NIT Patna | `NIT_PATNA` | `admin@nitp.ac.in` | `SuperAdmin@2026!` |
 | IIT Hyderabad | `IIT_HYDERABAD` | `admin@iith.ac.in` | `SuperAdmin@2026!` |
+| Thapar Institute of Engineering & Technology | `THAPAR-017` | `admin@thapar.edu` | `ThaparAdmin2026!` |
+| Amrita Vishwa Vidyapeetham | `AMRITA-018` | `admin@amrita.edu` | `AmritaAdmin2026!` |
+| IIIT Hyderabad | `IIITH-019` | `admin@iiit.ac.in` | `IiithAdmin2026!` |
 
 ---
 
