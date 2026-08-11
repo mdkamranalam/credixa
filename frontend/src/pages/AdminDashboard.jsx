@@ -44,6 +44,8 @@ const AdminDashboard = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [actionError, setActionError] = useState("");
   const [confirmAction, setConfirmAction] = useState(null);
+  const [overrideComment, setOverrideComment] = useState("");
+  const [viewingDoc, setViewingDoc] = useState(null);
 
   // Dossier State
   const [studentDossier, setStudentDossier] = useState(null);
@@ -162,6 +164,7 @@ const AdminDashboard = () => {
       await api.put(`/admin/loans/${selectedLoan.loan_id}/status`, {
         status,
         approved_amount: selectedLoan.requested_amount,
+        override_reason: overrideComment
       });
 
       const [loansRes, txnRes] = await Promise.all([
@@ -172,6 +175,7 @@ const AdminDashboard = () => {
       setLoans(loansRes.data);
       setGlobalTransactions(txnRes.data);
       setConfirmAction(null);
+      setOverrideComment("");
       setSelectedLoan(null);
     } catch (error) {
       setActionError(
@@ -716,12 +720,10 @@ const AdminDashboard = () => {
                 {studentDossier.documents.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {studentDossier.documents.map(doc => (
-                      <a
+                      <button
                         key={doc.doc_id}
-                        href={'http://localhost:3000/' + doc.file_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block p-4 border rounded-xl bg-white hover:border-indigo-300 hover:shadow-md transition-all group"
+                        onClick={() => setViewingDoc(doc)}
+                        className="text-left block p-4 border rounded-xl bg-white hover:border-indigo-300 hover:shadow-md transition-all group"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <FileText className="h-6 w-6 text-indigo-500 group-hover:scale-110 transition-transform" />
@@ -729,9 +731,9 @@ const AdminDashboard = () => {
                         </div>
                         <p className="font-medium text-sm text-gray-900 truncate mt-2">{doc.doc_type}</p>
                         <p className="text-xs text-green-600 font-bold mt-1 flex items-center">
-                          <CheckCircle className="h-3 w-3 mr-1" /> Profile Attached
+                          <CheckCircle className="h-3 w-3 mr-1" /> View AI Extraction
                         </p>
-                      </a>
+                      </button>
                     ))}
                   </div>
                 ) : (
@@ -742,6 +744,55 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
+          
+          {/* Document Viewer Sub-Modal */}
+          {viewingDoc && (
+             <div className="absolute inset-0 bg-white z-50 flex flex-col rounded-xl overflow-hidden">
+                <div className="bg-indigo-900 px-6 py-4 border-b flex justify-between items-center text-white">
+                  <h3 className="text-lg font-bold">AI Document Viewer - {viewingDoc.doc_type}</h3>
+                  <button onClick={() => setViewingDoc(null)} className="text-indigo-200 hover:text-white"><X className="h-5 w-5" /></button>
+                </div>
+                <div className="flex flex-1 overflow-hidden">
+                  <div className="w-1/2 border-r bg-gray-100 flex flex-col">
+                     <iframe src={'http://localhost:3000/' + viewingDoc.file_url} className="w-full h-full" title="Document PDF" />
+                  </div>
+                  <div className="w-1/2 bg-white p-6 overflow-y-auto">
+                     <h4 className="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
+                        <CheckCircle className="w-5 h-5 text-emerald-500 mr-2" /> AI Extracted Structured Data
+                     </h4>
+                     {viewingDoc.structured_details && Object.keys(viewingDoc.structured_details).length > 0 ? (
+                        <div className="space-y-4 mb-8">
+                           {Object.entries(typeof viewingDoc.structured_details === 'string' ? JSON.parse(viewingDoc.structured_details) : viewingDoc.structured_details).map(([key, val]) => {
+                             const isFlagged = String(val).toLowerCase().includes('not found') || String(val).toLowerCase().includes('bounced') || String(val).toLowerCase().includes('penalty');
+                             return (
+                               <div key={key} className={`p-3 rounded-lg border ${isFlagged ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
+                                 <p className="text-xs font-bold text-gray-500 uppercase">{key}</p>
+                                 <p className={`text-sm font-medium ${isFlagged ? 'text-red-700 font-bold' : 'text-gray-900'}`}>{val}</p>
+                               </div>
+                             );
+                           })}
+                        </div>
+                     ) : (
+                       <p className="text-sm text-gray-500 italic mb-8">No structured data found.</p>
+                     )}
+
+                     <h4 className="font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
+                        <AlertCircle className="w-5 h-5 text-orange-500 mr-2" /> Raw OCR Text with Flagged Lines
+                     </h4>
+                     <div className="bg-slate-50 p-4 rounded-lg border text-xs font-mono whitespace-pre-wrap text-slate-700 h-64 overflow-y-auto">
+                       {viewingDoc.extracted_text ? viewingDoc.extracted_text.split('\n').map((line, i) => {
+                          const isFlaggedLine = line.toLowerCase().match(/(insufficient|overdraft|penalty|bounced|default|late fee|fail)/);
+                          return (
+                            <div key={i} className={`py-1 ${isFlaggedLine ? 'bg-red-100 text-red-900 font-bold border-l-2 border-red-500 pl-2' : ''}`}>
+                               {line}
+                            </div>
+                          );
+                       }) : 'No raw text extracted.'}
+                     </div>
+                  </div>
+                </div>
+             </div>
+          )}
         </div>
       )}
 
@@ -889,9 +940,28 @@ const AdminDashboard = () => {
                     ? `Are you sure you want to approve this application and disburse ₹${parseFloat(selectedLoan.requested_amount).toLocaleString("en-IN")}?` 
                     : "Are you sure you want to reject this application? This action cannot be undone."}
                 </p>
+                
+                {/* Mandatory Override Justification */}
+                {((confirmAction === "APPROVED" && selectedLoan.risk_tier === "HIGH_RISK") || 
+                  (confirmAction === "REJECTED" && selectedLoan.risk_tier === "LOW_RISK")) && (
+                  <div className="mb-4 bg-white p-3 rounded-lg border border-red-300 shadow-inner">
+                     <label className="block text-xs font-black text-red-700 mb-2 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" /> MANDATORY OVERRIDE JUSTIFICATION
+                     </label>
+                     <textarea 
+                       className="w-full border border-red-200 rounded-md p-2 text-sm focus:ring-red-500 outline-none" 
+                       placeholder="You are overriding the AI recommendation. Please explain your reasoning..."
+                       value={overrideComment}
+                       onChange={(e) => setOverrideComment(e.target.value)}
+                       required
+                       rows="2"
+                     />
+                  </div>
+                )}
+
                 <div className="flex space-x-3">
                   <button
-                    onClick={() => setConfirmAction(null)}
+                    onClick={() => { setConfirmAction(null); setOverrideComment(""); }}
                     disabled={isProcessing}
                     className="flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
                   >
@@ -899,7 +969,7 @@ const AdminDashboard = () => {
                   </button>
                   <button
                     onClick={() => handleLoanAction(confirmAction)}
-                    disabled={isProcessing}
+                    disabled={isProcessing || (((confirmAction === "APPROVED" && selectedLoan.risk_tier === "HIGH_RISK") || (confirmAction === "REJECTED" && selectedLoan.risk_tier === "LOW_RISK")) && !overrideComment.trim())}
                     className={`flex-1 flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:opacity-50 ${confirmAction === "APPROVED" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}
                   >
                     {isProcessing ? "Processing..." : confirmAction === "APPROVED" ? "Yes, Disburse Funds" : "Yes, Reject"}
