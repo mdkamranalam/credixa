@@ -20,6 +20,7 @@ const LoanChecklist = lazy(() => import("./pages/LoanChecklist"));
 const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const SuperAdminDashboard = lazy(() => import("./pages/SuperAdminDashboard"));
+const TeacherRecommendation = lazy(() => import("./pages/TeacherRecommendation"));
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/loan-checklist" element={<LoanChecklist />} />
             <Route path="/onboarding" element={<ProtectedRoute allowedRoles={["STUDENT"]}><Onboarding /></ProtectedRoute>} />
+            <Route path="/teacher-recommendation/:token" element={<TeacherRecommendation />} />
 
             {/* Protected Student Route */}
             <Route

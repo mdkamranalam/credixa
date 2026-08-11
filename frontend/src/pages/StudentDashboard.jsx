@@ -18,6 +18,7 @@ import DocumentVault from "../components/dashboard/DocumentVault.jsx";
 import ProfileModal from "../components/dashboard/ProfileModal.jsx";
 import SupportChatWidget from "../components/dashboard/SupportChatWidget.jsx";
 import GlobalNav from "../components/GlobalNav.jsx";
+import TeacherRecommendationWidget from "../components/dashboard/TeacherRecommendationWidget.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure EMI calculator (kept here because loan application steps need it too)
@@ -622,6 +623,9 @@ const StudentDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <RepaymentSchedule payments={payments} />
             <DocumentVault />
+            <div className="md:col-span-2">
+                <TeacherRecommendationWidget studentId={profile?.user_id || 'student'} />
+            </div>
           </div>
         </div>
 
