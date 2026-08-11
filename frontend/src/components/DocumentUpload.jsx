@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, X, FileText } from 'lucide-react';
 import api from '../services/api';
+import OCRCorrectionModal from './OCRCorrectionModal';
 
 const DocumentUpload = ({ loanId, ownerType, category, docType, title, description, onUploadSuccess, useOcr = false }) => {
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadStatus, setUploadStatus] = useState('idle'); // 'idle', 'uploading', 'success', 'error'
     const [errorMsg, setErrorMsg] = useState('');
+    const [uploadedDoc, setUploadedDoc] = useState(null);
+    const [showCorrectionModal, setShowCorrectionModal] = useState(false);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -41,8 +44,20 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
             });
 
             setUploadStatus('success');
+            setUploadedDoc(response.data.document);
+            
+            // Check if there are structured details to verify
+            const doc = response.data.document;
+            let details = doc.structured_details;
+            if (typeof details === 'string') {
+                try { details = JSON.parse(details); } catch(e) {}
+            }
+            if (useOcr && details && Object.keys(details).length > 0) {
+                setShowCorrectionModal(true);
+            }
+
             if (onUploadSuccess) {
-                onUploadSuccess(response.data.document);
+                onUploadSuccess(doc);
             }
         } catch (err) {
             console.error("Upload error", err);
@@ -62,9 +77,19 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                 </div>
 
                 {uploadStatus === 'success' && (
-                    <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full flex items-center">
-                        <CheckCircle className="w-3 h-3 mr-1" /> Uploaded
-                    </span>
+                    <div className="flex items-center space-x-2">
+                        {useOcr && uploadedDoc && (
+                            <button 
+                                onClick={() => setShowCorrectionModal(true)}
+                                className="text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 font-bold px-2 py-1 rounded flex items-center transition-colors"
+                            >
+                                Verify AI Data
+                            </button>
+                        )}
+                        <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                            <CheckCircle className="w-3 h-3 mr-1" /> Uploaded
+                        </span>
+                    </div>
                 )}
             </div>
 
@@ -114,6 +139,17 @@ const DocumentUpload = ({ loanId, ownerType, category, docType, title, descripti
                         </div>
                     )}
                 </div>
+            )}
+
+            {showCorrectionModal && uploadedDoc && (
+                <OCRCorrectionModal
+                    document={uploadedDoc}
+                    onClose={() => setShowCorrectionModal(false)}
+                    onSave={(updatedDoc) => {
+                        setUploadedDoc(updatedDoc);
+                        setShowCorrectionModal(false);
+                    }}
+                />
             )}
         </div>
     );

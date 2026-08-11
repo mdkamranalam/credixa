@@ -240,6 +240,39 @@ router.post(
   }
 );
 
+// Update document structured details (Manual OCR Correction)
+router.put("/documents/:docId", authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { docId } = req.params;
+  const { structured_details } = req.body;
+
+  try {
+    const updateQuery = `
+      UPDATE loan_documents 
+      SET structured_details = $1, is_verified = true
+      WHERE doc_id = $2 AND user_id = $3
+      RETURNING *;
+    `;
+    const result = await pool.query(updateQuery, [
+      JSON.stringify(structured_details),
+      docId,
+      userId
+    ]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Document not found or unauthorized." });
+    }
+
+    res.status(200).json({
+      message: "Document details updated successfully",
+      document: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Document update error:", error);
+    res.status(500).json({ error: "Failed to update document details." });
+  }
+});
+
 // Save or Update the User's permanent Co-Applicant
 router.post("/co-applicant", authenticateToken, async (req, res) => {
   const userId = req.user.id;

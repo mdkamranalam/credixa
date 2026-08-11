@@ -251,6 +251,24 @@ const Onboarding = () => {
             </div>
             <p className="text-gray-600 mb-6">Upload your academic documents to strengthen your profile.</p>
             
+            {/* Upload Checklist */}
+            <div className="mb-6 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                <CheckCircle className="w-4 h-4 mr-2 text-emerald-500" /> Academic Document Checklist
+              </h4>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {requiredAcademicDocs.map(doc => {
+                  const isUploaded = uploadedAcademicDocs.includes(doc);
+                  return (
+                    <div key={doc} className={`flex items-center p-2 rounded-lg text-xs font-bold border ${isUploaded ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
+                      {isUploaded ? <CheckCircle className="w-3 h-3 mr-2" /> : <div className="w-3 h-3 rounded-full border-2 border-gray-300 mr-2" />}
+                      {doc.replace(/_/g, ' ')}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
             <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
               <p className="text-sm font-bold text-blue-900 mb-3">Select Document Extraction Method:</p>
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-6">
@@ -359,7 +377,7 @@ const Onboarding = () => {
               
               <button
                 type="submit"
-                disabled={academicLoading}
+                disabled={academicLoading || requiredAcademicDocs.some(doc => !uploadedAcademicDocs.includes(doc))}
                 className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center disabled:opacity-50 active:scale-[0.98] transition-transform"
               >
                 {academicLoading ? "Saving..." : "Continue to Financials"} <ArrowRight className="ml-2 w-5 h-5" />
@@ -376,6 +394,24 @@ const Onboarding = () => {
               <h3 className="text-lg sm:text-xl font-bold">Step 5: Financial Data Ingestion</h3>
             </div>
             <p className="text-gray-600 mb-6">To accurately calculate your AI Omniscore, we need historical cash-flow data.</p>
+            
+            {/* Upload Checklist */}
+            <div className="mb-6 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                <CheckCircle className="w-4 h-4 mr-2 text-emerald-500" /> Financial Document Checklist
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {requiredFinancialDocs.map(doc => {
+                  const isUploaded = uploadedFinancialDocs.includes(doc);
+                  return (
+                    <div key={doc} className={`flex items-center p-3 rounded-lg text-sm font-bold border ${isUploaded ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
+                      {isUploaded ? <CheckCircle className="w-4 h-4 mr-2" /> : <div className="w-4 h-4 rounded-full border-2 border-gray-300 mr-2" />}
+                      {doc.replace(/_/g, ' ')}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
             
             <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
               <p className="text-sm font-bold text-blue-900 mb-3">Select Document Extraction Method:</p>
@@ -428,7 +464,8 @@ const Onboarding = () => {
             
             <button
               onClick={finishOnboarding}
-              className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center active:scale-[0.98] transition-transform"
+              disabled={requiredFinancialDocs.some(doc => !uploadedFinancialDocs.includes(doc))}
+              className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg mt-8 flex items-center justify-center disabled:opacity-50 active:scale-[0.98] transition-transform"
             >
               Complete Onboarding <ArrowRight className="ml-2 w-5 h-5" />
             </button>
