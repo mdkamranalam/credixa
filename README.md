@@ -17,6 +17,12 @@
 
 ---
 
+## 📖 Comprehensive Documentation
+
+For a detailed walkthrough on setting up the platform, understanding user personas, exploring key ML features, and troubleshooting, please read the **[Official Credixa User Manual](docs/USER_MANUAL.md)**.
+
+---
+
 ## 🌐 Live Cloud Ecosystem
 
 Credixa is deployed globally across a highly scalable 5-pillar cloud microservice architecture:
