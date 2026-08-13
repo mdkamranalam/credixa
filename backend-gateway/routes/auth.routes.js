@@ -220,7 +220,7 @@ router.post('/register-institution', async (req, res) => {
 router.get("/institutions", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT institution_id, name FROM institutions WHERE is_active = TRUE ORDER BY name ASC"
+      "SELECT institution_id, name, code FROM institutions WHERE is_active = TRUE ORDER BY name ASC"
     );
     res.status(200).json(result.rows);
   } catch (error) {

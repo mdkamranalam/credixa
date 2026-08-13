@@ -102,8 +102,8 @@ const Register = () => {
         // --- Process Student Registration ---
         const selectedCollege = institutions.find(
           (inst) =>
-            inst.name.trim().toLowerCase() ===
-            collegeSearch.trim().toLowerCase(),
+            `${inst.name} (${inst.code})`.trim().toLowerCase() ===
+            collegeSearch.trim().toLowerCase() || inst.name.trim().toLowerCase() === collegeSearch.trim().toLowerCase(),
         );
 
         if (!selectedCollege) {
@@ -285,7 +285,7 @@ const Register = () => {
                     />
                     <datalist id="college-list">
                       {institutions.map((inst) => (
-                        <option key={inst.institution_id} value={inst.name} />
+                        <option key={inst.institution_id} value={`${inst.name} (${inst.code})`} />
                       ))}
                     </datalist>
                   </div>
