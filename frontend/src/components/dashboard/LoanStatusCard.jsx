@@ -57,7 +57,7 @@ const LoanStatusCard = ({
             <div className="bg-slate-50 px-6 py-4 rounded-xl border border-slate-100">
               <p className="text-xs font-bold text-slate-400 uppercase">Status</p>
               <p className="text-lg font-black text-yellow-600">
-                {activeLoan.status === "UNDER_REVIEW" ? "AI Extracting Data..." : activeLoan.status.replace("_", " ")}
+                {activeLoan.status === "UNDER_REVIEW" ? "Pending Admin Review" : activeLoan.status.replace("_", " ")}
               </p>
             </div>
           </div>

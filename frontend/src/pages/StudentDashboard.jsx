@@ -675,7 +675,7 @@ const StudentDashboard = () => {
                   { label: "Student Verification", done: true },
                   { label: "PAN Verified", done: true },
                   { label: "Bank Active", done: true },
-                  { label: "AI Assessment", done: step > 4 },
+                  { label: "AI Assessment", done: step > 4 || !!activeLoan },
                 ].map(({ label, done }) => (
                   <li key={label} className={`flex items-center text-sm font-bold ${done ? "text-slate-700" : "text-slate-400"}`}>
                     {done
