@@ -20,7 +20,6 @@
 ## 📖 Comprehensive Documentation
 
 For a detailed walkthrough on setting up the platform, understanding user personas, exploring key ML features, and troubleshooting, please read the **[Official Credixa User Manual](docs/USER_MANUAL.md)**.
-You can also review the Capstone Project Submission Document in **[SUBMISSION.md](private_docs/SUBMISSION.md)**.
 
 ---
 
