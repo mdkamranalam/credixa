@@ -20,26 +20,46 @@
 ## 📖 Comprehensive Documentation
 
 For a detailed walkthrough on setting up the platform, understanding user personas, exploring key ML features, and troubleshooting, please read the **[Official Credixa User Manual](docs/USER_MANUAL.md)**.
+You can also review the Capstone Project Submission Document in **[SUBMISSION.md](private_docs/SUBMISSION.md)**.
 
 ---
 
-## 🌐 Live Cloud Ecosystem
+## 🎯 The Problem & Our Solution
 
-Credixa is deployed globally across a highly scalable 5-pillar cloud microservice architecture:
+Traditional educational loans rely heavily on archaic credit scores (e.g., FICO, CIBIL), effectively excluding students with "thin credit files" who lack borrowing history. 
 
-| Service Pillar | Live URL / Endpoint | Technology | Status |
-| :--- | :--- | :--- | :---: |
-| **🖥️ React Frontend** | [credixa-8wlw.onrender.com](https://credixa-8wlw.onrender.com/) | React 19, Vite, Tailwind CSS | 🟢 **ONLINE** |
-| **⚡ API Gateway** | [credixa-backend-7r4k.onrender.com](https://credixa-backend-7r4k.onrender.com/) | Node.js, Express, JWT | 🟢 **ONLINE** |
-| **🧠 AI Risk Engine** | [credixa-risk-engine.onrender.com](https://credixa-risk-engine.onrender.com/) | Python, FastAPI, XGBoost, LLM | 🟢 **ONLINE** |
-| **🗄️ Database Vault** | Supabase PostgreSQL (`credixa-db`) | PostgreSQL 16 | 🟢 **ONLINE** |
-| **🔥 Session Cache** | Managed Render Redis | Redis 7 Alpine | 🟢 **ONLINE** |
+**Credixa** disrupts this by democratizing credit access. Instead of relying on traditional credit bureaus, Credixa uses an AI-driven, real-time behavioral underwriting system. It analyzes non-traditional data—like savings rates, Debt-to-Income (DTI) ratios, and academic performance—to instantly compute an inclusive and highly predictive credit score called the **Omniscore**.
 
 ---
 
-## 🏛️ System Architecture
+## 🌐 Live Cloud Ecosystem & Architecture
 
-![credixa hld](docs/Credixa_HLD.png)
+Credixa is deployed globally across a highly scalable **5-pillar cloud microservice architecture**:
+
+| Service Pillar | Live URL / Endpoint | Technology | Description |
+| :--- | :--- | :--- | :--- |
+| **🖥️ React Frontend** | [credixa-8wlw.onrender.com](https://credixa-8wlw.onrender.com/) | React 19, Vite, Tailwind | Blazing fast client dashboards for students and admins. |
+| **⚡ API Gateway** | [credixa-backend-7r4k.onrender.com](https://credixa-backend-7r4k.onrender.com/) | Node.js, Express, Prisma | Central router handling JWT auth, role access, and proxying. |
+| **🧠 AI Risk Engine** | [credixa-risk-engine.onrender.com](https://credixa-risk-engine.onrender.com/) | Python, FastAPI, XGBoost | Performs OCR and computes the Omniscore predictions. |
+| **🗄️ Database Vault** | Supabase PostgreSQL | PostgreSQL 16 | ACID-compliant storage for users, loans, and ledgers. |
+| **🔥 Session Cache** | Managed Render Redis | Redis 7 Alpine | High-speed state management and API rate-limiting. |
+
+---
+
+## 📂 Project Structure
+
+The monorepo is cleanly separated into autonomous microservices:
+
+```text
+credixa/
+├── backend-gateway/       # Node.js API Gateway (Express, Prisma ORM, Auth logic)
+├── risk-engine/           # Python AI Engine (FastAPI, XGBoost Model, LLM Extractors)
+├── frontend/              # React UI (Vite, Tailwind, Component library)
+├── database/              # DB schemas, migrations, and initialization scripts
+├── private_docs/          # Capstone and academic submission documents
+├── testing_docs/          # Extensive PDF test scenarios (Fraud, Happy Paths, etc.)
+└── docker-compose.yml     # Local environment orchestration
+```
 
 ---
 
@@ -48,13 +68,22 @@ Credixa is deployed globally across a highly scalable 5-pillar cloud microservic
 ### 🎒 For Students & Co-Applicants
 * **⚡ Instant 5-Step Onboarding Workflow:** Register educational institution details, select financing semesters, and input co-borrower credentials seamlessly.
 * **📂 Intelligent Document Vault:** Upload academic mark sheets, fee structures, and bank statements with automated OCR validation.
-* **📈 Real-Time Credit Scoring:** AI evaluation of non-traditional indicators (savings rate, academic performance, DTI ratio, gambling flags) to compute a proprietary **Omniscore**.
+* **📈 Real-Time Credit Scoring:** AI evaluation of non-traditional indicators (savings rate, academic performance, DTI ratio, gambling flags) to compute a proprietary **Omniscore** in under 60 seconds.
 * **🗓️ Transparent Repayment Schedules:** Automated amortization schedules with clear installment breakdowns and zero hidden fees.
 
 ### 🏛️ For Educational Institutions & Admins
 * **🔐 Partner Portal:** Dedicated dashboard to monitor student enrollments, pending disbursements, and active BNPL credit lines.
 * **📋 Verification Engine:** Approve or query student academic documents directly through digitized records.
-* **🛡️ Fraud Scrutiny:** Immutable audit logs tracking every state change, document upload, and login attempt.
+* **🛡️ Fraud Scrutiny:** Immutable audit logs tracking every state change, document upload, and login attempt. The AI flags document tampering and ledger inconsistencies immediately.
+
+---
+
+## 🤖 The AI Risk Engine (Underwriting)
+
+The core innovation of Credixa lies within the `risk-engine/` microservice. When a student uploads their documents:
+1. **Intelligent Extraction:** `pytesseract` and `pdfplumber` digitize the unstructured text from bank statements and transcripts.
+2. **LLM Parsing:** A HuggingFace LLM extracts critical financial indicators (savings, overdrafts, salary deposits).
+3. **Omniscore Calculation:** These features are scaled and fed into an **XGBoost Classifier** (`risk_model.pkl`), generating a probability of default that translates into a 0-900 Omniscore.
 
 ---
 
@@ -73,6 +102,7 @@ cd credixa
 
 # Copy gateway environment defaults
 cp backend-gateway/.env.example backend-gateway/.env
+cp risk-engine/.env.example risk-engine/.env
 ```
 
 ### 2️⃣ One-Click Container Launch
@@ -92,11 +122,21 @@ docker-compose up --build
 
 * **🔐 API Key Mandate:** Inter-service ML requests between Gateway and Risk Engine are strictly authenticated via `x-api-key` headers.
 * **🛡️ Universal CORS Whitelisting:** Gateway middleware dynamically verifies incoming origins against authorized cloud subdomains.
-* **📇 Resilient OCR Fallbacks:** Zero-failure document digitization pipeline with intelligent local heuristics.
-* **📦 Secret Management:** Zero hardcoded database strings or private keys in repository commits.
+* **📇 Resilient OCR Fallbacks:** Zero-failure document digitization pipeline with intelligent local heuristics. If standard text extraction fails, it gracefully falls back to OCR.
+* **📦 Secret Management:** Zero hardcoded database strings or private keys in repository commits. Environment variables securely manage all configurations.
+
+---
+
+## 🧪 Testing & Validation
+
+The `testing_docs/test_scenarios/` directory contains diverse, real-world mock data for validating the platform. This includes:
+* **Happy Paths:** Clean bank statements and standard academic transcripts.
+* **Fraud Detection:** Tampered PDFs, erratic bank statements with missing ledgers, and spoofed admission letters.
+* *The system is programmed to identify these anomalies and automatically reject applications, demonstrating its robustness as an automated underwriter.*
 
 ---
 
 <div align="center">
-  <b>Built with ❤️ for Financial Inclusion & Accessible Education.</b>
+  <b>Built with ❤️ for Financial Inclusion & Accessible Education.</b><br>
+  <i>Capstone Project 2025-2026</i>
 </div>
